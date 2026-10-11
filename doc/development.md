@@ -1,6 +1,6 @@
 # 开发环境与工程检查
 
-2026-10-11 工程基础初始化。以下入口已经配置；业务功能和课程验收尚未完成。
+2026-10-11 工程基础及阶段 3 领域模型。以下入口已经配置；完整 CLI 功能和课程验收尚未完成。
 
 ## 环境与依赖
 
@@ -56,8 +56,18 @@ npm run check
 
 静态 imports 无法判断 CLI 是否通过领域方法绕过应用，不能证明字段没有通过其他方式泄漏，也不能自动确认仅有两处分派、Command/Composite 的语义或全量功能完整。这些项目在后续实现阶段仍需代码审查与行为测试。当前目录骨架中的 `.gitkeep` 只保留规划目录，不表示对应模块已实现。
 
+## 领域测试与缓存
+
+```sh
+npm test -- tests/domain
+```
+
+只执行当前 81 个领域测试；提交前仍运行 npm run check，包含既有工程回归。测试失败应保留诊断，不通过减少测试范围宣称全量通过。
+
+本轮曾遇到 Windows 沙箱系统临时目录中 Vitest 模块缓存文件缺失，两个套件尚未执行即失败。将临时位置放到项目内后领域测试通过；随后使用 Vitest 官方 [fsModuleCachePath 配置](https://vitest.dev/config/fsmodulecachepath)，把模块缓存明确放在已忽略的 artifacts/vitest-cache。默认 npm test 和完整 check 已通过，不要求开发者修改系统环境变量或工具权限，不改变测试断言。
+
 ## 验证记录
 
-实际执行结果写入 [主文档的工程初始化记录](README.md#5-v04-工程基础初始化检查)。课程功能结果仍通过 [验收清单](acceptance.md) 和 [测试计划](testing.md) 记录；阶段 8 才根据实际系统测试编写 test-report.md。
+实际执行结果写入 [主文档的工程初始化记录](README.md#5-v04-工程基础初始化检查) 和阶段 3 记录。领域落点见 [domain-model.md](domain-model.md)；课程功能结果通过 [验收清单](acceptance.md) 和 [测试计划](testing.md) 记录；阶段 8 才根据实际系统测试编写 test-report.md。
 
 `dist/`、`node_modules/`、缓存、测试临时文件和后续 coverage 均不提交。每次提交仍先给完整 add 清单并等待用户确认；检查通过不改变提交、推送或标签权限。

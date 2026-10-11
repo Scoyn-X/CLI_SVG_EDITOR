@@ -2,7 +2,20 @@
 
 来源：[需求原文](../phase_cli_1.md)。暂定语义见 [决策记录](decisions.md)。
 
-当前所有功能项均为 **未实现、未执行**。本清单不是测试通过报告；后续每项关联真实测试文件、回放产物或人工检查记录，失败项保留问题说明。标注“暂定”的条目随决策一起修订。
+阶段 3 已取得领域层的部分实现/测试证据；完整命令、CLI、历史与 SVG 系统验收仍未完成。不能把领域通过等同于整项通过。标注“暂定”的条目随决策一起修订；当前证据映射见下表。
+
+## 当前实施证据（2026-10-11，阶段 3）
+
+| 验收项 | 已验证部分及证据 | 仍待完成 |
+| --- | --- | --- |
+| A01/A05 | [SvgDocument 测试](../tests/domain/SvgDocument.test.ts)：默认/显式尺寸、非法尺寸与原子更新 | init/canvas 命令和历史屏障 |
+| A06/A07 | [Shapes 测试](../tests/domain/Shapes.test.ts)、[SvgDocument 测试](../tests/domain/SvgDocument.test.ts)：六类模型、根/嵌套附着、缺省样式、id/容器精确错误及失败不变 | CLI 参数/schema、create 反馈、端到端错误前缀 |
+| A08 | [SvgDocument 测试](../tests/domain/SvgDocument.test.ts)：移除子树清理全部索引与父级，深复制保持独立结构 | delete Command 及 undo 恢复原位置 |
+| A09/A10/A11 | [Shapes 测试](../tests/domain/Shapes.test.ts)、[Group 测试](../tests/domain/Group.test.ts)：各几何/属性、嵌套递归、非法数值/白名单、溢出整组状态不变 | 命令摘要与 undo/redo、CLI 回放 |
+| A28 | 实际领域 21 类各在同名文件，封装字段；Group Composite，多态复制/描述；没有按图形类型名分派 | Command 及应用工厂/分发入口尚未实现，最终模式审查待后续 |
+| A29 | 主文档、[领域记录](domain-model.md) 和真实依赖检查已更新 | 应用/适配器完整实现的一致性自查与最终报告 |
+
+A02—A04、A12—A27 的完整要求仍未验收；上表之外不隐含通过状态。A30 的 final 仍未授权且截止日期未提供。81 个领域测试通过是领域证据，不是整套课程验收通过报告。
 
 ## 1. 需求覆盖
 
