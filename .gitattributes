@@ -3,6 +3,9 @@
 *.puml text eol=lf
 *.ts text eol=lf
 *.json text eol=lf
+*.mjs text eol=lf
+.npmrc text eol=lf
+.nvmrc text eol=lf
 *.svg text eol=lf
 .gitignore text eol=lf
 .gitattributes text eol=lf

@@ -1,0 +1,30 @@
+{
+  "name": "cli-svg-editor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "软件设计课程 SVG 命令行编辑器",
+  "type": "module",
+  "engines": {
+    "node": ">=24.11.0 <25",
+    "npm": ">=11 <12"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:architecture": "depcruise --config dependency-cruiser.config.json --output-type err-long src",
+    "check:runtime": "node dist/bootstrap/main.js",
+    "check": "npm run typecheck && npm run lint && npm run build && npm run check:architecture && npm test && npm run check:runtime"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.2",
+    "dependency-cruiser": "18.5.0",
+    "eslint": "10.12.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "5.0.3"
+  }
+}

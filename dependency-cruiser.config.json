@@ -1,0 +1,32 @@
+{
+  "forbidden": [
+    { "name": "no-cycles", "severity": "error", "from": {}, "to": { "circular": true } },
+    { "name": "no-unresolved-imports", "severity": "error", "from": {}, "to": { "couldNotResolve": true } },
+    { "name": "production-must-not-import-tests", "severity": "error", "from": { "path": "^src/" }, "to": { "path": "^tests/" } },
+    { "name": "production-must-not-import-dev-tools", "severity": "error", "from": { "path": "^src/" }, "to": { "dependencyTypes": ["npm-dev", "npm-unknown"] } }
+  ],
+  "allowedSeverity": "error",
+  "allowed": [
+    { "from": { "path": "^src/domain/" }, "to": { "path": "^src/domain/" } },
+    { "from": { "path": "^src/ports/" }, "to": { "path": "^src/(ports|domain)/" } },
+    { "from": { "path": "^src/application/" }, "to": { "path": "^src/(application|ports|domain)/" } },
+    { "from": { "path": "^src/adapters/cli/" }, "to": { "path": "^src/(adapters/cli|application|domain)/" } },
+    { "from": { "path": "^src/adapters/svg/" }, "to": { "path": "^src/(adapters/svg|ports|domain)/" } },
+    { "from": { "path": "^src/adapters/shapes/" }, "to": { "path": "^src/(adapters/shapes|ports|domain)/" } },
+    { "from": { "path": "^src/adapters/files/" }, "to": { "path": "^src/(adapters/files|ports)/" } },
+    { "from": { "path": "^src/(adapters/(cli|files)|bootstrap)/" }, "to": { "dependencyTypes": ["core"] } },
+    { "from": { "path": "^src/adapters/svg/" }, "to": { "dependencyTypes": ["npm"] } },
+    { "from": { "path": "^src/bootstrap/" }, "to": { "path": "^src/" } },
+    { "from": { "path": "^tests/" }, "to": {} }
+  ],
+  "options": {
+    "doNotFollow": { "path": "node_modules" },
+    "tsPreCompilationDeps": true,
+    "tsConfig": { "fileName": "tsconfig.json" },
+    "enhancedResolveOptions": {
+      "conditionNames": ["import", "types", "node", "default"],
+      "exportsFields": ["exports"],
+      "extensions": [".ts", ".js", ".json"]
+    }
+  }
+}
