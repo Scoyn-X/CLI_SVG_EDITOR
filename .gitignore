@@ -1,0 +1,21 @@
+# Dependencies and generated build/test output
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Local generated exports; committed SVG fixtures must remain visible
+artifacts/
+
+# Local configuration, logs and OS files
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+
+# Transient editor files
+*.swp
+*.swo
+*~

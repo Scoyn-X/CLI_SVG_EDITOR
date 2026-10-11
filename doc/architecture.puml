@@ -1,0 +1,39 @@
+@startuml
+title CLI SVG Editor - planned dependency direction
+skinparam componentStyle rectangle
+left to right direction
+
+component "CLI adapter\nREPL / parser / presenters" as CLI
+component "Application\ncommands / session / history / ShapeFactory" as APP
+component "Ports\nstorage / SVG codec / ShapeProvider" as PORTS
+component "Domain\nshapes / document / memento / descriptions" as DOMAIN
+component "SVG adapter\nXML parsing / generic serialization" as SVG
+component "File adapter\nread / safe write" as FILES
+component "Built-in providers\nCLI and SVG construction" as PROVIDERS
+component "Bootstrap\ncomposition / registration" as BOOT
+
+CLI --> APP
+CLI --> DOMAIN : read-only descriptions
+APP --> DOMAIN
+APP --> PORTS
+PORTS --> DOMAIN
+SVG --> PORTS
+SVG --> DOMAIN
+FILES --> PORTS
+PROVIDERS --> PORTS
+PROVIDERS --> DOMAIN
+BOOT --> CLI
+BOOT --> APP
+BOOT --> SVG
+BOOT --> FILES
+BOOT --> PROVIDERS
+
+note bottom of DOMAIN
+No CLI, XML library, filesystem or application dependencies.
+end note
+note bottom of APP
+Only two name dispatch locations:
+command dispatcher and shared ShapeFactory.
+Marked as refactoring targets for later plugin phase.
+end note
+@enduml
