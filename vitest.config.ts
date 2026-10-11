@@ -7,5 +7,7 @@ export default defineConfig({
     clearMocks: true,
     restoreMocks: true,
     testTimeout: 15_000,
+    fsModuleCache: true,
+    fsModuleCachePath: './artifacts/vitest-cache',
   },
 });
