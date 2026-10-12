@@ -4,7 +4,7 @@
 
 依据：[课程需求](../phase_cli_1.md) §1.2 要求说明功能完整性与代码质量依据，没有强制指定测试框架或独立测试阶段。具体安排是本项目的工程选择；需求行为以原文为准，未定义语义以 [决策记录](decisions.md) 为当前基线。
 
-**当前领域及 Command/历史、最小 CLI 已有持续验证，完整 CLI、树编辑与 SVG 功能验收尚未完成。** 最终数量与结果见 [课程主文档](README.md#7-v06-命令与历史检查)，工具入口见 [开发说明](development.md)，实现范围见 [命令记录](command-history.md)。这些结果不计为 A01—A29 全量通过，阶段 8 报告仍待实际系统测试后编写。
+**当前领域、全部图形编辑 Command/历史及 CLI 已有持续验证，SVG IO、完整显示与系统验收尚未完成。** 最终数量与结果见 [课程主文档](README.md#8-v07-树编辑检查)，工具入口见 [开发说明](development.md)，树编辑范围见 [树编辑记录](tree-editing.md)。这些结果不计为 A01—A29 全量通过，阶段 8 报告仍待实际系统测试后编写。
 
 ## 1. 持续测试与独立阶段
 
@@ -13,7 +13,7 @@
 | 2 工程基础 | 已选 Vitest；建立类型/lint/构建/依赖/启动检查及架构规则回归用例；锁定经兼容性核对的工具版本 |
 | 3 领域模型 | 图形几何、属性白名单、样式缺省、id 索引和树不变量的单元测试 |
 | 4 编辑与历史 | 已验证当前命令粒度、候选/发布准备失败不变、undo/redo、屏障、路径/副本隔离、最小 CLI 回放；复杂树/IO 留后续 |
-| 5 树编辑 | 已有分组/归属的嵌套与跨父级操作、循环拒绝、位置/顺序恢复；删除/z-order 为下一单元 |
+| 5 树编辑 | 分组/归属与删除/z-order 均有领域、历史和真实 CLI 验证；连续组合每一步完整恢复，失败保留 redo；两个独立提交检查点 |
 | 6 SVG 与文件 | 解析/转义、自动 id、读写往返、文件失败与目标替换；按 D09 的已定范围测试导入 |
 | 7 完整 CLI | 参数语法、规定输出、真实进程输入输出及功能流程的对应测试 |
 | 8 系统测试与回归验收 | 检查覆盖缺口，执行全部层次的测试和架构检查；修复缺陷，完成全量回归与人工预览，编写真正的测试报告 |
@@ -32,7 +32,7 @@
 
 当前已有 domain 的 Shapes/Group/SvgDocument、application 的 EditorSession、adapters 的 ShapeProviders/Tokenizer、integration 的 EditorFlow、e2e 的 CliHistory，以及原有 bootstrap/architecture 测试。真实 CLI 测试把源码编译到忽略的 artifacts/e2e-build，独立 npm test 不误用旧 dist。fixtures/history.cli 是已执行的最小回放，完整课程序列留后续。工具通过不能单独证明面向对象设计合格。
 
-阶段 5 单元 A 增加 tests/domain/TreeGrouping、tests/application/TreeGroupingCommands，并在 CliHistory 中回放 tree-grouping.cli；验证复杂分组/解组/归属的单条历史恢复及失败保留 redo，原测试保留。删除和顺序恢复作为单元 B 继续补充。两个提交检查点分别保存真实验证结果，后一个单元不能代替前一个单元的独立通过证据。
+阶段 5 单元 A 增加 TreeGrouping/TreeGroupingCommands 和 tree-grouping.cli；单元 B 增加 TreeOrder/TreeOrderCommands 和 tree-order.cli，原测试全部保留。验证复杂树编辑的单条历史、S03/S05、连续组合每一步恢复与失败保留 redo。A 独立 258 项，B 完整 290 项；后一个单元不能代替前一个单元的独立通过证据。
 
 自动测试断言可观察行为或受控领域状态，不只验证内部方法被调用。涉及浮点结果时区分运算容差与撤销精确恢复；撤销断言原存储值及结构恢复，SVG 往返比较语义，不要求 XML 字节相同。
 

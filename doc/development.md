@@ -75,6 +75,8 @@ npm test -- tests/domain
 
 阶段 4 在当前工具沙箱中遇到 spawn EPERM，测试启动器的子进程未能启动；获准的本地执行权限下原命令和完整检查通过。这是本次执行环境限制，不要求普通开发者修改系统配置，也没有通过缩小测试范围或放宽断言解决。
 
-实际执行结果写入 [主文档的工程初始化记录](README.md#5-v04-工程基础初始化检查)、阶段 3 记录和 [阶段 4 记录](README.md#7-v06-命令与历史检查)。领域落点见 [domain-model.md](domain-model.md)，应用落点见 [command-history.md](command-history.md)；课程结果通过 [验收清单](acceptance.md) 和 [测试计划](testing.md) 记录；阶段 8 才根据实际系统测试编写 test-report.md。
+实际执行结果写入 [工程初始化记录](README.md#5-v04-工程基础初始化检查)、阶段 3/4 记录和 [阶段 5 记录](README.md#8-v07-树编辑检查)。领域见 [domain-model.md](domain-model.md)，应用见 [command-history.md](command-history.md)，树编辑见 tree-editing.md；课程结果通过 [验收清单](acceptance.md) 和 [测试计划](testing.md) 记录；阶段 8 才根据实际系统测试编写 test-report.md。
+
+本阶段可执行 `npm test -- tests/domain/TreeGrouping.test.ts tests/domain/TreeOrder.test.ts tests/application/TreeGroupingCommands.test.ts tests/application/TreeOrderCommands.test.ts tests/e2e/CliHistory.test.ts` 做针对性验证；两个提交检查点均执行完整 npm run check，不能用最终工作区的通过替代前一个单元的独立结果。检查点差异在忽略目录保留，不等于已暂存。
 
 `dist/`、`node_modules/`、缓存、测试临时文件和后续 coverage 均不提交。每次提交仍先给完整 add 清单并等待用户确认；检查通过不改变提交、推送或标签权限。

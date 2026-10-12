@@ -1,0 +1,23 @@
+# 删除、顺序与完整历史回放
+init
+create g outer
+create rect before 0 0 1 1 in outer
+create rect box 1 2 3 4 in outer
+create rect after 0 0 1 1 in outer
+front box
+undo
+back box
+undo
+delete box
+undo
+redo
+delete missing
+undo
+create g inner in outer
+create text label 1 2 "开始" in inner
+delete inner
+undo
+move inner 0 10
+undo
+redo
+help

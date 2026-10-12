@@ -6,7 +6,7 @@
 
 ## 当前状态
 
-**阶段 5：正在完善树编辑；分组、解组和归属已接通，删除与顺序调整为本阶段下一单元。**
+**阶段 5：树编辑与完整撤销恢复已实现；所有图形编辑类命令可运行，SVG IO 与完整显示仍待后续。**
 
 | 项目 | 状态 |
 | --- | --- |
@@ -16,8 +16,8 @@
 | 工程基础 | 6a60d87 已推送至 chore-typescript-tooling；构建与质量检查可运行 |
 | 领域模型 | 六种图形、画布、树/id 索引及深复制；6bd9a43 已推送至 feature-domain-model |
 | 编辑流程与历史 | 4e2bfbc 已推送至 feature-command-history；候选执行、快照、屏障及副本隔离已实现 |
-| 当前 CLI | init/canvas/create/move/scale/set/group/ungroup/addto/undo/redo/help；六种图形及 in 可回放 |
-| 本阶段待续 | delete/front/back 及其完整结构/顺序恢复 |
+| 当前 CLI | init/canvas/create/delete/move/scale/set/group/ungroup/addto/front/back/undo/redo/help；六种图形及 in 可回放 |
+| 树编辑 | 删除子树、分组/解组、归属、同级顺序；父级/id/位置/属性均由独立快照恢复 |
 | 后续功能 | read/save、tree/show 及完整系统验收 |
 | 当前工作分支 | feature-tree-editing；本轮两个提交清单已确认，授权依次提交及推送 |
 | final 标签 | 未授权创建，截止时间尚未提供 |

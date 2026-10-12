@@ -13,7 +13,7 @@
 | 2 工程基础 | 选定运行环境与工具，TypeScript strict 配置、测试/lint/依赖检查入口、最小启动组织 | 最小构建与工具检查可运行，无假 CLI 行为 | `chore - 配置 TypeScript 编译与测试环境`；配置、锁文件、真实检查入口及文档 |
 | 3 领域模型 | 六种图形、画布、封装树、id 索引、属性与几何校验、多态描述/复制 | A07、A09—A11、A28 的相关领域测试 | `feature - 实现 SVG 图形与文档领域模型`；实现、必要测试与方案修订 |
 | 4 编辑流程与历史 | Command、会话、候选执行、Memento/历史屏障；最小 init/create/move/undo/redo CLI 贯通（当前还接入 canvas/scale/set 和可用帮助） | A18—A20、S01 及 S02 屏障边界的应用检查、最小真实进程回放；实际 IO 留阶段 6 | `feature - 实现编辑命令与撤销重做`；实现、必要测试与文档，不混入后续树编辑/IO |
-| 5 树编辑 | delete/group/ungroup/addto/front/back、所有类型 in；完整结构恢复 | A08、A12—A15，S03/S05 | 至少按“分组/归属”与“顺序/恢复”分批提交实现、测试和文档 |
+| 5 树编辑 | delete/group/ungroup/addto/front/back、所有类型 in；完整结构恢复（已实现） | A08、A12—A15、S03/S05 当前持续验证；最终系统回归另执行 | 已保留两个独立检查点；确认后依次 `feature - 实现图形分组与归属编辑`、`feature - 实现图形删除与同级顺序恢复`，每次只含该单元的实现/测试/文档 |
 | 6 SVG 与文件 | 在 D09 定稿后选 XML 实现；read/save/canvas、补 id、转义、文件替换、路径/IO 历史 | A02—A05、A23/A24，S04/S07/S08；实际 SVG 往返 | `feature - 实现 SVG 读写与文档命令`；编解码、IO、fixtures、检查与支持范围 |
 | 7 完整 CLI | 完整 tokenizer/schema、REPL、tree/show/help、规定反馈；接通题目会话和流程图 A，拒绝 box | A01/A06/A16/A17/A21/A22/A25—A27 的功能检查；新增 CLI 行为已有对应测试 | `feature - 完成 CLI 交互与命令输出`；实现、相关测试、样例和文档同步 |
 | 8 系统测试与回归验收（独立阶段） | 按测试计划补齐边界/失败用例，执行单元、集成、真实 CLI 端到端与全量回归；检查依赖/模式，预览实际 SVG；修复缺陷后重新验证 | A01—A29 在已定支持范围内都有证据并通过；无阻断性缺陷，未定语义已处理；真实测试报告，详见 testing.md | 测试用例、缺陷修复和报告分开组织提交，例如 `test - 补齐 CLI 流程与失败场景测试`、`fix - 修复编辑失败后的历史状态变化`、`docs - 记录系统测试与回归结果`；说明仅为示例 |
@@ -37,9 +37,9 @@
 
 测试采用“开发过程中持续测试 + 阶段 8 独立系统测试与回归验收”。阶段 2 配置测试入口；阶段 3—7 随功能编写并运行相关测试；阶段 8 检查遗漏、跨模块行为和最终回归，不能把全部测试推迟到最后。测试分层、阶段准入/退出条件和报告格式见 [testing.md](testing.md)。
 
-阶段 1—4 已按授权分步提交推送；最新基线 4e2bfbc。当前 feature-tree-editing 开展阶段 5，先保留“分组/归属”检查点，再完成“删除/顺序/恢复”检查点；提交内容与清单分别确认，不能把共享文件的后续变更提前混入前一单元。实际落点见 [tree-editing.md](tree-editing.md)。
+阶段 1—4 已按授权分步提交推送；最新基线 4e2bfbc。当前 feature-tree-editing 的阶段 5 已完成，先独立验证并保留“分组/归属”检查点，再完成“删除/顺序/恢复”检查点；提交内容与清单分别确认，不能把共享文件的后续变更提前混入前一单元。实际落点见 [tree-editing.md](tree-editing.md)。
 
-阶段 5 单元 A 已接通 group/ungroup/addto 及历史恢复；单元 B 将接通 delete/front/back，复核六种 create in 与全部树编辑组合。阶段 6 尚未授权，D09 的 SVG 开放事项仍需在其实现前定稿。
+阶段 5 单元 A 已接通 group/ungroup/addto，单元 B 已接通 delete/front/back，并验证六种 create in 与全部编辑组合的逐步恢复。下一工作单元为阶段 6 SVG 与文件，尚未授权；D09 的 transform/viewBox/扩展属性等支持范围仍须先定稿。
 
 首次文档推送前已成功查询 origin，未发现已有远程引用。文档任务使用 docs-architecture-and-testing-plan，后续初始化使用 chore-typescript-tooling；都基于当前项目历史，不覆盖或强推远程。
 

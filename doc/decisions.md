@@ -57,7 +57,9 @@
 - 暂定：group 至少需要一个目标；输入为零个目标时报语法错误。一目标组仍有意义，不额外要求两个。
 - 未来复合容器的“可容纳”与“可解散”是独立能力；当前不注册复合类型。
 
-阶段 5 单元 A 已实现 addto/ungroup：Shape.canUngroup 与容器协作能力分开；先判断容器、可解散能力，再判根级限制。循环归属暂定错误为 `cannot add a shape into itself or its descendant: <id>`；源/目标同时无效时先报源节点错误。解组/归属同样不物化继承样式；显式属性不变不等于视觉不变。front/back 及删除恢复仍为本阶段下一单元。
+阶段 5 单元 A 已实现 addto/ungroup：Shape.canUngroup 与容器协作能力分开；先判断容器、可解散能力，再判根级限制。循环归属暂定错误为 `cannot add a shape into itself or its descendant: <id>`；源/目标同时无效时先报源节点错误。解组/归属同样不物化继承样式；显式属性不变不等于视觉不变。
+
+单元 B 已实现 delete/front/back 与完整快照恢复：front 为同级末尾、back 为同级开头；节点身份/父级不变时不重建索引。边界成功仍按 D05 入栈；删除容器一个单元恢复全部后代、id/父级/位置和缺省属性。摘要中前后顺序用 moved to front/back、undo 用 order restored，题目未规定这些措辞，作为可修订的工程选择。
 
 参考：[SVG 2 绘制模型](https://www.w3.org/TR/SVG2/render.html)。
 
@@ -80,7 +82,7 @@
 
 暂定空历史错误：`error: nothing to undo` / `error: nothing to redo`。未建文档时优先无文档错误，有屏障时优先屏障错误。
 
-阶段 4 已按本基线实现并测试：显式屏障清空两栈，成功编辑（包括无变化）入一个单元并解禁；canvas 查询和当前 help 保持两栈/屏障。read/save 仅有会话成功发布边界，真实 IO 仍待阶段 6；group/delete 等复杂编辑的粒度验证留阶段 5。清除旧历史、无变化编辑及空栈错误仍是工程暂定规则，非教师确认。
+阶段 4 已按本基线实现并测试：显式屏障清空两栈，成功编辑（包括无变化）入一个单元并解禁；canvas 查询和当前 help 保持两栈/屏障。阶段 5 已补 group/delete/ungroup/addto/front/back 的单条粒度、完整结构恢复及失败保留 redo；read/save 的真实 IO 仍待阶段 6。清除旧历史、无变化编辑及空栈错误仍是工程暂定规则，非教师确认。
 
 ## D06：路径和保存
 

@@ -34,6 +34,8 @@ export class SvgDocument {
   public group(newId: string, ids: readonly string[]): void { this.tree.group(newId, ids); }
   public ungroup(id: string): void { this.tree.ungroup(id); }
   public addTo(parentId: string, id: string): void { this.tree.addTo(parentId, id); }
+  public front(id: string): void { this.tree.front(id); }
+  public back(id: string): void { this.tree.back(id); }
   public move(id: string, dx: number, dy: number): void { this.tree.move(id, dx, dy); }
   public scale(id: string, factor: number): void { this.tree.scale(id, factor); }
   public set(id: string, name: string, value: string | number): void { this.tree.set(id, name, value); }

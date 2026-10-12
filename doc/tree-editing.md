@@ -30,10 +30,30 @@ OrderedChildren 以先准备后赋值的新数组维护列表，replace 可一�
 
 重组保留显式/缺省属性，不物化原继承样式；移入、移出或解散带样式组可能改变视觉继承/遮挡。该限制按 D03/D04 记录，不能宣称像素外观不变；transform 等在 D09 定稿后重新核对。
 
-## 验证与后续单元
+## 单元 A 的验证
 
 - [领域分组测试](../tests/domain/TreeGrouping.test.ts)：同级/跨父/深层共同父级、单目标、空组解散、祖先冲突、复制失败、索引/计数/样式缺省和环拒绝。
 - [命令与历史测试](../tests/application/TreeGroupingCommands.test.ts)：一条重组一个单元、完整前/后状态、redo 保留与替换、路径/屏障、输入列表隔离及 create in 的协作。
 - [真实进程测试](../tests/e2e/CliHistory.test.ts) 回放 [tree-grouping.cli](../tests/fixtures/tree-grouping.cli)，验证成功摘要、精确错误及实际帮助。
 
-删除、front/back 和相应恢复为单元 B，当前尚未完成。真实 SVG/文件及完整显示仍留后续；单元 A 的检查点只包含上述已实现内容，不把后一个单元的共享文件变更混入提交。
+单元 A 独立检查点为 258 项测试通过；源码/文档和差异保存在忽略的 artifacts，不修改 Git 索引。该检查点只有分组/归属内容，不含下面单元 B 的共享文件增量。
+
+## 单元 B：删除与同级顺序恢复
+
+新增 DeleteCommand、FrontCommand、BackCommand，全部继承 EditCommand，继续复用候选执行和独立快照；ShapeTree 管理树，命令只调用 SvgDocument 的受控入口并产生摘要。
+
+delete 对叶子/容器统一移除目标子树并重建索引；undo 直接恢复前文档，不用重新 create 或 addto 推算原位置。恢复包括具体类型、全部后代 id、父级、同级位置、几何精度、文本与属性缺省。恢复摘要包含原父级，例如题目的 `rect#box restored into g#markers`；根级为 svg。
+
+front 移到同级末尾，back 移到同级开头，不跨父级或修改节点自身内容。ShapeTree 的两个 id/父级索引不随这种重排变化，描述仍按新列表顺序生成；快照复制时重新建索引。当前摘要为 moved to front/back，撤销为 order restored，这是题目未指定措辞的工程选择。
+
+每条成功操作一个历史单元；已在边界的成功 front/back 按 D05 仍入栈、解禁并清空 redo。失败删除/重排保持文档、源路径、两栈和屏障。删除后显式复用旧 id 是新编辑，按标准历史规则恢复该次状态，不另设全局递增 id 计数。
+
+- [领域顺序测试](../tests/domain/TreeOrder.test.ts)：根/嵌套顺序、完整子树、边界无变化、失败不变、有序列表替换以及重排/分组/删除组合。
+- [删除与历史测试](../tests/application/TreeOrderCommands.test.ts)：六种统一删除、S03 嵌套子树、根级恢复和 id 复用、前后顺序一步恢复、redo 分支、失败/无文档与全部编辑的连续逐步恢复。
+- 真实 CliHistory 继续编译当前源码，回放 [tree-order.cli](../tests/fixtures/tree-order.cli)，核对删除/恢复摘要和错误后继续。
+
+## 完成边界与提交安排
+
+两个单元的完整入口均通过；最终 14 个测试文件、290 项测试，包含原阶段 4 的 210 项和本轮新增 80 项。分别保留可审查快照、差异和清单，确认后依次提交 A，再提交相对 A 的 B，避免一次性混入整个阶段。
+
+共享文件在两个单元都可能出现，第一次只暂存分组/归属检查点，第二次才加入删除/顺序增量；清单项数不能简单相加作为唯一文件数。所有准备均未 add/commit/push。阶段 6 尚未授权，D09 仍需在 SVG 读写前定稿；没有创建 test-report.md 或执行完整系统验收/浏览器 SVG 预览。

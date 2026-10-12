@@ -15,6 +15,25 @@ beforeAll(() => {
 }, 35_000);
 
 describe('真实 CLI 进程', () => {
+  it('删除与同级顺序回放包含题目恢复摘要，错误后历史仍可恢复', () => {
+    const input = readFileSync(resolve(root, 'tests/fixtures/tree-order.cli'), 'utf8');
+    const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });
+    expect(child.error).toBeUndefined();
+    expect(child.status).toBe(0);
+    expect(child.stderr).toBe('');
+    const messages = child.stdout.split('svg> ').map(part => part.trim()).filter(Boolean);
+    expect(messages.slice(1, -1)).toEqual([
+      'canvas 800x600 created', 'g#outer created', 'rect#before created in g#outer', 'rect#box created in g#outer', 'rect#after created in g#outer',
+      'rect#box moved to front', 'rect#box order restored', 'rect#box moved to back', 'rect#box order restored',
+      'rect#box deleted', 'rect#box restored into g#outer', 'rect#box deleted', 'error: no such shape: missing', 'rect#box restored into g#outer',
+      'g#inner created in g#outer', 'text#label created in g#inner', 'g#inner deleted', 'g#inner restored into g#outer',
+      'g#inner moved by (0,10)', 'g#inner moved back by (0,-10)', 'g#inner moved by (0,10)',
+    ]);
+    expect(messages.at(-1)).toContain('delete <id>');
+    expect(messages.at(-1)).toContain('front <id>');
+    expect(messages.at(-1)).toContain('back <id>');
+  });
+
   it('分组、解组与归属回放产生规定反馈，帮助自动覆盖新命令', () => {
     const input = readFileSync(resolve(root, 'tests/fixtures/tree-grouping.cli'), 'utf8');
     const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });

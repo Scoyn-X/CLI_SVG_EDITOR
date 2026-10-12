@@ -2,7 +2,7 @@
 
 开始工作前读取 [agent.md](agent.md)、[课程需求](phase_cli_1.md)、[课程文档](doc/README.md) 和 [决策记录](doc/decisions.md)。仅按用户授权的阶段开展工作。
 
-- 阶段 4 提交 4e2bfbc 已推送。用户已授权阶段 5：delete/group/ungroup/addto/front/back、对应历史恢复、CLI/测试/文档；不要擅自进入阶段 6 SVG 与文件或发布。
+- 阶段 4 提交 4e2bfbc 已推送。阶段 5 的 delete/group/ungroup/addto/front/back、历史恢复、CLI/测试/文档已按授权完成，两个提交单元均有独立验证；不要擅自进入阶段 6 SVG 与文件或发布。
 - 每次先列出 add 清单、分支和提交说明，等待用户确认后才暂存并提交；仅告知不等于确认。用户已确认本轮阶段 5 的两份清单（25 项和 22 项）并授权依次 commit/push；此次授权仅用于这两个单元，标签仍未授权。以后仍逐次确认，不自行合并为一次大提交。
 - 提交信息为 `类型 - 一句话说明工作内容`，不写阶段编号；任务分支为 `类型-英文短描述`，如 docs-architecture-and-testing-plan。详见 agent.md。
 - TypeScript 面向对象，一类一文件、文件名等于类名，封装与多态；禁止公共数据袋加自由函数实现领域逻辑。必须采用 Command 和容器/叶子统一操作。

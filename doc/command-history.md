@@ -6,7 +6,7 @@
 
 已实现 Command、会话、候选执行、Memento 与历史屏障，并贯通最小 CLI。当前注册 init、canvas、create、move、scale、set、undo、redo、help；create 支持六种内置图形及末尾 in，box 保持规定未知类型错误。帮助只列实际注册的命令。
 
-阶段 4 当时没有树编辑；阶段 5 已接入 group/ungroup/addto，delete/front/back 为下一单元。SVG/read/save 和真实文件替换留在阶段 6；tree/show、完整帮助和全功能 transcript 留在阶段 7。现有 read/save 只有会话发布边界，**没有实现文件读写或宣称 save/read 验收通过**。
+阶段 4 当时没有树编辑；阶段 5 已接入 delete/group/ungroup/addto/front/back 并验证完整历史恢复。SVG/read/save 和真实文件替换留在阶段 6；tree/show、完整帮助和全功能 transcript 留在阶段 7。现有 read/save 只有会话发布边界，**没有实现文件读写或宣称 save/read 验收通过**。
 
 ## 实际职责与依赖
 

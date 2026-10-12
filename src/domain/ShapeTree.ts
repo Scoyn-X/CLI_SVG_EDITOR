@@ -96,6 +96,9 @@ export class ShapeTree {
     this.rebuildIndex();
   }
 
+  public front(id: string): void { this.reorder(id, true); }
+  public back(id: string): void { this.reorder(id, false); }
+
   public move(id: string, dx: number, dy: number): void { this.requireShape(id).move(dx, dy); }
   public scale(id: string, factor: number): void { this.requireShape(id).scale(factor); }
   public set(id: string, name: string, value: string | number): void { this.requireShape(id).set(name, value); }
@@ -116,6 +119,14 @@ export class ShapeTree {
       throw new DomainError(`no such shape: ${id}`);
     }
     return shape;
+  }
+
+  private reorder(id: string, front: boolean): void {
+    const shape = this.requireShape(id);
+    const siblings = this.container(this.parents.get(id));
+    siblings.remove(shape);
+    siblings.insert(shape, front ? siblings.items().length : 0);
+    // 同级顺序变化没有改动对象身份和父级，现有两个索引仍然有效。
   }
 
   private parentChain(id: string): readonly (string | undefined)[] {

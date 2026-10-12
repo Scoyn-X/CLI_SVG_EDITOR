@@ -43,7 +43,7 @@ ShapeTree 拥有有序根列表、id 到实例的索引和 id 到父 id 的索�
 
 容器资格通过 ShapeAccess.children 协作能力取得，不以 `getTag() === 'g'` 决定。ShapeAccess、OrderedChildren、ShapeTraversal 和 prepareTransform 是内部协作机制，适配器/应用不应调用；文档没有暴露这些内部节点。协作键是模块约定，不是面向任意恶意 JS 的安全机制；代码审查仍需禁止跨层使用它。
 
-本轮的插入和移除是领域基础能力，尚无 group、ungroup、addto、front/back 的重组用例，也没有撤销恢复流程。后续由受控领域操作扩充结构变化，通过 Command 组织执行，不把节点列表交给 CLI 修改。
+阶段 3 当时只有插入/移除基础；阶段 5 已扩充 group、ungroup、addTo、front/back，后者只重排同级。全部结构修改仍走受控领域入口，历史由应用 Command/Memento 组织，不把节点列表交给 CLI 修改；完整树编辑证据另见本阶段记录。
 
 ## 几何、样式与失败原子性
 
