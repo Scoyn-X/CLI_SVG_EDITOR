@@ -2,6 +2,7 @@
 export class ShapeDescription {
   private readonly attributes: Readonly<Record<string, string | number>>;
   private readonly children: readonly ShapeDescription[];
+  private readonly position: readonly [number, number] | undefined;
 
   public constructor(
     private readonly id: string,
@@ -9,9 +10,11 @@ export class ShapeDescription {
     attributes: Readonly<Record<string, string | number>>,
     children: readonly ShapeDescription[],
     private readonly text: string | undefined,
+    position?: readonly [number, number],
   ) {
     this.attributes = Object.freeze({ ...attributes });
     this.children = Object.freeze([...children]);
+    this.position = position === undefined ? undefined : Object.freeze([...position] as [number, number]);
     Object.freeze(this);
   }
 
@@ -20,4 +23,5 @@ export class ShapeDescription {
   public getAttributes(): Readonly<Record<string, string | number>> { return this.attributes; }
   public getChildren(): readonly ShapeDescription[] { return this.children; }
   public getText(): string | undefined { return this.text; }
+  public getPosition(): readonly [number, number] | undefined { return this.position; }
 }

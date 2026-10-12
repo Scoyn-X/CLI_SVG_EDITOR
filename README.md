@@ -6,7 +6,7 @@
 
 ## 当前状态
 
-**阶段 3：领域模型已实现并验证，尚未实现 SVG CLI。**
+**阶段 4：编辑命令与撤销/重做已实现，最小 CLI 可运行；完整课程功能仍在后续阶段。**
 
 | 项目 | 状态 |
 | --- | --- |
@@ -14,9 +14,11 @@
 | 需求决策和验收清单 | 已编写；教师未确认的事项明确标注 |
 | 文档基线 | 已提交并推送：36c2055，分支 docs-architecture-and-testing-plan |
 | 工程基础 | 6a60d87 已推送至 chore-typescript-tooling；构建与质量检查可运行 |
-| 领域模型 | 六种图形、嵌套操作、画布、受控树/id 索引、不可变描述及深复制已实现 |
-| 后续功能 | Command、历史、结构重组、SVG 读写及 REPL 待相应阶段实现 |
-| 当前工作分支 | feature-domain-model；阶段 3 的 37 项变更清单已确认，授权提交和推送 |
+| 领域模型 | 六种图形、画布、树/id 索引及深复制；6bd9a43 已推送至 feature-domain-model |
+| 编辑流程与历史 | Command、候选执行、前后快照、历史屏障、redo 分支及副本隔离已实现 |
+| 最小 CLI | init/canvas/create/move/scale/set/undo/redo/help；六种图形及 in 尾缀可回放 |
+| 后续功能 | delete/group/ungroup/addto/front/back、read/save、tree/show 及完整系统验收 |
+| 当前工作分支 | feature-command-history；本轮 68 项清单已确认，授权本地提交；push 尚未授权 |
 | final 标签 | 未授权创建，截止时间尚未提供 |
 
 ## 工程检查
@@ -28,7 +30,15 @@ npm ci
 npm run check
 ```
 
-`check` 依次执行类型检查、lint、构建、生产代码依赖检查、自动测试与编译后启动验证。独立检查及工具版本见 [开发说明](doc/development.md)。启动验证只输出工程就绪信息；`npm run cli` 待真正的 REPL 实现后提供。
+`check` 依次执行类型检查、lint、构建、生产代码依赖检查、自动测试与编译后组装验证。独立检查及工具版本见 [开发说明](doc/development.md)。
+
+启动最小 CLI：
+
+```sh
+npm run cli
+```
+
+例如依次输入 `init`、`create circle c1 100 100 20 red`、`move c1 30 0`、`undo`、`redo`。输入结束（EOF）正常退出；尚未实现的命令暂报 unknown command，不能据此视为最终产品行为。可回放脚本见 [history.cli](tests/fixtures/history.cli)。
 
 ## 文档入口
 
@@ -38,6 +48,7 @@ npm run check
 - [测试计划](doc/testing.md)：持续测试、独立系统测试阶段、退出条件与报告要求。
 - [开发说明](doc/development.md)：环境、依赖、可运行命令和检查边界。
 - [领域模型说明](doc/domain-model.md)：实际类职责、调用入口、树不变量、复制与原子性。
+- [命令与历史说明](doc/command-history.md)：状态机、快照隔离、最小 CLI 范围及阶段 4 验证。
 - [阶段路线与提交计划](doc/roadmap.md)：每阶段完成内容、验收和拟提交内容。
 - [架构图源文件](doc/architecture.puml)：PlantUML 组件图，与课程文档内嵌图一致。
 - [协作规范](agent.md)：包括持续生效的 Git 权限。
@@ -51,8 +62,8 @@ npm run check
 
 ## 开发约定
 
-工程已建立 `src/domain`、`src/application`、`src/ports`、`src/adapters`、`src/bootstrap` 和分层测试目录。领域与启动环境已有源码，其他模块仍使用 `.gitkeep` 保留；没有占位业务实现。
+工程已建立领域、应用、协议、CLI、图形提供者和启动组装；SVG 与文件适配器仍为规划目录。类各在同名文件中，领域不依赖应用和外部 IO。
 
 每阶段同步更新实现、必要验证和课程文档。每次提交前列出 add 清单，用户明确确认后才暂存并提交。提交信息为 `类型 - 一句话说明工作内容`，任务分支为 `类型-英文短描述`；push 与标签按授权范围执行，具体见协作规范。
 
-测试贯穿开发阶段，并在功能完成后安排阶段 8“系统测试与回归验收”；最终交付为阶段 9。当前完整检查通过，118 个测试通过，其中领域测试 81 个；这不代表 CLI 功能或系统验收已完成。
+测试贯穿开发阶段，并在功能完成后安排阶段 8“系统测试与回归验收”；最终交付为阶段 9。当前检查结果和数量见 [课程文档](doc/README.md#7-v06-命令与历史检查)，不代表完整课程验收已完成。

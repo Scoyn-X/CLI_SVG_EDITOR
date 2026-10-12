@@ -1,12 +1,12 @@
 @startuml
-title CLI SVG Editor - planned dependency direction
+title CLI SVG Editor - dependency direction (SVG / files planned)
 skinparam componentStyle rectangle
 left to right direction
 
 component "CLI adapter\nREPL / parser / presenters" as CLI
-component "Application\ncommands / session / history / ShapeFactory" as APP
+component "Application\ncommands / session / history / mementos / ShapeFactory" as APP
 component "Ports\nstorage / SVG codec / ShapeProvider" as PORTS
-component "Domain\nshapes / document / memento / descriptions" as DOMAIN
+component "Domain\nshapes / document / descriptions" as DOMAIN
 component "SVG adapter\nXML parsing / generic serialization" as SVG
 component "File adapter\nread / safe write" as FILES
 component "Built-in providers\nCLI and SVG construction" as PROVIDERS

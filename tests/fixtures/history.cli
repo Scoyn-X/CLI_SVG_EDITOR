@@ -1,0 +1,21 @@
+# 阶段 4：最小历史回放；颜色不是注释
+init 400 200
+undo
+create circle c1 100 100 20 red
+move c1 30 0
+undo
+create circle c1 0 0 1
+canvas
+redo
+create g node
+create text title 20 40 "in" in node
+set title text "My Diagram v2"
+undo
+redo
+canvas 500 300
+undo
+redo
+move node 0 100
+undo
+undo
+create box n1 0 0 100 50 "开始"

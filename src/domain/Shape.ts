@@ -35,7 +35,7 @@ export abstract class Shape {
   public describe(): ShapeDescription {
     return new ShapeDescription(this.id, this.tag,
       { id: this.id, ...this.geometryAttributes(), ...this.styles.attributes() },
-      this[ShapeAccess.children]()?.items().map(child => child.describe()) ?? [], this.textContent());
+      this[ShapeAccess.children]()?.items().map(child => child.describe()) ?? [], this.textContent(), this.position());
   }
 
   /** @internal 仅用于领域对象间的两阶段几何修改。 */
@@ -52,5 +52,6 @@ export abstract class Shape {
 
   protected geometryAttributes(): Readonly<Record<string, number>> { return {}; }
   protected textContent(): string | undefined { return undefined; }
+  protected position(): readonly [number, number] | undefined { return undefined; }
   protected abstract setSpecificAttribute(name: string, value: string | number): void;
 }

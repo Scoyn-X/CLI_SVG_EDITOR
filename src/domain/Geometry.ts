@@ -28,6 +28,13 @@ export class Geometry {
     return Object.freeze({ ...this.xs, ...this.ys, ...this.sizes });
   }
 
+  /** 中立的位置锚点：line 取首端点，其余叶子取自身定位坐标。 */
+  public position(): readonly [number, number] | undefined {
+    const x = Object.values(this.xs)[0];
+    const y = Object.values(this.ys)[0];
+    return x === undefined || y === undefined ? undefined : Object.freeze([x, y] as const);
+  }
+
   public value(name: string): number {
     const attributes = this.attributes();
     const value = attributes[name];

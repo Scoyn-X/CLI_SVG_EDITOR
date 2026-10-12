@@ -1,0 +1,74 @@
+# 命令、会话与历史实现
+
+阶段 4，2026-10-12；分支 feature-command-history，基于已推送的领域提交 6bd9a43。用户已确认本轮 68 项清单并授权本地提交，尚未授权推送；以后仍逐次确认清单。
+
+## 当前范围
+
+已实现 Command、会话、候选执行、Memento 与历史屏障，并贯通最小 CLI。当前注册 init、canvas、create、move、scale、set、undo、redo、help；create 支持六种内置图形及末尾 in，box 保持规定未知类型错误。帮助只列实际注册的命令。
+
+delete/group/ungroup/addto/front/back 留在阶段 5；SVG/read/save 和真实文件替换留在阶段 6；tree/show、完整帮助和全功能 transcript 留在阶段 7。本轮提供 read/save 的会话发布边界并用测试验证屏障，**没有实现文件读写或宣称 save/read 验收通过**。
+
+## 实际职责与依赖
+
+| 位置/对象 | 职责 |
+| --- | --- |
+| application/Command、EditCommand | 共同执行契约；编辑统一委托会话候选执行，具体命令只修改候选文档 |
+| Init/Canvas/Create/Move/Scale/Set/Undo/Redo/HelpCommand | 当前具体用例；文档、查询和历史命令不走编辑入栈路径 |
+| EditorSession | 拥有当前文档、读入路径和私有 HistoryManager；只对外提供不可变描述与受控操作 |
+| DocumentMemento、HistoryEntry | 封装独立的前/后文档；恢复时再次多态复制，保存原反馈与撤销反馈 |
+| HistoryManager、HistoryStatus | 两栈、显式屏障和不可变状态视图；准备恢复成功后才接受栈迁移 |
+| CommandResult | 封装应用反馈及撤销反馈；不执行终端 IO，不带 svg> 或 error: |
+| InputArgument、CommandArguments | 输入值和字面量标记、参数读取与 in 尾缀识别 |
+| CommandRegistration、CommandDispatcher | 通用参数数量验证与唯一命令名查找 |
+| ShapeFactory、ports/ShapeCreator、ShapeProvider | 唯一类型名查找与中立创建协议；当前接收创建值序列，不依赖 CLI token/XML DOM |
+| adapters/shapes 的六种 Provider、BuiltinShapeProvider | 本类型参数数量、数值转换、可选 fill/stroke 和领域构造；不保存会话 |
+| adapters/cli/Tokenizer、CliController、Repl | 引号/注释分词、统一 error: 边界、提示符及逐行终端 IO |
+| bootstrap/EditorComposition、main | 注册提供者和命令、注入会话并启动 REPL；--check 只检查组装，不等待读入 |
+
+依赖遵守原规则：应用只用领域/协议；图形提供者只用领域/协议；CLI 只用应用/领域及 Node 终端能力；具体依赖仅在 bootstrap 组装。唯一名字查找分别在 CommandDispatcher 和 ShapeFactory；注册语句集中组装，几何/复制/反馈不按图形标签分支。
+
+图形创建的 SVG 读回路径仍未实现。阶段 6 在同一工厂分派处扩充提供者的中立元素构造协议，禁止另写一套标签到类映射。当前不提前创建空 codec/storage 接口或插件加载器。
+
+## 候选执行与恢复
+
+编辑流程：读取当前文档 → 多态复制候选 → 具体 Command 修改候选并生成反馈 → 再复制发布文档 → 准备独立前/后 Memento → 记录单个历史条目并发布文档。任何准备失败都不触碰当前文档、路径、两栈和屏障。
+
+发布时额外复制，是为了防止命令保留候选引用后修改会话。输入文档与快照也不能泄漏可写对象；描述冻结，旧视图不会随后续编辑改变。同步执行期间禁止重入会话修改；失败后 finally 释放执行锁。未来异步文件命令需在串行入口完成 IO，成功后再调用发布边界。
+
+undo/redo 先获取待恢复条目，准备独立恢复文档及反馈，再移动两栈并替换文档。redo 恢复保存的后状态，不重新执行命令、调用工厂、分配 id 或访问文件。浮点值通过复制精确恢复，不使用减去增量/除以因子等逆运算。
+
+快照目前只含文档。读入路径由会话管理，编辑命令不改变路径；init 清除路径，未来 read 成功才替换路径。历史对象不放进领域文档。当前接受每次编辑 O(N) 复制、历史 O(H×N) 空间成本，不增加未经需求约定的历史裁剪。
+
+## 历史状态机
+
+按 [D05/D06](decisions.md) 的工程基线，未定义部分仍为暂定，不冒充教师确认：
+
+| 操作 | 历史行为 |
+| --- | --- |
+| 无文档时 undo/redo/编辑/查询 | no document. use 'init' or 'read' first |
+| init 或 canvas 带参数成功 | 清空两栈并建立屏障 |
+| replaceDocument / establishIoBarrier 成功边界 | 为未来 read/save 建立同样屏障；IO 本轮未实现 |
+| 屏障中 undo 或 redo | undo not allowed after io command，区别于空栈 |
+| 一条成功编辑，包括无变化编辑 | 一个前/后条目，解禁屏障，清空 redo |
+| 编辑或文档修改失败 | 所有会话状态保持，失败不解禁或清空 redo |
+| canvas 查询、help、空行及注释 | 不入栈，不改变历史或屏障 |
+| 无屏障且栈空 | nothing to undo / nothing to redo |
+
+## 最小 CLI 与展示取舍
+
+`npm run cli` 先编译再启动；启动文案按题目，提示符 svg>，逐行处理，EOF 正常退出。命令失败输出规定单行 error: 并继续读取；未预期的程序异常终止进程并设置非零退出码。交互和管道均输出提示符，当前不增加 exit 命令或 shell 插值。
+
+整行注释与颜色 # 分开；双引号保留空正文和字面量标记，仅解释双引号/反斜杠转义。只有 create 末尾未引用的 in 才是归属子句。语法/参数数量先检查，再由执行入口检查文档与标量/领域规则。类型专用参数数量和语义归提供者；完整可扩展 schema 在实际 CLI/SVG 需要时再增补。
+
+为支持题目的 moved to/moved by，领域描述增加中立的只读 position 锚点：叶子通过 Geometry 声明的第一对 x/y 坐标提供，line 取首端点，Group 无自身锚点。MoveCommand 多态消费描述，不比较 rect/circle/g 类型名，也不让领域返回终端文本。
+
+当前 CommandResult 采用已格式化的应用摘要；CLI 负责提示符与错误前缀，具体命令负责业务反馈措辞。该选择保证当前题目反馈和历史回显一致，但会限制未来多语言或图形入口的富结果；出现该需求时可扩充为中立反馈字段/策略，不引入按类型名分派。tree/show 的属性分组和树线仍留待阶段 7。
+
+## 验证与剩余范围
+
+- [应用测试](../tests/application/EditorSession.test.ts)：失败前/后发布原子性、redo、新编辑分支、无变化编辑、屏障、路径、浮点恢复、副本隔离和重入拒绝。
+- [提供者测试](../tests/adapters/ShapeProviders.test.ts)、[分词测试](../tests/adapters/Tokenizer.test.ts)：六种创建、严格数值、缺省样式、未知类型、颜色/引号/Windows 路径。
+- [集成测试](../tests/integration/EditorFlow.test.ts)：六种根/嵌套创建、文本 in、题目移动反馈、精确错误及最小流程。
+- [真实进程测试](../tests/e2e/CliHistory.test.ts)：编译当前源码到忽略目录，回放 [history.cli](../tests/fixtures/history.cli)，验证输出/提示符、错误后继续、CRLF 和 EOF。
+
+最终检查数量见 [课程主文档](README.md#7-v06-命令与历史检查)。没有执行完整 SVG 往返、浏览器预览或阶段 8 系统验收，未创建 test-report.md；下一工作单元是阶段 5，须另获授权。

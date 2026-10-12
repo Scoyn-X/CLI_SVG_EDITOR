@@ -1,6 +1,6 @@
 # 领域模型实施记录
 
-阶段 3，2026-10-11。代码位于 src/domain，当前工作分支 feature-domain-model。工程基础提交 6a60d87 已推送；用户已确认本轮 37 项变更清单并授权提交和推送。
+阶段 3，2026-10-11；该基线已以 6bd9a43 推送至 feature-domain-model。2026-10-12 阶段 4 仅扩充中立 position 描述，不改变领域依赖方向；应用实现见 [command-history.md](command-history.md)。
 
 ## 实际职责与入口
 
@@ -61,6 +61,8 @@ set 数字接受完整十进制/科学计数 token，不接受空白、px、十�
 
 describe 通过多态获得完整属性、文本与有序子描述；数据离开模型后冻结，旧视图不随后续编辑改变。当前描述提供完整属性，尚未添加 CLI 专属显示分组；如阶段 7 有需要，由具体类扩充中立描述，仍不增加按图形标签分派。
 
+阶段 4 增加只读 position 锚点以供移动摘要：LeafShape 经 Geometry 的第一对 x/y 声明提供坐标（line 为首端点），Group 没有自身锚点。ShapeDescription 复制并冻结该元组；领域不产生 moved to 等终端文字，命令不靠标签判断叶子/容器。
+
 clone 由每个具体类实现。Group 递归复制全部子节点，ShapeTree 重建父级和索引，SvgDocument 保存精确画布尺寸；不使用 JSON 转换或 SVG 序列化。坐标和尺寸直接复制原数值，保留浮点精度、空文本、子类型及属性未设置状态。StyleAttributes 可以共享不可变值实例，后续 set 产生新值，不共享可写状态。
 
 完整复制为 O(N)；插入/删除后索引重建也为 O(N)。本阶段接受该成本，后续先验证正确性，再根据实际规模考虑优化，不提前实现增量快照或插件框架。
@@ -69,4 +71,4 @@ clone 由每个具体类实现。Group 递归复制全部子节点，ShapeTree �
 
 81 个领域测试位于 Shapes.test.ts、Group.test.ts、SvgDocument.test.ts：五种叶子几何/白名单、组递归/样式、六类根级及嵌套附着、全局唯一 id、树索引、环/共享节点拒绝、失败不变、深复制与只读视图。完整入口 npm run check 共 118 个测试通过，含既有 37 个工程测试；类型、lint、构建及 23 模块/55 依赖的架构检查通过。
 
-对应课程验收是部分证据，见 [acceptance.md](acceptance.md)。Command、历史屏障、CLI、SVG 读写及系统回归尚未实现/执行；没有创建 test-report.md，也没有宣称课程 Phase 1 已完成。下一工作单元是阶段 4 命令与历史，待用户授权。
+对应课程验收是部分证据，见 [acceptance.md](acceptance.md)。上述 81 项是阶段 3 基线验证；阶段 4 已在其上加入 Command、历史与最小 CLI，最新验证见主文档。SVG 读写及系统验收尚未完成，没有创建 test-report.md，也没有宣称课程 Phase 1 已完成。

@@ -22,6 +22,8 @@ export abstract class LeafShape extends Shape {
 
   protected geometryValue(name: string): number { return this.geometry.value(name); }
 
+  protected override position(): readonly [number, number] | undefined { return this.geometry.position(); }
+
   protected override setSpecificAttribute(name: string, value: string | number): void {
     this.geometry = this.geometry.withAttribute(name, value);
   }

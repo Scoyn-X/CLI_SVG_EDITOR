@@ -15,7 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check:architecture": "depcruise --config dependency-cruiser.config.json --output-type err-long src",
-    "check:runtime": "node dist/bootstrap/main.js",
+    "cli": "npm run build && node dist/bootstrap/main.js",
+    "check:runtime": "node dist/bootstrap/main.js --check",
     "check": "npm run typecheck && npm run lint && npm run build && npm run check:architecture && npm test && npm run check:runtime"
   },
   "devDependencies": {

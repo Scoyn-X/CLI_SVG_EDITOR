@@ -1,8 +1,8 @@
 # 软件设计课程项目文档
 
-版本：v0.5，2026-10-11；文档及工程基础已提交推送，阶段 3 领域模型和检查已完成。用户已确认本轮 37 项变更清单并授权提交和推送；下文检查记录保留验证时的状态。
+版本：v0.6，2026-10-12；阶段 3 提交 6bd9a43 已推送，阶段 4 Command、历史与最小 CLI 已实现。用户已确认本轮 68 项清单并授权本地提交，尚未授权推送；历史检查记录保留验证时的状态。
 
-本文件是课程要求的主文档。架构内容区分实际领域实现与其余规划；过程记录只记实际发生的讨论；一致性与质量栏目如实区分设计检查和实现检查。当前已有领域代码，但 Command、历史、CLI 和 SVG IO 尚未实现。
+本文件是课程要求的主文档。架构内容区分实际实现与其余规划；过程记录只记实际发生的讨论；一致性与质量栏目如实区分设计检查和实现检查。当前已有领域、应用、图形提供者和最小 CLI，树编辑、SVG IO 与完整显示仍待后续。
 
 需求来源：[phase_cli_1.md](../phase_cli_1.md)。协作权限：[agent.md](../agent.md)。具体语义与验收分别见 [decisions.md](decisions.md) 和 [acceptance.md](acceptance.md)。
 
@@ -12,7 +12,7 @@
 
 工程根目录是 `pj1/CLI_SVG_EDITOR`，不是整个课程目录 `SD`。本轮复用该目录下用户已有的空 Git 仓库，避免把其他课程项目纳入同一仓库。
 
-以下模块目录已建立；domain 和 bootstrap 已有实际代码，application、ports、adapters 仍是规划：
+以下模块目录已建立；domain、application、ports、CLI、图形提供者和 bootstrap 已有实际代码，SVG 与文件适配器仍是规划：
 
 ```text
 src/
@@ -43,9 +43,10 @@ doc/
   roadmap.md
   development.md      # 实际工具链与工程检查入口
   domain-model.md     # 领域类职责、实际 API 与阶段 3 验证
+  command-history.md  # Command、会话、历史与最小 CLI 的实际落点
 ```
 
-| 模块 | 拟承担职责 | 明确不承担的职责 |
+| 模块 | 职责（SVG/文件仍为规划） | 明确不承担的职责 |
 | --- | --- | --- |
 | domain | `Shape` 抽象、五种叶子图形、`Group`、`SvgDocument`；校验属性及几何，维护树与 id 索引；多态复制和只读描述 | 不读文件、不打印、不认识 XML 库和 CLI token |
 | application | `EditorSession`、具体编辑命令、文档用例、`HistoryManager`、`CommandDispatcher`、`ShapeFactory`；组织执行和状态提交 | 不直接使用终端或文件系统，不以图形类型分支实现几何操作 |
@@ -56,20 +57,20 @@ doc/
 | adapters/shapes | `RectProvider` 等内置提供者；创建参数 schema、从参数/中立 SVG 描述构造领域对象 | 不保存全局文档，不含独立类型名分派 |
 | bootstrap | 实例化依赖、注册六种提供者、注册命令、启动 CLI | 不承载图形算法或业务规则 |
 
-一类一文件，类名与文件名一致。领域中的 Shape/LeafShape、五种叶子、Group、SvgDocument、ShapeTree 及其协作类已存在；上表中的应用/协议/适配器类仍为设计落点。具体 21 个领域类和公共入口见 [domain-model.md](domain-model.md)。接口和值对象数量以实际职责为准，不为每个类机械创建接口。
+一类一文件，类名与文件名一致。21 个领域类见 [domain-model.md](domain-model.md)；应用、协议、图形提供者和最小 CLI 的实际职责见 [command-history.md](command-history.md)。ports 当前只有 ShapeProvider/ShapeCreator，DocumentStorage/SvgCodec 等留在阶段 6 按实际需求确定，不以空接口冒充实现。
 
 组件图箭头表示静态代码依赖。以下代码块与 [独立图源](architecture.puml) 保持一致；本轮未运行 PlantUML 渲染器。
 
 ```plantuml
 @startuml
-title CLI SVG Editor - planned dependency direction
+title CLI SVG Editor - dependency direction (SVG / files planned)
 skinparam componentStyle rectangle
 left to right direction
 
 component "CLI adapter\nREPL / parser / presenters" as CLI
-component "Application\ncommands / session / history / ShapeFactory" as APP
+component "Application\ncommands / session / history / mementos / ShapeFactory" as APP
 component "Ports\nstorage / SVG codec / ShapeProvider" as PORTS
-component "Domain\nshapes / document / memento / descriptions" as DOMAIN
+component "Domain\nshapes / document / descriptions" as DOMAIN
 component "SVG adapter\nXML parsing / generic serialization" as SVG
 component "File adapter\nread / safe write" as FILES
 component "Built-in providers\nCLI and SVG construction" as PROVIDERS
@@ -102,19 +103,19 @@ end note
 @enduml
 ```
 
-### 2. 设计模式的选择及拟落地方式
+### 2. 设计模式的选择及落地状态
 
-| 模式/原则 | 拟落地位置 | 解决的问题及取舍 |
+| 模式/原则 | 实际或规划位置 | 解决的问题及取舍 |
 | --- | --- | --- |
-| Command（必需） | `CreateCommand`、`MoveCommand`、`GroupCommand` 等对象，经执行入口和历史管理器运行 | 一条编辑意图一个撤销单元；CLI、未来 GUI 可调用相同应用能力 |
+| Command（必需） | 已有 Command/EditCommand 和 Create/Move/Scale/Set 等具体对象；GroupCommand 仍为阶段 5 | 编辑经会话候选执行形成一个撤销单元；查询/文档/历史命令走各自路径 |
 | Composite（需求语义） | `Shape` 和容器能力；`Group` 的有序子树 | 命令统一对待容器和叶子，容器递归 move/scale，删除统一处理整棵子树 |
-| Memento（当前选择） | 文档快照与历史条目 | 精确恢复坐标、样式缺省、父级及位置；第一阶段接受完整文档复制的空间成本 |
-| 工厂与提供者 | 共享 `ShapeFactory` + `ShapeProvider` | CLI 与 SVG 读回复用类型创建；为后续复合类型留下位置 |
+| Memento（当前选择） | application/DocumentMemento、HistoryEntry 已实现，封装领域复制 | 精确恢复坐标、样式缺省、父级及位置；第一阶段接受完整文档复制的空间成本 |
+| 工厂与提供者 | 已有共享 ShapeFactory、ShapeProvider 与六种提供者；SVG 构造协议留阶段 6 | 当前 CLI 集中类型创建；未来读回扩充同一工厂，不另建标签映射 |
 | Adapter / 依赖倒置 | 终端、SVG 和文件适配器实现内层协议 | 隔离 IO 和第三方库，允许替换入口与 XML 实现 |
 
 不为展示或遍历再引入按类型名分派的 Visitor。图形已以多态 describe 产生中立只读描述：元素标签、明确设置的属性、文本和子节点；数据冻结，旧描述与模型变化独立。用于 CLI 展示的语义分组尚未添加，按实际展示需要再扩充。后续通用 SVG 序列化器据描述输出 XML；CLI presenter 据描述生成格式，不新增按类型名分支。描述不带终端树线或完整 XML 字符串，领域对象仍封装行为，而非退化成公共数据袋。
 
-类型创建的两条路径：CLI 的 `create` 获取 schema 并交给同一工厂；SVG reader 交出不依赖 XML 库的元素视图，由同一工厂选择提供者。提供者承担本类型的创建与校验。`ShapeProvider` 不依赖 CLI token 或 XML DOM 类型。
+类型创建当前路径：CLI create 的中立参数经同一工厂交给提供者，提供者校验本类型参数数量及标量并创建领域对象。ShapeProvider 不依赖 CLI token 或 XML DOM。规划的 SVG 路径在阶段 6 扩充中立元素构造协议，仍复用同一工厂查找提供者；当前没有宣称已支持 SVG 创建或完整 schema。
 
 **两处待重构点：** `CommandDispatcher` 的命令名注册/分发与 `ShapeFactory` 的类型名注册/分发，按需求 §2.1 明确标记为待重构。阶段一采用集中注册的简单实现；后续插件阶段调整注册来源和生命周期，不把类型判断散落到 parser、serializer、tree 或 clone。
 
@@ -128,17 +129,17 @@ end note
 
 编辑流程：
 
-1. CLI 完成分词和语法校验，保留引号信息；通用参数转换不包含类型专用分支。
+1. CLI 完成分词并保留引号信息，CommandRegistration 通用校验命令参数数量；不包含类型专用分支。
 2. 应用入口校验文档状态，工厂/领域对象校验创建、几何、属性和结构约束。
 3. 以当前文档的多态深复制建立候选状态，在候选状态执行 Command。
-4. 执行成功后发布候选文档，并生成一个历史条目；失败丢弃候选状态，不改路径、历史或 id 分配。
-5. 输出结构化结果经 CLI presenter 生成题目约定的反馈。成功的查询不进入历史。
+4. 执行成功后再复制发布文档，并准备独立的前/后快照；全部准备成功后才生成一个历史条目并发布文档。失败不改路径、历史或 id 分配；命令保留候选引用也不能随后修改会话。
+5. 具体命令返回 CommandResult，当前封装应用反馈和撤销措辞；CLI 增加提示符/错误前缀并写终端。查询不进入历史。富反馈及完整 tree/show presenter 留后续按实际需要扩充，取舍见命令记录。
 
 快照深复制保留具体子类型、属性“未设置”状态和有序结构；父级及索引指向新对象。undo/redo 发布独立的恢复副本，历史快照不得共享可写节点。重做恢复已保存的后状态，不重新读文件或重新分配 id；后续入口只以 id 寻址，不缓存跨恢复的可写图形引用。
 
 预计每次编辑复制成本为 O(N)，历史空间为 O(H × N)，其中 N 是图形数、H 是历史条目数。本阶段没有自动裁剪历史的需求，不擅自增加可能丢失撤销能力的数量上限。
 
-`read` 先完成读文件、解析、补 id 和校验，再一次替换会话并建立屏障，警告也在成功后输出。`save` 完成序列化和文件替换后才改变路径/历史状态。外部 IO 失败与领域失败统一由应用边界转换为规定错误。
+已实现 replaceDocument 和 establishIoBarrier 作为未来 read/save 的成功发布边界，实际 IO 尚未实现。规划 read 先完成读文件、解析、补 id 和校验，再一次替换会话并建立屏障，警告也在成功后输出；save 完成序列化和文件替换后才改变历史，另存不改读入路径。同步候选期间禁止重入会话修改；阶段 6 异步命令需继续串行执行。
 
 ### 4. 依赖方向规则
 
@@ -191,6 +192,11 @@ end note
 | 2026-10-11 / v0.5 领域模型 | 用户授权推送工程基础并开始阶段 3；发现直接递归修改会在后续子孙溢出时留下部分状态 | 6a60d87 已推送；Group 两阶段准备/应用保证整组几何失败不变，ShapeTree 持有索引并隔离外部可写来源；本轮未提交 |
 | 2026-10-11 / 领域复核 | 属性映射需防止原型链继承名被误当作白名单；只验证 CLI 错误将漏掉领域值错误 | 显式检查自有属性，增加 constructor/toString/__proto__、非有限数、尺寸与完整数字 token 的行为用例 |
 | 2026-10-11 / 测试运行环境 | 默认 Windows 沙箱临时目录出现 Vitest 缓存文件缺失，两个测试套件未能执行 | 核对工具配置，把模块缓存放 artifacts/vitest-cache；默认命令和完整检查通过，未修改系统配置或放宽断言 |
+| 2026-10-11 / 领域提交 | 用户确认 37 项变更并明确要求 commit/push | 6bd9a43 已推送 feature-domain-model；该一次性授权不适用于后续提交 |
+| 2026-10-12 / v0.6 编辑流程与历史 | 用户提出进入阶段 4；核对需求中的失败不变、IO 屏障及最小 CLI 路线 | 实现 Command/Memento、会话、前/后候选发布、工厂/提供者和最小 REPL；新增应用、解析、集成及真实进程验证；提交仍须新清单确认 |
+| 2026-10-12 / 快照与反馈复核 | 命令可能保留候选引用；按标签拼移动反馈会形成额外类型分派 | 发布时复制，历史恢复也复制；ShapeDescription 以多态提供中立 position，叶子反馈使用锚点、容器使用增量 |
+| 2026-10-12 / 执行环境限制 | Vitest 启动时子进程被沙箱以 spawn EPERM 阻止，尚未运行用例 | 在获准的本地执行权限下重跑，持续测试及完整检查通过；没有放宽断言或修改系统设置 |
+| 2026-10-12 / 提交确认 | 用户在收到 68 项清单、分支和提交信息后要求提交 | 本轮授权本地 commit；push/tag 仍按明确授权执行，不进入阶段 5 |
 
 参考只用于设计，未复制代码或添加框架依赖：
 
@@ -204,13 +210,13 @@ end note
 
 ### 1. 模块划分
 
-实际模块目录与方案一致；领域 21 个类各在同名文件，bootstrap 保留环境检查和启动组装语句。tests/domain 新增 Shapes、Group、SvgDocument 行为测试；工程/架构测试继续保留。domain 中多了封装树和不可变几何/描述等私有协作职责，是方案中已允许的领域内部细分，不改变模块方向。其余业务模块仍是空目录，未冒充完整编辑器。
+实际模块目录与方案一致；领域 21 个类各在同名文件，新增应用、CLI、提供者及 bootstrap 组装类也遵守此约束。Memento 属应用，领域只负责复制；已同步图源标签。ports 当前只有创建协议，SVG/文件仍是空规划目录。tests/application、adapters、integration、e2e、fixtures 已有实际验证文件；工程/架构回归继续保留。没有占位 read/save 或树编辑实现。
 
 后续检查：实际目录是否对应模块；是否存在无明确职责的模块；是否通过公共数据袋绕过领域封装；类是否一类一文件；变化已记入修订记录。
 
 ### 2. 依赖方向
 
-当前 23 个生产模块、55 条依赖的自动检查通过；领域只依赖领域，无循环或越界，包括仅类型 import。抽样核对 SvgDocument → ShapeTree → Shape 抽象、Group → Shape 多态准备/复制、LeafShape → Geometry：没有 Node/XML 库依赖，也没有按图形标签分派。ShapeAccess 仅由领域和针对内部不变量的测试使用；后续适配器不可绕过文档入口访问持有节点。
+当前 60 个生产模块、175 条依赖的自动检查通过；无循环或越界，包括仅类型 import。抽样核对 EditorSession → HistoryManager/Memento/领域、CreateCommand → ShapeCreator 协议、具体 Provider → 领域和协议、CLI → 应用、Bootstrap → 具体组装。领域不使用 Node/XML，应用没有适配器依赖；CLI 不直接修改领域节点。ShapeAccess 仍只供领域协作和不变量测试，名字分派仅在 Dispatcher/Factory 两处。
 
 当前文档检查结果：架构图与规则表的依赖方向一致；两处分派、源码目录规划和工厂入口一致。独立图源与内嵌图已进行文本一致性检查；PlantUML 图尚未渲染。
 
@@ -218,11 +224,11 @@ end note
 
 ### 1. 功能完整性
 
-以 [acceptance.md](acceptance.md) 的编号为验收索引，对照需求 §2—§6。当前已关联领域层的部分证据，尤其 A07、A09—A11 和 A28 的相关部分；完整 CLI、历史、IO 和端到端尚未验收，不将部分结果标记为整项通过。
+以 [acceptance.md](acceptance.md) 的编号为验收索引，对照需求 §2—§6。领域及当前命令/历史、最小 CLI 已有证据，覆盖 A18—A20 的已实现部分及 S01；S02 只验证 IO 屏障的会话边界。复杂树编辑、真实 IO、完整 transcript 和系统验收未完成，不将部分结果标记为整项通过。
 
 测试是明确的阶段任务：阶段 2 配置入口、阶段 3—7 持续验证，阶段 8 独立执行系统测试与回归验收，通过后才能进入阶段 9 最终交付。分层、必测范围、退出条件和报告要求见 [testing.md](testing.md)。阶段 8 覆盖 A01—A29，A30 的交付权限/远程/标签另在阶段 9 检查。
 
-### 2. 代码质量依据（工程工具已建立，业务验证待实施）
+### 2. 代码质量依据（持续验证，完整系统验收待实施）
 
 - 类型检查与静态检查：已配置 strict、ESLint 和依赖方向检查；封装及模式仍结合人工审查。
 - 领域测试：几何变化、属性白名单、样式缺省、树不变量及 id 索引。
@@ -296,3 +302,23 @@ end note
 | Git | 工程基础 6a60d87 已推送至 chore-typescript-tooling；领域变更未 add/commit/push，无新标签 |
 
 本轮错误输出、树结构和几何的领域检查与最终 CLI 检查分别记录。默认缓存目录故障在测试执行前发生，修复缓存位置后执行了完整回归；数值和树测试没有为通过而删除或放宽。源码审查与验收映射详见 [领域记录](domain-model.md) 和 [验收清单](acceptance.md)。
+
+### 7. v0.6 命令与历史检查
+
+2026-10-12，feature-command-history 未提交工作区，基于已推送的 6bd9a43；Node.js 24.11.0 / npm 11.6.1。以下为阶段 4 的持续验证，非阶段 8 系统报告。
+
+| 检查 | 实际结果 |
+| --- | --- |
+| 范围 | Command、会话、候选执行、Memento/两栈/屏障、副本隔离、六种提供者及最小 REPL；未实现树编辑/真实 SVG IO/完整显示 |
+| 完整回归 | 最后新增快照准备失败和真实 redo 分支用例后，npm run check 退出码 0；10 个测试文件、210 项全部通过 |
+| 数量构成 | 原有领域 81 项、工程 37 项保留；新增应用/提供者/分词/集成/真实进程共 92 项 |
+| 类型/lint/构建 | 全部通过，lint 警告 0，dist 只编译生产源码 |
+| 真实依赖 | 60 模块、175 依赖检查通过，无循环、未解析 import 或规则违例；计数包含平台模块 |
+| 真实 CLI | 编译当前源码至 artifacts/e2e-build；history.cli 输出、屏障与 redo、逐行提示符、错误后继续、CRLF/EOF 均通过 |
+| 编译后组装 | npm run check:runtime 以 --check 检查对象组装并立即退出；默认入口正常启动 REPL |
+| 设计审查 | 55 个生产类各在同名文件，字段封装；Memento 属应用；名字查找只在 CommandDispatcher/ShapeFactory，移动反馈消费多态 position |
+| 文档及来源 | 98 个工程文件有效 UTF-8，79 个新编写文档本地链接目标存在；独立图源与内嵌图一致；课程需求、think1 内容和依赖锁文件未改动 |
+| Git 边界 | 本轮 68 项变更：42 新增、17 修改、9 个已填充目录的占位文件删除；暂存为 0，未 commit/push/tag，仍待用户确认清单 |
+| 剩余验证 | 复杂 group/delete 等整条恢复、真实 read/save、完整 transcript、浏览器 SVG 预览和独立系统验收留后续阶段 |
+
+第一轮 Vitest 启动被沙箱子进程限制阻止；获准的本地执行权限下持续测试与完整检查通过。审查脚本按现有 Git 文本属性核对来源内容，think1 的原 CRLF 工作区副本未被改写。没有放宽断言、依赖规则或修改用户系统配置。阶段 5 尚未授权，本轮提交也不能沿用阶段 3 的一次性确认。
