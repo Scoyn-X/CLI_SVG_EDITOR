@@ -16,6 +16,9 @@ export abstract class Shape {
 
   public getId(): string { return this.id; }
 
+  /** 容纳子节点和允许解散是独立能力；无需通过类型名判断。 */
+  public canUngroup(): boolean { return false; }
+
   public move(dx: number, dy: number): void {
     this.prepareTransform(GeometryTransform.translation(dx, dy)).apply();
   }

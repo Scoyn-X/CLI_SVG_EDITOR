@@ -18,6 +18,7 @@ export class Group extends Shape {
   }
 
   public override [ShapeAccess.children](): OrderedChildren<Shape> { return this.children; }
+  public override canUngroup(): boolean { return true; }
 
   public override prepareTransform(transform: GeometryTransform): ShapeChange {
     return ShapeChange.combine(this.children.items().map(child => child.prepareTransform(transform)));

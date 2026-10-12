@@ -1,12 +1,12 @@
 # 命令、会话与历史实现
 
-阶段 4，2026-10-12；分支 feature-command-history，基于已推送的领域提交 6bd9a43。用户已确认本轮 68 项清单并授权本地提交，尚未授权推送；以后仍逐次确认清单。
+阶段 4 基线，2026-10-12；4e2bfbc 已推送至 feature-command-history。阶段 5 在现有候选/快照机制上增加树编辑，见 [tree-editing.md](tree-editing.md)；本轮仍逐次确认提交清单，不沿用旧权限。
 
 ## 当前范围
 
 已实现 Command、会话、候选执行、Memento 与历史屏障，并贯通最小 CLI。当前注册 init、canvas、create、move、scale、set、undo、redo、help；create 支持六种内置图形及末尾 in，box 保持规定未知类型错误。帮助只列实际注册的命令。
 
-delete/group/ungroup/addto/front/back 留在阶段 5；SVG/read/save 和真实文件替换留在阶段 6；tree/show、完整帮助和全功能 transcript 留在阶段 7。本轮提供 read/save 的会话发布边界并用测试验证屏障，**没有实现文件读写或宣称 save/read 验收通过**。
+阶段 4 当时没有树编辑；阶段 5 已接入 group/ungroup/addto，delete/front/back 为下一单元。SVG/read/save 和真实文件替换留在阶段 6；tree/show、完整帮助和全功能 transcript 留在阶段 7。现有 read/save 只有会话发布边界，**没有实现文件读写或宣称 save/read 验收通过**。
 
 ## 实际职责与依赖
 
@@ -71,4 +71,4 @@ undo/redo 先获取待恢复条目，准备独立恢复文档及反馈，再移�
 - [集成测试](../tests/integration/EditorFlow.test.ts)：六种根/嵌套创建、文本 in、题目移动反馈、精确错误及最小流程。
 - [真实进程测试](../tests/e2e/CliHistory.test.ts)：编译当前源码到忽略目录，回放 [history.cli](../tests/fixtures/history.cli)，验证输出/提示符、错误后继续、CRLF 和 EOF。
 
-最终检查数量见 [课程主文档](README.md#7-v06-命令与历史检查)。没有执行完整 SVG 往返、浏览器预览或阶段 8 系统验收，未创建 test-report.md；下一工作单元是阶段 5，须另获授权。
+阶段 4 的检查数量见 [课程主文档](README.md#7-v06-命令与历史检查)，阶段 5 的新证据另行记录。没有执行完整 SVG 往返、浏览器预览或阶段 8 系统验收，未创建 test-report.md；阶段 6 须另获授权。

@@ -1,6 +1,6 @@
 # 开发环境与工程检查
 
-2026-10-12，工程基础、领域与阶段 4 编辑流程。以下入口已经配置；最小 CLI 可运行，完整课程功能和验收尚未完成。
+2026-10-12，工程基础、领域、编辑流程与阶段 5 树编辑。以下入口已经配置；已有 CLI 可运行，完整课程功能和验收尚未完成。
 
 ## 环境与依赖
 
@@ -45,7 +45,7 @@ npm run check
 
 采用 NodeNext ESM，TypeScript 本地 imports 使用 `.js` 后缀，由编译器解析对应 `.ts`。编译目标与 lib 为 ES2024，没有浏览器 DOM 类型。开启 strict、索引访问与可选属性严格校验、override、未使用变量和参数检查；不跳过依赖类型检查。
 
-`src/bootstrap/main.ts` 检查 Node.js 环境，借 EditorComposition 组装提供者、命令、会话和 REPL。默认启动最小 CLI；--check 仅检查对象组装并退出。当前可用命令及限制见 [命令与历史说明](command-history.md)，未实现树编辑、SVG IO 和完整显示。
+`src/bootstrap/main.ts` 检查 Node.js 环境，借 EditorComposition 组装提供者、命令、会话和 REPL。默认启动 CLI；--check 仅检查对象组装并退出。当前树编辑命令见 [树编辑说明](tree-editing.md)，SVG IO 和完整显示仍未实现。
 
 交互和管道输入均输出 svg> 提示符。逐行失败反馈后继续，EOF 正常退出；未预期的程序异常返回非零退出码。复现最小流程可把 [history.cli](../tests/fixtures/history.cli) 作为标准输入传给编译后的 main。help 只列当前注册的命令，按 D05/D10 暂定未 init/read 时仍报无文档错误。
 

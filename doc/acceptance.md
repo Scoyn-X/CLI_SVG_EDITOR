@@ -2,23 +2,24 @@
 
 来源：[需求原文](../phase_cli_1.md)。暂定语义见 [决策记录](decisions.md)。
 
-阶段 3/4 已取得领域、当前命令/历史及最小 CLI 的实现/测试证据；树编辑、SVG 与完整系统验收仍未完成。不能把部分通过等同于整项通过。标注“暂定”的条目随决策一起修订；当前证据映射见下表。
+阶段 3—5 已取得领域、当前命令/历史及 CLI 的持续证据；阶段 5 单元 A 分组/归属已验证，删除/z-order 为下一单元，SVG 与完整系统验收仍未完成。不能把部分通过等同于整项通过。暂定条目随决策修订。
 
-## 当前实施证据（2026-10-12，阶段 4）
+## 当前实施证据（2026-10-12，阶段 5 单元 A）
 
 | 验收项 | 已验证部分及证据 | 仍待完成 |
 | --- | --- | --- |
 | A01/A05 | [领域测试](../tests/domain/SvgDocument.test.ts)、[应用测试](../tests/application/EditorSession.test.ts)、[CLI 集成](../tests/integration/EditorFlow.test.ts)：默认/显式尺寸、init 替换、canvas 查询/修改、失败不变和屏障 | 最终全功能回归 |
 | A06/A07 | 领域及[提供者](../tests/adapters/ShapeProviders.test.ts)/CLI 集成：六类根/嵌套创建、缺省样式、id/容器精确错误、create 反馈和 error: 前缀 | 与后续重组及 SVG 导入组合的完整回归 |
 | A08 | [SvgDocument 测试](../tests/domain/SvgDocument.test.ts)：移除子树清理全部索引与父级，深复制保持独立结构 | delete Command 及 undo 恢复原位置 |
+| A12/A13/A14、S05 | [领域分组](../tests/domain/TreeGrouping.test.ts)、[命令分组](../tests/application/TreeGroupingCommands.test.ts)及真实进程：暂定共同父级/插入位置、原相对顺序、根级解组拒绝、循环拒绝、一步恢复完整结构、失败保留 redo | 最终系统回归；位置规则仍为 D03 工程暂定 |
 | A09/A10/A11 | [Shapes](../tests/domain/Shapes.test.ts)/[Group](../tests/domain/Group.test.ts)、应用/集成：各几何/属性、嵌套递归、非法数值/白名单、溢出失败不变、移动摘要、精确 undo/redo | 全部命令与后续树/IO 的系统组合回归 |
-| A18/A19/A20、S01 | 应用/集成/[真实进程](../tests/e2e/CliHistory.test.ts)：当前编辑一个单元、失败保留 redo、新成功编辑替换分支、显式屏障、查询不变、快照恢复不重跑工厂 | group/delete 等复杂编辑及真实 read/save 的粒度/屏障 |
+| A18/A19/A20、S01 | 应用/集成/[真实进程](../tests/e2e/CliHistory.test.ts)：当前编辑及 group/ungroup/addto 一个单元，失败保留 redo、新成功编辑替换分支、显式屏障、查询不变、快照恢复不重跑工厂 | delete/front/back 等和真实 read/save 的粒度/屏障 |
 | S02（部分） | 应用测试验证 save 成功会话边界、清空旧历史及新编辑解禁；CLI 用 canvas 屏障回放 | 实际 save/read IO 尚未实现，不能宣称完整 S02 通过 |
 | A17/A21/A22/A25（部分） | 当前 help、规定错误、[分词](../tests/adapters/Tokenizer.test.ts)和进程回放：单行前缀、引号/空文本/颜色/注释、CRLF/EOF、box 规定拒绝 | 完整帮助、完整错误矩阵及全部真实 CLI 功能 |
 | A28 | 实际 Command/EditCommand、会话/Memento；Group Composite；类与文件同名、字段封装；名字查找仅 Dispatcher/Factory | 最终全功能模式/封装审查 |
 | A29 | 主文档、[领域记录](domain-model.md)、[命令记录](command-history.md)与真实依赖检查已更新，图源与 Memento 归属一致 | 全部适配器实现的一致性自查与最终报告 |
 
-A02—A04、A08、A12—A16、A23/A24、A26/A27 的完整要求仍未验收，其余条目以上表标注的范围为准；不隐含整项通过。A30 的 final 仍未授权且截止日期未提供。最新检查数量见课程主文档，不等于整套课程验收通过报告。
+A02—A04、A08、A15/A16、A23/A24、A26/A27 的完整要求仍未验收，其余条目以上表范围为准，不隐含整项通过。A30 的 final 仍未授权且截止日期未提供。最新数量见课程主文档，不等于整套课程验收报告。
 
 ## 1. 需求覆盖
 
@@ -57,7 +58,7 @@ A02—A04、A08、A12—A16、A23/A24、A26/A27 的完整要求仍未验收，�
 
 ## 2. 关键场景设计
 
-这些是完整场景设计。S01 已在阶段 4 回放；S02 仅有会话屏障边界证据，其余按当前映射区分已验证部分和待实施范围，不能把设计当成执行记录。
+这些是完整场景设计。S01 已在阶段 4 回放；S05 已在阶段 5 单元 A 验证；S02 仅有会话屏障边界证据，其余按当前映射区分已验证部分和待实施范围，不能把设计当成执行记录。
 
 ### S01：失败编辑不能破坏 redo
 

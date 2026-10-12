@@ -1,6 +1,6 @@
 # 领域模型实施记录
 
-阶段 3，2026-10-11；该基线已以 6bd9a43 推送至 feature-domain-model。2026-10-12 阶段 4 仅扩充中立 position 描述，不改变领域依赖方向；应用实现见 [command-history.md](command-history.md)。
+阶段 3，2026-10-11；该基线已以 6bd9a43 推送至 feature-domain-model。阶段 4 扩充中立 position 描述；阶段 5 扩充受控重组和解散能力，不改变领域依赖方向。应用见 [command-history.md](command-history.md)，树编辑见 [tree-editing.md](tree-editing.md)。
 
 ## 实际职责与入口
 

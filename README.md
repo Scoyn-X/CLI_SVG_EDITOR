@@ -6,7 +6,7 @@
 
 ## 当前状态
 
-**阶段 4：编辑命令与撤销/重做已实现，最小 CLI 可运行；完整课程功能仍在后续阶段。**
+**阶段 5：正在完善树编辑；分组、解组和归属已接通，删除与顺序调整为本阶段下一单元。**
 
 | 项目 | 状态 |
 | --- | --- |
@@ -15,10 +15,11 @@
 | 文档基线 | 已提交并推送：36c2055，分支 docs-architecture-and-testing-plan |
 | 工程基础 | 6a60d87 已推送至 chore-typescript-tooling；构建与质量检查可运行 |
 | 领域模型 | 六种图形、画布、树/id 索引及深复制；6bd9a43 已推送至 feature-domain-model |
-| 编辑流程与历史 | Command、候选执行、前后快照、历史屏障、redo 分支及副本隔离已实现 |
-| 最小 CLI | init/canvas/create/move/scale/set/undo/redo/help；六种图形及 in 尾缀可回放 |
-| 后续功能 | delete/group/ungroup/addto/front/back、read/save、tree/show 及完整系统验收 |
-| 当前工作分支 | feature-command-history；本轮 68 项清单已确认，授权本地提交；push 尚未授权 |
+| 编辑流程与历史 | 4e2bfbc 已推送至 feature-command-history；候选执行、快照、屏障及副本隔离已实现 |
+| 当前 CLI | init/canvas/create/move/scale/set/group/ungroup/addto/undo/redo/help；六种图形及 in 可回放 |
+| 本阶段待续 | delete/front/back 及其完整结构/顺序恢复 |
+| 后续功能 | read/save、tree/show 及完整系统验收 |
+| 当前工作分支 | feature-tree-editing；本轮两个提交清单已确认，授权依次提交及推送 |
 | final 标签 | 未授权创建，截止时间尚未提供 |
 
 ## 工程检查
@@ -49,6 +50,7 @@ npm run cli
 - [开发说明](doc/development.md)：环境、依赖、可运行命令和检查边界。
 - [领域模型说明](doc/domain-model.md)：实际类职责、调用入口、树不变量、复制与原子性。
 - [命令与历史说明](doc/command-history.md)：状态机、快照隔离、最小 CLI 范围及阶段 4 验证。
+- [树编辑说明](doc/tree-editing.md)：分组位置、归属/解组不变量和本阶段恢复验证。
 - [阶段路线与提交计划](doc/roadmap.md)：每阶段完成内容、验收和拟提交内容。
 - [架构图源文件](doc/architecture.puml)：PlantUML 组件图，与课程文档内嵌图一致。
 - [协作规范](agent.md)：包括持续生效的 Git 权限。
@@ -66,4 +68,4 @@ npm run cli
 
 每阶段同步更新实现、必要验证和课程文档。每次提交前列出 add 清单，用户明确确认后才暂存并提交。提交信息为 `类型 - 一句话说明工作内容`，任务分支为 `类型-英文短描述`；push 与标签按授权范围执行，具体见协作规范。
 
-测试贯穿开发阶段，并在功能完成后安排阶段 8“系统测试与回归验收”；最终交付为阶段 9。当前检查结果和数量见 [课程文档](doc/README.md#7-v06-命令与历史检查)，不代表完整课程验收已完成。
+测试贯穿开发阶段，并在功能完成后安排阶段 8“系统测试与回归验收”；最终交付为阶段 9。当前检查结果和数量见 [课程文档](doc/README.md#8-v07-树编辑检查)，不代表完整课程验收已完成。

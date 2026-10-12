@@ -15,6 +15,25 @@ beforeAll(() => {
 }, 35_000);
 
 describe('真实 CLI 进程', () => {
+  it('分组、解组与归属回放产生规定反馈，帮助自动覆盖新命令', () => {
+    const input = readFileSync(resolve(root, 'tests/fixtures/tree-grouping.cli'), 'utf8');
+    const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });
+    expect(child.error).toBeUndefined();
+    expect(child.status).toBe(0);
+    expect(child.stderr).toBe('');
+    const messages = child.stdout.split('svg> ').map(part => part.trim()).filter(Boolean);
+    expect(messages.slice(1, -1)).toEqual([
+      'canvas 800x600 created', 'g#outer created', 'rect#a created in g#outer', 'circle#b created in g#outer',
+      'g#pair created with 2 children', 'g#pair grouping undone', 'g#pair created with 2 children',
+      'g#pair ungrouped', 'g#pair grouping restored', 'error: cannot group a container into its own descendant: pair',
+      'g#target created', 'g#pair moved into g#target', 'g#pair restored into g#outer', 'g#pair moved into g#target',
+      'error: cannot ungroup top-level container: target', 'error: cannot add a shape into itself or its descendant: target',
+    ]);
+    expect(messages.at(-1)).toContain('group <newGid> <id1> <id2>…');
+    expect(messages.at(-1)).toContain('ungroup <gid>');
+    expect(messages.at(-1)).toContain('addto <gid> <id>');
+  });
+
   it('逐行回放历史 fixture，错误后继续执行，EOF 正常退出', () => {
     const input = readFileSync(resolve(root, 'tests/fixtures/history.cli'), 'utf8');
     const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });
