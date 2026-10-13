@@ -8,6 +8,9 @@
 | --- | --- | --- |
 | I01 / F4 | src/application/EditorSession.ts | 删除生产未使用的 establishIoBarrier；保存屏障只由 saveDocument 在回调成功后建立。更新 replaceDocument 注释，明确 init 与带锁 readDocument 的入口区别 |
 | I01 / 回归 | tests/application/EditorSession.test.ts、tests/integration/DocumentCommands.test.ts | 原测试改走 saveDocument；新增实际 SaveCommand 的写入前后状态断言，检查成功前不清空 redo、成功后两栈清空并建立屏障、文档和来源路径不变 |
+| I02 / 源码检查 | tests/architecture/SourceConventionChecker.ts、OopConventions.test.ts | 提取测试专用扫描器，真实生产源码与内存正/负例使用同一入口；补公开 readonly 参数属性、顶层箭头/函数表达式、改名/别名类型注册表和明显标签判断的诊断 |
+| I02 / 扩展探针 | tests/fixtures/ExtensionProbe.ts、tests/integration/ExtensionBoundaries.test.ts | 仅测试注册标记容器，验证子树创建、set 多态传播、移动/快照恢复、拒绝解组、标记保存/普通 g 降级与生产组合不泄漏注册 |
+| I03 / 审查规则 | 仓库外 ../review/REVIEW-SKILL.md | 更新 v1.2：校准 help 与循环方向、错误条数/示例风险表述、真实反例与扩展完成程度，下一轮读取本增量记录；原报告/日志/总账未改写 |
 
 ## 原审查项的处理口径
 
@@ -21,6 +24,17 @@
 
 功能范围仍是六类图形与19命令；没有注册生产 box 或进入插件/GUI阶段。final 标签继续暂缓。
 
+## 已确认的扩展边界
+
+探针只验证当前能力，不声称插件链路完整：
+
+- 子树创建、图形多态 set、clone/undo/redo 可保留测试容器能力，无需先增加 Provider 转发接口。
+- 序列化保持 g/data-kind 与子节点；导入仅按 SVG 标签选择提供者。即使注册 probe 提供者，读回 data-kind=probe 仍得到普通 g，便利属性语义降级；这在本阶段是受控已知边界。
+- tree/show 显示 data-kind 属性，没有语义类型标注 `(probe)`。
+- SetCommand 摘要目前读取节点自身属性；传播到子部件的 fill/label 会显示 `(unset)`，因此“能多态修改”不等于已有插件反馈。未来需中立属性读回/富反馈协议。
+- 快照是 DocumentMemento/HistoryEntry 中直接构造的具体实现，已封装但未提供可注入策略；本轮不增加没有性能依据的策略框架。
+- AST 检查针对可识别语法、类型注册表和显式比较；动态别名、反射及任意控制流仍需人工审查，不能据通过证明全程序只有两处分派。
+
 ## 验证与提交
 
-I01 针对性测试通过：EditorSession/DocumentCommands 两文件、39 项；类型与 lint 检查通过。本轮后续还将补源码检查反例和扩展边界探针，并完整运行 npm run check。原第一轮报告、日志、总账与需求来源保持不变。
+I01 已独立提交推送：117cadd；针对性测试两文件/39 项、类型与 lint 通过。I02 源码扫描器 28 项（真实源码1、普通正例6、负例19、集中查找正例2）通过；扩展探针4项通过。最后代码变更后 npm run check 全部通过：21 个测试文件、407 项测试；strict类型、lint 0警告、构建、91模块/288依赖/0违规、运行时组装均通过。原第一轮报告、日志、总账与需求来源保持不变；本记录与测试一起提交，不冒充第002轮审查。
