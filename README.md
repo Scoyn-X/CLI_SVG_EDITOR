@@ -41,7 +41,7 @@ box/插件、GUI 和完整 SVG 格式属于后续范围；跨父重组的局部�
 
 ## 验证与样例
 
-最后完整检查通过：20 个测试文件、376 项测试，类型/lint/构建/依赖/组装检查通过。已执行题目完整会话和版本 A 的真实 CLI 回放，以及浏览器 SVG 预览；详情见 [测试报告](doc/test-report.md)。
+首轮审查整改后的完整检查通过：21 个测试文件、407 项测试，类型/lint/构建/依赖/组装检查通过；修改、处理选择及下轮复核入口见 [增量记录](doc/iteration-notes.md)。首次交付时的课程序列和浏览器预览见 [历史测试报告](doc/test-report.md)，本轮未改变图形展示或保存格式。
 
 [流程图](doc/examples/flowchart.svg)、[典型会话导出图](doc/examples/demo.svg)、[嵌套变换](doc/examples/nested.svg) 是实际保存产物。[回放说明](doc/development.md) 包含 Windows 运行方法；[typical.cli](tests/fixtures/typical.cli)、[flowchart.cli](tests/fixtures/flowchart.cli) 为可重复脚本。
 
@@ -51,7 +51,7 @@ box/插件、GUI 和完整 SVG 格式属于后续范围；跨父重组的局部�
 
 - [正式课程文档](doc/README.md)：架构方案、过程记录、一致性自查、质量保证。
 - [架构图源](doc/architecture.puml) / [渲染图](doc/architecture.svg)。
-- [验收索引](doc/acceptance.md)、[测试计划](doc/testing.md)、[系统修复记录](doc/system-regression.md)。
+- [验收索引](doc/acceptance.md)、[测试计划](doc/testing.md)、[系统修复记录](doc/system-regression.md)、[审查后增量](doc/iteration-notes.md)。
 - [阶段路线与提交记录](doc/roadmap.md)、[开发说明](doc/development.md)、[历史检查](doc/historical-checks.md)。
 - [领域](doc/domain-model.md)、[命令与历史](doc/command-history.md)、[树编辑](doc/tree-editing.md)、[完整 CLI](doc/cli.md)。
 - [协作规范](agent.md)、[课程原文](phase_cli_1.md)、[第一次设计讨论](think1.md)。

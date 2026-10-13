@@ -82,3 +82,8 @@ SVG 与真实文件 IO 已实现；read/save 复用共享 ShapeFactory 与会话
 ## 2026-10-13 阶段 7 更新
 
 全部 19 条命令接通：tree/show 按不可变描述及多态显示协议渲染，help 包含六类完整语法。新增 GeometrySummary 不含终端字符串，不增加类型名分派；查询及失败查询保持历史。课程 transcript 与版本 A 通过真实进程回放并读回保存产物。职责及实际样例见 [完整命令行](cli.md)，阶段 8 接续独立系统验收。
+
+
+## 首轮审查后接口清理
+
+生产未使用的 establishIoBarrier 已删除；saveDocument 在写入回调成功返回后建立屏障，是实际 SaveCommand 使用的边界。测试验证写入前保留历史、成功后清空两栈，失败仍保持 redo。replaceDocument 用于已构造文档发布，readDocument 覆盖读取全程执行锁；增量见 [iteration-notes.md](iteration-notes.md)。

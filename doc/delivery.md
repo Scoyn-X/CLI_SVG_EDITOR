@@ -1,5 +1,7 @@
 # 交付记录
 
+本文为25d6575首次交付的历史记录。首轮审查后的增量、最新验证与任务提交见 [iteration-notes.md](iteration-notes.md)；下文既有分支/数量均为当时核验结果。
+
 2026-10-13，docs-final-delivery。课程 Phase 1 的六类图形、全部19命令、代码和测试已完成；阶段 1—9 过程与提交见 [roadmap.md](roadmap.md)。本次不进入插件/GUI阶段。
 
 ## 最终状态
