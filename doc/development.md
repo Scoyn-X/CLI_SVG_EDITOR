@@ -80,3 +80,8 @@ npm test -- tests/domain
 本阶段可执行 `npm test -- tests/domain/TreeGrouping.test.ts tests/domain/TreeOrder.test.ts tests/application/TreeGroupingCommands.test.ts tests/application/TreeOrderCommands.test.ts tests/e2e/CliHistory.test.ts` 做针对性验证；两个提交检查点均执行完整 npm run check，不能用最终工作区的通过替代前一个单元的独立结果。检查点差异在忽略目录保留，不等于已暂存。
 
 `dist/`、`node_modules/`、缓存、测试临时文件和后续 coverage 均不提交。每次提交仍先给完整 add 清单并等待用户确认；检查通过不改变提交、推送或标签权限。
+
+
+## 2026-10-13 阶段 6 更新
+
+SVG 与真实文件 IO 已实现；read/save 复用共享 ShapeFactory 与会话发布边界，严格失败原子性、补 id、路径、屏障和受控元数据往返。实际类、支持范围、依赖选择及验证见 [SVG 与文件说明](svg-io.md)。历史阶段的“尚未实现”是当时状态，以本更新为当前状态。用户授权自动完成剩余阶段并逐步提交推送，本次明确不创建标签。

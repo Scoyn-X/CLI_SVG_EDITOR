@@ -25,6 +25,11 @@ import { GroupProvider } from '../adapters/shapes/GroupProvider.js';
 import { LineProvider } from '../adapters/shapes/LineProvider.js';
 import { RectProvider } from '../adapters/shapes/RectProvider.js';
 import { TextProvider } from '../adapters/shapes/TextProvider.js';
+import { NodeDocumentStorage } from '../adapters/files/NodeDocumentStorage.js';
+import { XmlSvgCodec } from '../adapters/svg/XmlSvgCodec.js';
+import { ReadCommand } from '../application/ReadCommand.js';
+import { SaveCommand } from '../application/SaveCommand.js';
+import type { DocumentStorage } from '../ports/DocumentStorage.js';
 
 /** 集中组装依赖；这里只登记名字，不按名字比较或执行图形算法。 */
 export class EditorComposition {
@@ -36,10 +41,13 @@ export class EditorComposition {
     return factory;
   }
 
-  public createDispatcher(factory: ShapeFactory = this.createFactory()): CommandDispatcher {
+  public createDispatcher(factory: ShapeFactory = this.createFactory(), storage: DocumentStorage = new NodeDocumentStorage()): CommandDispatcher {
     const dispatcher = new CommandDispatcher();
+    const codec = new XmlSvgCodec(factory);
     dispatcher.register('init', new CommandRegistration('init [w] [h]', 0, 2, args => new InitCommand(args.optional(0), args.optional(1))));
     dispatcher.register('canvas', new CommandRegistration('canvas [w] [h]', 0, 2, args => new CanvasCommand(args.optional(0), args.optional(1))));
+    dispatcher.register('read', new CommandRegistration('read <file.svg>', 1, 1, args => new ReadCommand(args.required(0), storage, codec)));
+    dispatcher.register('save', new CommandRegistration('save [file.svg]', 0, 1, args => new SaveCommand(storage, codec, args.optional(0))));
     dispatcher.register('create', new CommandRegistration('create <type> <id> [params…] [in <containerId>]', 2, undefined, args => {
       const parentId = args.creationParent();
       return new CreateCommand(factory, args.required(0), args.required(1), args.values(2, args.count() - (parentId === undefined ? 0 : 2)), parentId);

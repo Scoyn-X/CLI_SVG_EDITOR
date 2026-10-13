@@ -3,16 +3,19 @@ import type { Shape } from './Shape.js';
 import type { ShapeDescription } from './ShapeDescription.js';
 import { ShapeTree } from './ShapeTree.js';
 import { ValueValidation } from './ValueValidation.js';
+import { CanvasAttributes } from './CanvasAttributes.js';
 
 export class SvgDocument {
   private width: number;
   private height: number;
   private tree: ShapeTree;
+  private readonly canvasAttributes: CanvasAttributes;
 
-  public constructor(width: number = 800, height: number = 600, roots: readonly Shape[] = []) {
+  public constructor(width: number = 800, height: number = 600, roots: readonly Shape[] = [], canvasAttributes: CanvasAttributes = new CanvasAttributes()) {
     this.width = ValueValidation.positive(width, 'canvas width');
     this.height = ValueValidation.positive(height, 'canvas height');
     this.tree = new ShapeTree(roots);
+    this.canvasAttributes = canvasAttributes;
   }
 
   public getWidth(): number { return this.width; }
@@ -20,7 +23,7 @@ export class SvgDocument {
   public getElementCount(): number { return this.tree.getElementCount(); }
   public getParentId(id: string): string | undefined { return this.tree.getParentId(id); }
   public describeShape(id: string): ShapeDescription { return this.tree.describe(id); }
-  public describe(): DocumentDescription { return new DocumentDescription(this.width, this.height, this.tree.describeRoots()); }
+  public describe(): DocumentDescription { return new DocumentDescription(this.width, this.height, this.tree.describeRoots(), this.canvasAttributes); }
 
   public resize(width: number, height: number): void {
     const nextWidth = ValueValidation.positive(width, 'canvas width');
@@ -41,7 +44,7 @@ export class SvgDocument {
   public set(id: string, name: string, value: string | number): void { this.tree.set(id, name, value); }
 
   public clone(): SvgDocument {
-    const copy = new SvgDocument(this.width, this.height);
+    const copy = new SvgDocument(this.width, this.height, [], this.canvasAttributes);
     copy.tree = this.tree.clone();
     return copy;
   }

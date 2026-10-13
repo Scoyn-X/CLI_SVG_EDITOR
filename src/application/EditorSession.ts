@@ -7,6 +7,7 @@ import { CommandResult } from './CommandResult.js';
 import { HistoryEntry } from './HistoryEntry.js';
 import { HistoryManager } from './HistoryManager.js';
 import type { HistoryStatus } from './HistoryStatus.js';
+import type { ImportedDocument } from '../ports/ImportedDocument.js';
 
 export class EditorSession {
   private document: SvgDocument | undefined;
@@ -19,6 +20,23 @@ export class EditorSession {
   public getParentId(id: string): string | undefined { return this.requireDocument().getParentId(id); }
   public getSourcePath(): string | undefined { return this.sourcePath; }
   public getHistoryStatus(): HistoryStatus { return this.history.status(); }
+
+  public readDocument(load: () => ImportedDocument, sourcePath: string, feedback: (loaded: ImportedDocument) => CommandResult): CommandResult {
+    return this.exclusive(() => {
+      ValueValidation.text(sourcePath, 'source path');
+      if (sourcePath.length === 0) { throw new DomainError('source path must be non-empty'); }
+      const loaded = load(); const owned = loaded.getDocument(); const result = feedback(loaded);
+      this.history.establishBarrier(); this.document = owned; this.sourcePath = sourcePath;
+      return result;
+    });
+  }
+
+  public saveDocument(write: (document: DocumentDescription, sourcePath: string | undefined) => CommandResult): CommandResult {
+    return this.exclusive(() => {
+      const result = write(this.requireDocument().describe(), this.sourcePath);
+      this.history.establishBarrier(); return result;
+    });
+  }
 
   public edit(action: (candidate: SvgDocument) => CommandResult): CommandResult {
     return this.exclusive(() => {

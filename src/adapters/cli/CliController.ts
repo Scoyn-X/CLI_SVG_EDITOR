@@ -14,7 +14,8 @@ export class CliController {
       const name = tokens[0];
       if (name === undefined) { return []; }
       const command = this.dispatcher.create(name.getValue(), tokens.slice(1));
-      return [command.execute(this.session).getSummary()];
+      const result = command.execute(this.session);
+      return [...result.getWarnings().map(warning => `warning: ${warning}`), result.getSummary()];
     } catch (error) {
       if (!(error instanceof DomainError)) { throw error; }
       return [`error: ${error.message.replace(/[\r\n]+/g, ' ')}`];

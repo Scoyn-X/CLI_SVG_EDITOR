@@ -5,10 +5,12 @@ import type { ShapeChange } from './ShapeChange.js';
 import { ShapeDescription } from './ShapeDescription.js';
 import { StyleAttributes } from './StyleAttributes.js';
 import { ValueValidation } from './ValueValidation.js';
+import { PresentationAttributes } from './PresentationAttributes.js';
 
 export abstract class Shape {
   private readonly id: string;
   private styles = StyleAttributes.empty();
+  private presentation = new PresentationAttributes();
 
   protected constructor(id: string, private readonly tag: string) {
     this.id = ValueValidation.id(id);
@@ -18,6 +20,8 @@ export abstract class Shape {
 
   /** 容纳子节点和允许解散是独立能力；无需通过类型名判断。 */
   public canUngroup(): boolean { return false; }
+
+  public preservePresentation(attributes: PresentationAttributes): void { this.presentation = attributes; }
 
   public move(dx: number, dy: number): void {
     this.prepareTransform(GeometryTransform.translation(dx, dy)).apply();
@@ -37,7 +41,7 @@ export abstract class Shape {
 
   public describe(): ShapeDescription {
     return new ShapeDescription(this.id, this.tag,
-      { id: this.id, ...this.geometryAttributes(), ...this.styles.attributes() },
+      { id: this.id, ...this.geometryAttributes(), ...this.styles.attributes(), ...this.presentation.attributes() },
       this[ShapeAccess.children]()?.items().map(child => child.describe()) ?? [], this.textContent(), this.position());
   }
 
@@ -50,6 +54,7 @@ export abstract class Shape {
 
   protected copyStylesTo<T extends Shape>(copy: T): T {
     copy.styles = this.styles;
+    copy.presentation = this.presentation;
     return copy;
   }
 

@@ -117,7 +117,8 @@ describe('CLI → Command → 会话 → 领域/历史集成', () => {
     const dispatcher = composition.createDispatcher();
     expect(() => dispatcher.register('undo', new CommandRegistration('bad', 0, 0, () => new UndoCommand()))).toThrow(/^command already registered: undo$/);
     expect(dispatcher.getUsages()).toContain('undo');
-    expect(dispatcher.getUsages().some(usage => usage.startsWith('read'))).toBe(false);
+    expect(dispatcher.getUsages()).toContain('read <file.svg>');
+    expect(dispatcher.getUsages()).toContain('save [file.svg]');
     expect(Object.isFrozen(dispatcher.getUsages())).toBe(true);
   });
 });
