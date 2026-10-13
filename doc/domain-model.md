@@ -18,7 +18,7 @@
 | OrderedChildren / ShapeAccess / ShapeTraversal | 领域内部有序存储、容器协作键、前序遍历与树/id 校验 |
 | ValueValidation / DomainError | 领域标量规则和无输出副作用的错误；交互边界以后添加 error: 前缀 |
 
-21 个类各占一个同名文件，实例字段封装在类内。领域没有 Node、终端、文件系统、XML、应用或适配器依赖；公共方法的行为由类承担，没有自由函数形式的领域流程。
+当前 24 个类（原 21 加 PresentationAttributes、CanvasAttributes、GeometrySummary）各占一个同名文件，实例字段封装在类内。领域没有 Node、终端、文件系统、XML、应用或适配器依赖；公共方法的行为由类承担，没有自由函数形式的领域流程。
 
 对外主要使用 SvgDocument：
 
@@ -33,7 +33,7 @@ document.set('r', 'fill', '#eee');
 const view = snapshot.describeShape('r'); // 快照仍未设置 fill
 ```
 
-示例仅展示领域调用，不是已经提供的 CLI。实际 API 还有 resize、scale、remove、describe、getParentId、getElementCount。传入图形在附着时被复制；describeShape 返回 ShapeDescription，不返回所持有的 Shape。
+示例展示领域 API 调用；对应 CLI 已通过命令层提供。实际 API 还有 resize、scale、remove、describe、getParentId、getElementCount。传入图形在附着时被复制；describeShape 返回 ShapeDescription，不返回所持有的 Shape。
 
 ## 树与封装
 
@@ -59,7 +59,7 @@ set 数字接受完整十进制/科学计数 token，不接受空白、px、十�
 
 ## 描述与复制
 
-describe 通过多态获得完整属性、文本与有序子描述；数据离开模型后冻结，旧视图不随后续编辑改变。当前描述提供完整属性，尚未添加 CLI 专属显示分组；如阶段 7 有需要，由具体类扩充中立描述，仍不增加按图形标签分派。
+describe 通过多态获得完整属性、文本与有序子描述；数据离开模型后冻结，旧视图不随后续编辑改变。当前完整属性包含受控元数据，GeometrySummary 提供属性/点列分组，Text/Line 多态声明点；CliPresenter 消费中立分组，不增加按图形标签分派。
 
 阶段 4 增加只读 position 锚点以供移动摘要：LeafShape 经 Geometry 的第一对 x/y 声明提供坐标（line 为首端点），Group 没有自身锚点。ShapeDescription 复制并冻结该元组；领域不产生 moved to 等终端文字，命令不靠标签判断叶子/容器。
 
@@ -71,7 +71,7 @@ clone 由每个具体类实现。Group 递归复制全部子节点，ShapeTree �
 
 81 个领域测试位于 Shapes.test.ts、Group.test.ts、SvgDocument.test.ts：五种叶子几何/白名单、组递归/样式、六类根级及嵌套附着、全局唯一 id、树索引、环/共享节点拒绝、失败不变、深复制与只读视图。完整入口 npm run check 共 118 个测试通过，含既有 37 个工程测试；类型、lint、构建及 23 模块/55 依赖的架构检查通过。
 
-对应课程验收是部分证据，见 [acceptance.md](acceptance.md)。上述 81 项是阶段 3 基线验证；阶段 4 已在其上加入 Command、历史与最小 CLI，最新验证见主文档。SVG 读写及系统验收尚未完成，没有创建 test-report.md，也没有宣称课程 Phase 1 已完成。
+对应课程验收是部分证据，见 [acceptance.md](acceptance.md)。上述 81 项是阶段 3 基线验证；阶段 4 已在其上加入 Command、历史与最小 CLI，最新验证见主文档。阶段 6—8 已完成 SVG 读写、完整 CLI 与系统验收，当前报告见 test-report.md；上述 118 项只是阶段 3 的历史检查点。
 
 
 ## 2026-10-13 阶段 6 更新

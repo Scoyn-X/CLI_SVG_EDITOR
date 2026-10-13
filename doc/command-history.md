@@ -1,12 +1,12 @@
 # 命令、会话与历史实现
 
-阶段 4 基线，2026-10-12；4e2bfbc 已推送至 feature-command-history。阶段 5 在现有候选/快照机制上增加树编辑，见 [tree-editing.md](tree-editing.md)；本轮仍逐次确认提交清单，不沿用旧权限。
+阶段 4 基线，2026-10-12；4e2bfbc 已推送至 feature-command-history。阶段 5 在现有候选/快照机制上增加树编辑，见 [tree-editing.md](tree-editing.md)；阶段 6—9 已按用户授权自动完成并提交推送，旧清单确认门槛已取消。
 
 ## 当前范围
 
-已实现 Command、会话、候选执行、Memento 与历史屏障，并贯通最小 CLI。当前注册 init、canvas、create、move、scale、set、undo、redo、help；create 支持六种内置图形及末尾 in，box 保持规定未知类型错误。帮助只列实际注册的命令。
+已实现 Command、会话、候选执行、Memento 与历史屏障，并贯通最小 CLI。当前注册全部 19 个命令，create 支持六种内置图形及末尾 in，box 保持规定未知类型错误。帮助只列实际注册的命令。
 
-阶段 4 当时没有树编辑；阶段 5 已接入 delete/group/ungroup/addto/front/back 并验证完整历史恢复。SVG/read/save 和真实文件替换留在阶段 6；tree/show、完整帮助和全功能 transcript 留在阶段 7。现有 read/save 只有会话发布边界，**没有实现文件读写或宣称 save/read 验收通过**。
+阶段 4 当时没有树编辑；阶段 5 已接入 delete/group/ungroup/addto/front/back 并验证完整历史恢复。阶段 6 已完成真实 SVG/read/save 和文件替换，阶段 7 已完成 tree/show、完整帮助和 transcript，阶段 8 已实际验收，详见 svg-io.md/cli.md/test-report.md。
 
 ## 实际职责与依赖
 
@@ -27,7 +27,7 @@
 
 依赖遵守原规则：应用只用领域/协议；图形提供者只用领域/协议；CLI 只用应用/领域及 Node 终端能力；具体依赖仅在 bootstrap 组装。唯一名字查找分别在 CommandDispatcher 和 ShapeFactory；注册语句集中组装，几何/复制/反馈不按图形标签分支。
 
-图形创建的 SVG 读回路径仍未实现。阶段 6 在同一工厂分派处扩充提供者的中立元素构造协议，禁止另写一套标签到类映射。当前不提前创建空 codec/storage 接口或插件加载器。
+SVG 读回与 create 复用工厂 provider 查找；提供者通过 SvgElement 中立协议构造，图形类型分派仍只有工厂一处。codec/storage 协议已有真实适配器，不实现插件加载器。
 
 ## 候选执行与恢复
 
@@ -37,7 +37,7 @@
 
 undo/redo 先获取待恢复条目，准备独立恢复文档及反馈，再移动两栈并替换文档。redo 恢复保存的后状态，不重新执行命令、调用工厂、分配 id 或访问文件。浮点值通过复制精确恢复，不使用减去增量/除以因子等逆运算。
 
-快照目前只含文档。读入路径由会话管理，编辑命令不改变路径；init 清除路径，未来 read 成功才替换路径。历史对象不放进领域文档。当前接受每次编辑 O(N) 复制、历史 O(H×N) 空间成本，不增加未经需求约定的历史裁剪。
+快照目前只含文档。读入路径由会话管理，编辑命令不改变路径；init 清除路径，read 成功才替换路径。历史对象不放进领域文档。当前接受每次编辑 O(N) 复制、历史 O(H×N) 空间成本，不增加未经需求约定的历史裁剪。
 
 ## 历史状态机
 
@@ -47,7 +47,7 @@ undo/redo 先获取待恢复条目，准备独立恢复文档及反馈，再移�
 | --- | --- |
 | 无文档时 undo/redo/编辑/查询 | no document. use 'init' or 'read' first |
 | init 或 canvas 带参数成功 | 清空两栈并建立屏障 |
-| replaceDocument / establishIoBarrier 成功边界 | 为未来 read/save 建立同样屏障；IO 本轮未实现 |
+| readDocument / saveDocument 成功边界 | 路径解析、IO、反馈准备在执行锁内，成功后建立屏障 |
 | 屏障中 undo 或 redo | undo not allowed after io command，区别于空栈 |
 | 一条成功编辑，包括无变化编辑 | 一个前/后条目，解禁屏障，清空 redo |
 | 编辑或文档修改失败 | 所有会话状态保持，失败不解禁或清空 redo |
@@ -62,7 +62,7 @@ undo/redo 先获取待恢复条目，准备独立恢复文档及反馈，再移�
 
 为支持题目的 moved to/moved by，领域描述增加中立的只读 position 锚点：叶子通过 Geometry 声明的第一对 x/y 坐标提供，line 取首端点，Group 无自身锚点。MoveCommand 多态消费描述，不比较 rect/circle/g 类型名，也不让领域返回终端文本。
 
-当前 CommandResult 采用已格式化的应用摘要；CLI 负责提示符与错误前缀，具体命令负责业务反馈措辞。该选择保证当前题目反馈和历史回显一致，但会限制未来多语言或图形入口的富结果；出现该需求时可扩充为中立反馈字段/策略，不引入按类型名分派。tree/show 的属性分组和树线仍留待阶段 7。
+当前 CommandResult 采用已格式化的应用摘要；CLI 负责提示符与错误前缀，具体命令负责业务反馈措辞。该选择保证当前题目反馈和历史回显一致，但会限制未来多语言或图形入口的富结果；出现该需求时可扩充为中立反馈字段/策略，不引入按类型名分派。tree/show 已通过 CommandDisplay/Formatter 与 GeometrySummary 组织展示，应用不保存终端树线。
 
 ## 验证与剩余范围
 
@@ -71,7 +71,7 @@ undo/redo 先获取待恢复条目，准备独立恢复文档及反馈，再移�
 - [集成测试](../tests/integration/EditorFlow.test.ts)：六种根/嵌套创建、文本 in、题目移动反馈、精确错误及最小流程。
 - [真实进程测试](../tests/e2e/CliHistory.test.ts)：编译当前源码到忽略目录，回放 [history.cli](../tests/fixtures/history.cli)，验证输出/提示符、错误后继续、CRLF 和 EOF。
 
-阶段 4 的检查数量见 [课程主文档](README.md#7-v06-命令与历史检查)，阶段 5 的新证据另行记录。没有执行完整 SVG 往返、浏览器预览或阶段 8 系统验收，未创建 test-report.md；阶段 6 须另获授权。
+阶段 4 的检查数量见 [课程主文档](historical-checks.md#7-v06-命令与历史检查)，阶段 5 的新证据另行记录。阶段 6—8 已完成完整受支持 SVG 往返、浏览器预览及独立系统验收，当前真实报告见 test-report.md。
 
 
 ## 2026-10-13 阶段 6 更新

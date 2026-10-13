@@ -1,10 +1,10 @@
 # 测试计划与系统验收阶段
 
-版本：v0.5，2026-10-12。新增阶段 5 树编辑持续测试，保留独立系统测试与持续测试的安排。
+版本：v1.0，2026-10-13。持续测试与独立系统验收均已完成，下文保留计划、准入/退出条件及历史阶段证据。
 
 依据：[课程需求](../phase_cli_1.md) §1.2 要求说明功能完整性与代码质量依据，没有强制指定测试框架或独立测试阶段。具体安排是本项目的工程选择；需求行为以原文为准，未定义语义以 [决策记录](decisions.md) 为当前基线。
 
-**当前领域、全部图形编辑 Command/历史及 CLI 已有持续验证，SVG IO、完整显示与系统验收尚未完成。** 最终数量与结果见 [课程主文档](README.md#8-v07-树编辑检查)，工具入口见 [开发说明](development.md)，树编辑范围见 [树编辑记录](tree-editing.md)。这些结果不计为 A01—A29 全量通过，阶段 8 报告仍待实际系统测试后编写。
+**持续测试与阶段 8 独立系统验收已完成：20 个测试文件、376 项测试通过；A01—A29及S01—S08已有证据。** 当前结果见 [真实报告](test-report.md)，工具入口见 [开发说明](development.md)。下文保留计划与退出条件，历史阶段数量不是当前总数。
 
 ## 1. 持续测试与独立阶段
 
@@ -30,7 +30,7 @@
 | 架构与静态检查 | tests/architecture 或工具配置 | 编译/类型、风格、依赖方向、两处分派、Command/Composite 落点、一类一文件 | A28/A29 |
 | 人工检查 | doc/test-report.md 中记录（执行阶段才创建） | 浏览器预览实际保存的 SVG、显示内容可读性、文档与实现一致性 | A23、A26—A29 |
 
-当前已有 domain 的 Shapes/Group/SvgDocument、application 的 EditorSession、adapters 的 ShapeProviders/Tokenizer、integration 的 EditorFlow、e2e 的 CliHistory，以及原有 bootstrap/architecture 测试。真实 CLI 测试把源码编译到忽略的 artifacts/e2e-build，独立 npm test 不误用旧 dist。fixtures/history.cli 是已执行的最小回放，完整课程序列留后续。工具通过不能单独证明面向对象设计合格。
+当前已有 domain 的 Shapes/Group/SvgDocument、application 的 EditorSession、adapters 的 ShapeProviders/Tokenizer、integration 的 EditorFlow、e2e 的 CliHistory，以及原有 bootstrap/architecture 测试。真实 CLI 测试把源码编译到忽略的 artifacts/e2e-build，独立 npm test 不误用旧 dist。fixtures/history.cli 是已执行的最小回放，完整课程序列 typical.cli/flowchart.cli 和真实 SVG/文件场景已执行。工具通过不能单独证明面向对象设计合格。
 
 阶段 5 单元 A 增加 TreeGrouping/TreeGroupingCommands 和 tree-grouping.cli；单元 B 增加 TreeOrder/TreeOrderCommands 和 tree-order.cli，原测试全部保留。验证复杂树编辑的单条历史、S03/S05、连续组合每一步恢复与失败保留 redo。A 独立 258 项，B 完整 290 项；后一个单元不能代替前一个单元的独立通过证据。
 
@@ -71,11 +71,11 @@
 - 每个已修复缺陷都有对应回归依据；最终完整回归针对最新代码，报告可辨认实际版本。
 - 已编写真实的 doc/test-report.md，并将结果链接回验收清单和主文档的质量保证栏目。
 
-A30 的远程推送、截止日期和 final 标签属于阶段 9 交付，仍受用户权限限制；阶段 8 通过不是提交或发布授权。
+A30 的提交推送由用户另行明确授权自动执行；用户明确暂不创建标签，截止时间未提供；阶段 8 通过本身不产生授权。
 
 ## 5. 测试报告与缺陷记录
 
-执行阶段才创建 `doc/test-report.md`，至少记录：
+实际报告已创建于 [test-report.md](test-report.md)，包含以下记录：
 
 - 环境和版本：系统、运行时/工具版本、执行日期、分支与提交号（没有提交时如实标为未提交工作区）。
 - 实际执行命令、检查范围、结果与日志/产物位置；总数来自实际工具，不猜测通过数或覆盖率。

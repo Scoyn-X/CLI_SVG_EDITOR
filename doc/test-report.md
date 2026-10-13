@@ -1,6 +1,6 @@
 # 系统测试与回归验收报告
 
-日期：2026-10-13（Asia/Shanghai）。测试代码版本：a4f84ae（test-system-regression）；报告在代码检查、提交推送及实际浏览器预览后形成。阶段 8 已完成；课程 Phase 1 功能范围验收通过，final 标签按用户明确要求暂不创建，截止时间未提供。
+日期：2026-10-13（Asia/Shanghai）。系统验收基线：a4f84ae（test-system-regression，368项）；交付最终代码：ad74465（docs-final-delivery，R04修复后376项）；报告在代码检查、提交推送及实际浏览器预览后形成。阶段 8 已完成；课程 Phase 1 功能范围验收通过，final 标签按用户明确要求暂不创建，截止时间未提供。
 
 ## 环境与执行结果
 
@@ -13,9 +13,9 @@ Windows；Node.js 24.11.0、npm 11.6.1、TypeScript 6.0.3、Vitest 5.0.3、ESLin
 | npm run lint | 0 错误、0 警告 |
 | npm run build | 当前生产代码编译通过 |
 | npm run check:architecture | 91 个模块、288 条依赖，0 违规；含解析库模块，生产 src 为 85 文件 |
-| npm test | 20 个测试文件、368 项测试全部通过；未声明覆盖率百分比 |
+| npm test | 20 个测试文件、376 项测试全部通过；未声明覆盖率百分比 |
 | npm run check:runtime | 编译后真实组装检查通过 |
-| npm run check | 最后一次代码修改后的完整串行回归通过，以上检查全部包含 |
+| npm run check | R04 最后代码修改后的完整串行回归通过，以上检查全部包含 |
 | 课程源码规范 | AST 与人工抽查通过：77 类、7 接口及入口；一类一同名文件、私有实例字段、无顶层业务函数；两处分派核对 |
 | 文档/来源 | 内嵌图与独立图源一致；phase_cli_1.md/think1.md 未变；最终全目录链接复核在阶段 9 |
 
@@ -73,7 +73,7 @@ Windows；Node.js 24.11.0、npm 11.6.1、TypeScript 6.0.3、Vitest 5.0.3、ESLin
 
 ## 缺陷与浏览器观察
 
-R01 非法命名空间 QName、R02 路径回调重入、R03 自定义 viewBox 复制问题，复现、修复及测试位置见 [系统回归记录](system-regression.md)。最后代码回归无未解决的阻断缺陷。
+R01 非法命名空间 QName、R02 路径回调重入、R03 自定义 viewBox 复制及 R04 SVG 分隔符问题，复现、修复及测试位置见 [系统回归记录](system-regression.md)。最后代码回归无未解决的阻断缺陷。
 
 2026-10-13，Codex 内置浏览器，通过公开 HTTPS 地址读取 a4f84ae 中真实 CLI 保存的文件，查看可访问性内容及截图。file 协议受工具策略禁止，因此没有访问本地文件协议或启动代理绕过；以下均为已推送的仓库产物：
 
