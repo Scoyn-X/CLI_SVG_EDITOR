@@ -53,7 +53,7 @@ export class EditorSession {
     });
   }
 
-  /** init/read 的发布边界；read 的 IO/解析必须在调用前成功完成。 */
+  /** 发布已构造的文档并建立屏障；init 使用此入口，读取使用带 IO 锁的 readDocument。 */
   public replaceDocument(document: SvgDocument, sourcePath?: string): void {
     this.exclusive(() => {
       if (sourcePath !== undefined) {
@@ -75,14 +75,6 @@ export class EditorSession {
       this.history.establishBarrier();
       this.document = candidate;
       return result;
-    });
-  }
-
-  /** save 的成功发布边界；本阶段没有文件写入，阶段 6 在写入成功后调用。 */
-  public establishIoBarrier(): void {
-    this.exclusive(() => {
-      this.requireDocument();
-      this.history.establishBarrier();
     });
   }
 

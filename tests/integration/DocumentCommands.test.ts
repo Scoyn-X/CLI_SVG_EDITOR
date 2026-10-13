@@ -6,6 +6,29 @@ import { EditorComposition } from '../../src/bootstrap/EditorComposition.js';
 const valid = '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200"><g id="scene"><rect width="5" height="2"/><text>in &amp; 中文</text></g></svg>';
 
 describe('read/save 原子发布与真实命令组合', () => {
+  it('实际 SaveCommand 等写入成功才清空旧历史，保持文档和读入路径', () => {
+    const session = new EditorSession(); const composition = new EditorComposition();
+    const write = vi.fn<(file: string, contents: string) => void>();
+    const storage = { resolve: (file: string) => file, read: () => valid, write };
+    const cli = new CliController(composition.createDispatcher(composition.createFactory(), storage), session);
+    for (const line of ['read source.svg', 'move rect1 5 0', 'undo']) { cli.executeLine(line); }
+    const before = session.describe(); const history = session.getHistoryStatus();
+    expect(history.getRedoCount()).toBe(1);
+    write.mockImplementation((file, xml) => {
+      expect(file).toBe('copy.svg'); expect(xml).toContain('<rect id="rect1"');
+      expect(session.describe()).toEqual(before);
+      expect(session.getHistoryStatus()).toEqual(history);
+      expect(session.getSourcePath()).toBe('source.svg');
+    });
+    expect(cli.executeLine('save copy.svg')).toEqual(['saved to copy.svg (3 elements)']);
+    expect(write).toHaveBeenCalledOnce(); expect(session.describe()).toEqual(before);
+    expect(session.getSourcePath()).toBe('source.svg');
+    expect(session.getHistoryStatus().getUndoCount()).toBe(0);
+    expect(session.getHistoryStatus().getRedoCount()).toBe(0);
+    expect(session.getHistoryStatus().isBlocked()).toBe(true);
+    for (const line of ['undo', 'redo']) { expect(cli.executeLine(line)).toEqual(['error: undo not allowed after io command']); }
+  });
+
   it('补 id 警告、元素数、读入路径、另存与无参 save 生命周期', () => {
     const session = new EditorSession(); const composition = new EditorComposition();
     const storage = { resolve: (file: string) => file.startsWith('/') ? file : `/base/${file}`, read: vi.fn(() => valid), write: vi.fn() };

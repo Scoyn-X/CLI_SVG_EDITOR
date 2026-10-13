@@ -15,6 +15,7 @@ import { DomainError } from '../../src/domain/DomainError.js';
 import { Group } from '../../src/domain/Group.js';
 import { Rect } from '../../src/domain/Rect.js';
 import { SvgDocument } from '../../src/domain/SvgDocument.js';
+import type { DocumentDescription } from '../../src/domain/DocumentDescription.js';
 
 describe('Command、候选执行与 Memento 历史', () => {
   it.each([
@@ -22,7 +23,7 @@ describe('Command、候选执行与 Memento 历史', () => {
     (session: EditorSession) => session.undo(),
     (session: EditorSession) => session.redo(),
     (session: EditorSession) => session.resize(1, 2),
-    (session: EditorSession) => session.establishIoBarrier(),
+    (session: EditorSession) => session.saveDocument(() => new CommandResult('saved')),
     (session: EditorSession) => new MoveCommand('a', 'bad', 0).execute(session),
     (session: EditorSession) => new CreateCommand(new ShapeFactory(), 'box', 'a').execute(session),
   ])('无文档优先报规定错误且不改变会话 (%#)', action => {
@@ -193,7 +194,7 @@ describe('Command、候选执行与 Memento 历史', () => {
     expect(() => session.undo()).toThrow(/^nothing to undo$/);
   });
 
-  it('文档发布及 save 成功边界建立屏障；失败发布不改变路径或历史', () => {
+  it('文档发布及 saveDocument 成功回调建立屏障；失败发布不改变路径或历史', () => {
     const session = new EditorSession();
     session.replaceDocument(new SvgDocument(100, 200, [new Rect('a', 1, 2, 3, 4)]), 'old.svg');
     new MoveCommand('a', 10, 0).execute(session);
@@ -203,7 +204,15 @@ describe('Command、候选执行与 Memento 历史', () => {
     expect(session.describe()).toEqual(before);
     expect(session.getSourcePath()).toBe('old.svg');
     expect(session.getHistoryStatus()).toEqual(history);
-    session.establishIoBarrier();
+    const write = vi.fn((document: DocumentDescription, sourcePath: string | undefined) => {
+      expect(document).toEqual(before);
+      expect(sourcePath).toBe('old.svg');
+      // 写入回调完成前，旧历史仍有效，屏障只能在返回成功后建立。
+      expect(session.getHistoryStatus()).toEqual(history);
+      return new CommandResult('saved');
+    });
+    expect(session.saveDocument(write).getSummary()).toBe('saved');
+    expect(write).toHaveBeenCalledOnce();
     expect(() => session.undo()).toThrow(/^undo not allowed after io command$/);
     new MoveCommand('a', 1, 0).execute(session);
     session.undo();
