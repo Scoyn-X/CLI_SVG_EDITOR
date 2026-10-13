@@ -9,6 +9,7 @@
 | R01 | 先前编译产物接受 `<:rect/>` 并导入一个 rect。XML Name 验证不等于命名空间 QName 验证，非法前缀可能被忽略 | XmlSvgCodec 独立检查前缀/局部名 NCName 首字符及 namespace 声明；SystemRegression 覆盖空前缀、数字首字符、多重冒号、错误声明与合法 Unicode 前缀 |
 | R02 | 静态复查发现 ReadCommand 在会话锁外解析路径；依赖回调若重入修改会话后失败，会破坏失败原子性 | EditorSession.readDocument 在锁内解析/校验绝对路径，再读文件与构造候选；新增回调重入用例断言文档、路径、redo 不变 |
 | R03（阶段 6 已修复） | 非默认 viewBox 恰好等于 resize 后尺寸时，clone 再归一化可能失去自定义坐标系 | 归一化只在导入一次，领域复制保留 CanvasAttributes；XmlSvgCodec 测试验证复制后再 resize 的 viewBox |
+| R04（交付复核） | 连续 transform 没有分隔符、或使用 NBSP 也能通过，保存了非法 SVG 变换 | 按 SVG comma-wsp 检查函数间分隔及 XML 空白，numbers 拒绝 NBSP；XmlSvgCodec 新增合法/非法分隔符回归 |
 
 没有改变 set 白名单、加入 box 或放宽 TypeScript 严格配置。R01/R02 与回归测试同一提交，不将整套剩余项目做成一次提交。
 
@@ -33,3 +34,5 @@ java -jar artifacts/plantuml-1.2026.8.jar -Playout=smetana -tsvg doc/architectur
 doc/examples 中保存真实 CLI 生成的课程会话与流程图 SVG。浏览器禁止 file 协议，遵守限制，不启动本地文件代理；在已授权推送后预览仓库 HTTPS 公开示例。最终浏览器观察与逐项 A/S 映射记录于后续 test-report.md，不把准备状态写成已预览。
 
 最新代码完整回归：npm run check 全部通过，20 个测试文件、368 项测试；依赖检查 91 个模块、288 条依赖，0 违规。生产源码 85 文件、77 类、7 接口及入口；需求原文和第一次讨论副本未变。
+
+交付复核 R04 后再次完整 npm run check 通过：20 个测试文件、376 项测试，生产依赖仍 91 模块/288 依赖、0 违规。阶段 8 的 368 项记录保留为当时结果，本条是最终代码修复后的最新回归。

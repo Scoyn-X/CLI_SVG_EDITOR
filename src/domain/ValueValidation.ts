@@ -45,7 +45,7 @@ export class ValueValidation {
 
   public static numbers(value: string, name: string): readonly number[] {
     const trimmed = value.trim();
-    if (trimmed === '' || /^,|,$|,\s*,/.test(trimmed)) { throw new DomainError(`invalid number list: ${name}`); }
+    if (trimmed === '' || /[^\S \t\r\n]/u.test(value) || /^,|,$|,\s*,/.test(trimmed)) { throw new DomainError(`invalid number list: ${name}`); }
     return Object.freeze(trimmed.split(/\s*,\s*|\s+/).map(part => this.number(part, name)));
   }
 

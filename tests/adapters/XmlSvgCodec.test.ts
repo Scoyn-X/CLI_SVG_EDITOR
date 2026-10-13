@@ -47,6 +47,11 @@ describe('严格 SVG 编解码', () => {
     expect(codec.encode(copied.describe())).toContain('viewBox="0 0 40 20"');
   });
 
+  it.each(['translate(1,2) scale(2)', 'translate(1 2),scale(2)', ' translate(1,2) , scale(2) '])('合法变换分隔符 %s 保留', transform => {
+    const loaded = codec.decode(wrap(`<rect id="r" transform="${transform}"/>`));
+    expect(loaded.getDocument().describeShape('r').getAttributes()['transform']).toBe(transform);
+  });
+
   it.each([
     '<rect id="a"/><circle id="a"/>', '<rect id=""/>', '<rect id="a b"/>',
     '<path id="a"/>', '<rect id="a" style="fill:red"/>', '<text id="a"><tspan>text</tspan></text>',
@@ -54,6 +59,8 @@ describe('严格 SVG 编解码', () => {
     '<rect id="a" width="-1"/>', '<rect id="a" width="Infinity"/>', '<rect id="a" transform="rotate(1)"/>',
     '<rect id="a" transform="translate(1,,2)"/>', '<rect id="a" transform=",scale(1)"/>',
     '<rect id="a" transform="scale(1),"/>', '<rect id="a" transform="scale(1) junk scale(2)"/>',
+    '<rect id="a" transform="scale(1)translate(2)"/>', '<rect id="a" transform="scale(1)\u00a0translate(2)"/>',
+    '<rect id="a" transform="translate(1\u00a02)"/>', '<rect id="a" transform="scale(1)\u00a0"/>',
     '<rect id="a" font-size="10%"/>', '<text id="a" text-anchor="other"/>', '<g xmlns="urn:other"/>',
     '<q:rect/>', '<rect xmlns:xml="urn:bad"/>', '<rect xmlns:q=""/>', '<rect q:x="1"/>',
     '<rect id="a" id="b"/>', '<rect></circle>', '<rect id="a">&unknown;</rect>',
@@ -64,6 +71,7 @@ describe('严格 SVG 编解码', () => {
     '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="1"/>',
     '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="1"/>',
     '<svg width="1" height="1"/>', wrap('', 'viewBox="0,,0,1,1"'), wrap('', 'viewBox="0 0 0 1"'),
+    wrap('', 'viewBox="0\u00a00 1 1"'),
     wrap('', 'id="root"'), wrap('unexpected'), '<!DOCTYPE svg SYSTEM "https://example.invalid/a.dtd">' + wrap(''),
     '<?x data?>' + wrap(''), wrap('<?x data?>'), '<?xml version="1.1"?>' + wrap(''),
     '<?xml version="1.0" encoding="UTF-16"?>' + wrap(''), wrap('') + wrap(''), '',

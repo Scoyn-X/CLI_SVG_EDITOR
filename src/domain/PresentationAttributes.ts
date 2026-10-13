@@ -23,13 +23,13 @@ export class PresentationAttributes {
   private validateTransform(value: string): void {
     let end = 0;
     let count = 0;
-    for (const match of value.matchAll(/(translate|scale)\s*\(([^()]*)\)/g)) {
+    for (const match of value.matchAll(/(translate|scale)[ \t\r\n]*\(([^()]*)\)/g)) {
       const separator = value.slice(end, match.index);
-      if (!(count === 0 ? /^\s*$/.test(separator) : /^\s*(?:,\s*)?$/.test(separator))) { throw new DomainError('unsupported or invalid transform'); }
+      if (!(count === 0 ? /^[ \t\r\n]*$/.test(separator) : /^(?:[ \t\r\n]+,?[ \t\r\n]*|,[ \t\r\n]*)$/.test(separator))) { throw new DomainError('unsupported or invalid transform'); }
       const parameters = ValueValidation.numbers(match[2] ?? '', 'transform');
       if (parameters.length < 1 || parameters.length > 2) { throw new DomainError(`invalid transform: ${match[1]}`); }
       end = match.index + match[0].length; count++;
     }
-    if (count === 0 || value.slice(end).trim() !== '') { throw new DomainError('unsupported or invalid transform'); }
+    if (count === 0 || !/^[ \t\r\n]*$/.test(value.slice(end))) { throw new DomainError('unsupported or invalid transform'); }
   }
 }
