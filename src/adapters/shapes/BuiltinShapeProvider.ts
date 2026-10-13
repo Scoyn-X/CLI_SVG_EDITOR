@@ -10,6 +10,11 @@ export abstract class BuiltinShapeProvider implements ShapeProvider {
     private readonly geometry: readonly string[] = []) {}
 
   public getType(): string { return this.type; }
+  public getUsage(): string {
+    const parameters = this.usageParameters().map(name => name.startsWith('"') ? name : `<${name === 'width' ? 'w' : name === 'height' ? 'h' : name}>`).join(' ');
+    return `create ${this.type} <id>${parameters === '' ? '' : ` ${parameters}`}${this.style === undefined ? '' : ` [${this.style}]`} [in <containerId>]`;
+  }
+  protected usageParameters(): readonly string[] { return this.geometry; }
 
   public create(id: string, parameters: readonly string[]): Shape {
     if (parameters.length < this.count || parameters.length > this.count + (this.style === undefined ? 0 : 1)) {

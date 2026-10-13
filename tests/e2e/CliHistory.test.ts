@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { XmlSvgCodec } from '../../src/adapters/svg/XmlSvgCodec.js';
+import { EditorComposition } from '../../src/bootstrap/EditorComposition.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const output = resolve(root, 'artifacts/e2e-build');
@@ -15,6 +17,34 @@ beforeAll(() => {
 }, 35_000);
 
 describe('真实 CLI 进程', () => {
+  it('完整课程 transcript 包含准确编辑/错误/补 id 和保存产物', () => {
+    const input = readFileSync(resolve(root, 'tests/fixtures/typical.cli'), 'utf8');
+    const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });
+    expect(child.status).toBe(0); expect(child.stderr).toBe('');
+    const messages = child.stdout.split('svg> ').map(part => part.trim()).filter(Boolean);
+    expect(messages.slice(1, 7)).toEqual(['canvas 800x600 created', 'rect#bg created', 'text#title created', 'circle#c1 created', 'rect#box created', 'g#markers created with 2 children']);
+    expect(messages[7]).toContain('├── text#title  (20,40) "My Diagram"');
+    expect(messages.slice(8, 19)).toEqual(['circle#c1 moved to (130,100)', 'circle#c1 moved back to (100,100)', 'circle#c1 moved to (130,100)', 'text#title updated: text="My Diagram v2"', 'text#title updated: text="My Diagram"', 'error: cannot group a container into its own descendant: markers', 'rect#box deleted', 'rect#box restored into g#markers', 'saved to artifacts/demo.svg (5 elements)', 'error: undo not allowed after io command', 'warning: assigned id rect1 to unnamed <rect>\nread tests/fixtures/other.svg (7 elements)']);
+    expect(messages.at(-1)).toContain('svg (400x300)');
+    expect(messages.at(-1)).toContain('└── ellipse#e1  cx=1 cy=2 rx=3 ry=4');
+    const saved = new XmlSvgCodec(new EditorComposition().createFactory()).decode(readFileSync(resolve(root, 'artifacts/demo.svg'), 'utf8'));
+    expect(saved.getElementCount()).toBe(5); expect(saved.getDocument().describeShape('c1').getAttributes()['cx']).toBe(130);
+    expect(saved.getDocument().describeShape('title').getText()).toBe('My Diagram');
+  });
+
+  it('版本 A 的 8 元素流程图，组移动文字随行、undo 还原且保存读回', () => {
+    const input = readFileSync(resolve(root, 'tests/fixtures/flowchart.cli'), 'utf8');
+    const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });
+    expect(child.status).toBe(0); expect(child.stderr).toBe(''); expect(child.stdout).not.toContain('error:');
+    expect(child.stdout).toContain('rect#process  x=520 y=200 w=160 h=60 fill=#f5a623');
+    expect(child.stdout).toContain('text#process-label  (545,235) "处理数据"');
+    expect(child.stdout).toContain('g#node2 moved back by (0,-100)');
+    expect(child.stdout).toContain('saved to artifacts/flowchart.svg (8 elements)');
+    const saved = new XmlSvgCodec(new EditorComposition().createFactory()).decode(readFileSync(resolve(root, 'artifacts/flowchart.svg'), 'utf8'));
+    expect(saved.getElementCount()).toBe(8); expect(saved.getDocument().describeShape('process').getAttributes()['y']).toBe(100);
+    expect(saved.getDocument().describeShape('process-label').getText()).toBe('处理数据 v2');
+    expect(saved.getDocument().getParentId('process-label')).toBe('node2');
+  });
   it('删除与同级顺序回放包含题目恢复摘要，错误后历史仍可恢复', () => {
     const input = readFileSync(resolve(root, 'tests/fixtures/tree-order.cli'), 'utf8');
     const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });

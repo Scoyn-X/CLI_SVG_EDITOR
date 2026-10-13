@@ -6,6 +6,7 @@ import { ShapeDescription } from './ShapeDescription.js';
 import { StyleAttributes } from './StyleAttributes.js';
 import { ValueValidation } from './ValueValidation.js';
 import { PresentationAttributes } from './PresentationAttributes.js';
+import { GeometrySummary } from './GeometrySummary.js';
 
 export abstract class Shape {
   private readonly id: string;
@@ -42,7 +43,7 @@ export abstract class Shape {
   public describe(): ShapeDescription {
     return new ShapeDescription(this.id, this.tag,
       { id: this.id, ...this.geometryAttributes(), ...this.styles.attributes(), ...this.presentation.attributes() },
-      this[ShapeAccess.children]()?.items().map(child => child.describe()) ?? [], this.textContent(), this.position());
+      this[ShapeAccess.children]()?.items().map(child => child.describe()) ?? [], this.textContent(), this.position(), this.geometrySummary());
   }
 
   /** @internal 仅用于领域对象间的两阶段几何修改。 */
@@ -59,6 +60,7 @@ export abstract class Shape {
   }
 
   protected geometryAttributes(): Readonly<Record<string, number>> { return {}; }
+  protected geometrySummary(): GeometrySummary { return new GeometrySummary(this.geometryAttributes()); }
   protected textContent(): string | undefined { return undefined; }
   protected position(): readonly [number, number] | undefined { return undefined; }
   protected abstract setSpecificAttribute(name: string, value: string | number): void;

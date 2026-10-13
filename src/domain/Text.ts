@@ -2,6 +2,7 @@ import { DomainError } from './DomainError.js';
 import { Geometry } from './Geometry.js';
 import { LeafShape } from './LeafShape.js';
 import { ValueValidation } from './ValueValidation.js';
+import { GeometrySummary } from './GeometrySummary.js';
 
 export class Text extends LeafShape {
   private text: string;
@@ -16,6 +17,7 @@ export class Text extends LeafShape {
   }
 
   protected override textContent(): string { return this.text; }
+  protected override geometrySummary(): GeometrySummary { return new GeometrySummary({}, [[this.geometryValue('x'), this.geometryValue('y')]]); }
 
   protected override setSpecificAttribute(name: string, value: string | number): void {
     if (name === 'text') {

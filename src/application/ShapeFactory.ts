@@ -22,6 +22,7 @@ export class ShapeFactory implements ShapeCreator, ShapeImporter {
   public fromSvg(element: SvgElement): Shape {
     return this.provider(element.getTag()).fromSvg(element, child => this.fromSvg(child));
   }
+  public getUsages(): readonly string[] { return Object.freeze([...this.providers.values()].map(provider => provider.getUsage())); }
 
   private provider(type: string): ShapeProvider {
     const provider = this.providers.get(type);

@@ -4,6 +4,7 @@ import type { SvgElement } from '../../ports/SvgElement.js';
 
 export class TextProvider extends BuiltinShapeProvider {
   public constructor() { super('text', 3, undefined, ['x', 'y']); }
+  protected override usageParameters(): readonly string[] { return [...super.usageParameters(), '"content"']; }
   protected override allowsText(): boolean { return true; }
   protected override svgParameters(element: SvgElement): readonly string[] { return [...super.svgParameters(element), element.getText()]; }
   protected override build(id: string, parameters: readonly string[]): Text {

@@ -6,7 +6,7 @@
 
 ## 当前状态
 
-**阶段 6：SVG 读写与文件保存已实现；完整显示和独立系统验收接续完成。**
+**阶段 7：课程 Phase 1 的全部 19 个命令与六类图形已实现；正在接续独立系统测试和交付复核。**
 
 | 项目 | 状态 |
 | --- | --- |
@@ -16,10 +16,10 @@
 | 工程基础 | 6a60d87 已推送至 chore-typescript-tooling；构建与质量检查可运行 |
 | 领域模型 | 六种图形、画布、树/id 索引及深复制；6bd9a43 已推送至 feature-domain-model |
 | 编辑流程与历史 | 4e2bfbc 已推送至 feature-command-history；候选执行、快照、屏障及副本隔离已实现 |
-| 当前 CLI | read/save/init/canvas/create/delete/move/scale/set/group/ungroup/addto/front/back/undo/redo/help；六种图形及 in 可回放 |
+| 当前 CLI | tree/show/read/save/init/canvas/create/delete/move/scale/set/group/ungroup/addto/front/back/undo/redo/help；六种图形及 in 可回放 |
 | 树编辑 | 删除子树、分组/解组、归属、同级顺序；父级/id/位置/属性均由独立快照恢复 |
-| 后续功能 | tree/show 及完整系统验收 |
-| 当前工作分支 | feature-svg-io；按用户持续授权核对范围后提交推送 |
+| 后续工作 | 独立系统验收、浏览器预览及交付复核 |
+| 当前工作分支 | feature-cli-output；按用户持续授权核对范围后提交推送 |
 | final 标签 | 未授权创建，截止时间尚未提供 |
 
 ## 工程检查
@@ -33,13 +33,13 @@ npm run check
 
 `check` 依次执行类型检查、lint、构建、生产代码依赖检查、自动测试与编译后组装验证。独立检查及工具版本见 [开发说明](doc/development.md)。
 
-启动最小 CLI：
+启动 CLI：
 
 ```sh
 npm run cli
 ```
 
-例如依次输入 `init`、`create circle c1 100 100 20 red`、`move c1 30 0`、`undo`、`redo`。输入结束（EOF）正常退出；尚未实现的命令暂报 unknown command，不能据此视为最终产品行为。可回放脚本见 [history.cli](tests/fixtures/history.cli)。
+例如依次输入 `init`、`create circle c1 100 100 20 red`、`move c1 30 0`、`undo`、`redo`。输入结束（EOF）正常退出；全部课程命令已接通；未知命令仍给出单行错误。可回放脚本见 [history.cli](tests/fixtures/history.cli)。
 
 ## 文档入口
 
@@ -60,7 +60,7 @@ npm run cli
 
 内置 `rect / circle / ellipse / line / text / g`，通过唯一 id 定位图形，支持层级编辑、几何与属性编辑、SVG 读写、结构显示和撤销重做。
 
-`box` 和插件加载属于后续课程阶段，本阶段拒绝 `create box`。GUI、协同编辑及通用 SVG 全格式支持不属于已承诺功能。当前导入范围的未决事项见需求决策文档。
+`box` 和插件加载属于后续课程阶段，本阶段拒绝 `create box`。GUI、协同编辑及通用 SVG 全格式支持不属于已承诺功能。当前导入支持范围见 doc/svg-io.md，拒绝范围明确报错。
 
 ## 开发约定
 

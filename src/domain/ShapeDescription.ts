@@ -1,3 +1,5 @@
+import { GeometrySummary } from './GeometrySummary.js';
+
 /** 脱离可写模型的不可变中立描述，可供通用 SVG 和 CLI 展示读取。 */
 export class ShapeDescription {
   private readonly attributes: Readonly<Record<string, string | number>>;
@@ -11,6 +13,7 @@ export class ShapeDescription {
     children: readonly ShapeDescription[],
     private readonly text: string | undefined,
     position?: readonly [number, number],
+    private readonly geometry: GeometrySummary = new GeometrySummary(),
   ) {
     this.attributes = Object.freeze({ ...attributes });
     this.children = Object.freeze([...children]);
@@ -24,4 +27,5 @@ export class ShapeDescription {
   public getChildren(): readonly ShapeDescription[] { return this.children; }
   public getText(): string | undefined { return this.text; }
   public getPosition(): readonly [number, number] | undefined { return this.position; }
+  public getGeometry(): GeometrySummary { return this.geometry; }
 }

@@ -30,6 +30,8 @@ import { XmlSvgCodec } from '../adapters/svg/XmlSvgCodec.js';
 import { ReadCommand } from '../application/ReadCommand.js';
 import { SaveCommand } from '../application/SaveCommand.js';
 import type { DocumentStorage } from '../ports/DocumentStorage.js';
+import { TreeCommand } from '../application/TreeCommand.js';
+import { ShowCommand } from '../application/ShowCommand.js';
 
 /** 集中组装依赖；这里只登记名字，不按名字比较或执行图形算法。 */
 export class EditorComposition {
@@ -63,7 +65,9 @@ export class EditorComposition {
     dispatcher.register('back', new CommandRegistration('back <id>', 1, 1, args => new BackCommand(args.required(0))));
     dispatcher.register('undo', new CommandRegistration('undo', 0, 0, () => new UndoCommand()));
     dispatcher.register('redo', new CommandRegistration('redo', 0, 0, () => new RedoCommand()));
-    dispatcher.register('help', new CommandRegistration('help', 0, 0, () => new HelpCommand(dispatcher.getUsages())));
+    dispatcher.register('tree', new CommandRegistration('tree [id]', 0, 1, args => new TreeCommand(args.optional(0))));
+    dispatcher.register('show', new CommandRegistration('show <id>', 1, 1, args => new ShowCommand(args.required(0))));
+    dispatcher.register('help', new CommandRegistration('help', 0, 0, () => new HelpCommand([...dispatcher.getUsages(), ...factory.getUsages()])));
     return dispatcher;
   }
 
