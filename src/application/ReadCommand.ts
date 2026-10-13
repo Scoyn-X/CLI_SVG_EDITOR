@@ -8,13 +8,13 @@ import type { EditorSession } from './EditorSession.js';
 export class ReadCommand extends Command {
   public constructor(private readonly file: string, private readonly storage: DocumentStorage, private readonly codec: SvgCodec) { super(); }
   public override execute(session: EditorSession): CommandResult {
-    let path: string;
-    try { path = this.storage.resolve(this.file); } catch { throw new DomainError(`cannot read file: ${this.file}`); }
-    return session.readDocument(() => {
+    return session.readDocument(path => {
       let xml: string;
       try { xml = this.storage.read(path); } catch { throw new DomainError(`cannot read file: ${this.file}`); }
       return this.codec.decode(xml);
-    }, path, loaded => new CommandResult(`read ${this.file} (${loaded.getElementCount()} elements)`, undefined,
+    }, () => {
+      try { return this.storage.resolve(this.file); } catch { throw new DomainError(`cannot read file: ${this.file}`); }
+    }, loaded => new CommandResult(`read ${this.file} (${loaded.getElementCount()} elements)`, undefined,
       loaded.getAssignments().map(assignment => `assigned id ${assignment.getId()} to unnamed <${assignment.getTag()}>`)));
   }
 }

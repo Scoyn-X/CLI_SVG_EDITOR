@@ -62,7 +62,7 @@ export class XmlSvgCodec implements SvgCodec {
     for (const [name, value] of Object.entries(node.attributes)) {
       if (name === 'xmlns' || name.startsWith('xmlns:')) {
         const prefix = name === 'xmlns' ? '' : name.slice(6);
-        if (prefix.includes(':') || prefix === 'xmlns' || (prefix !== '' && value === '')
+        if ((name !== 'xmlns' && !this.namespaceName(prefix)) || prefix === 'xmlns' || (prefix !== '' && value === '')
           || (prefix === 'xml') !== (value === 'http://www.w3.org/XML/1998/namespace')
           || value === 'http://www.w3.org/2000/xmlns/') { throw new DomainError('invalid SVG namespace declaration'); }
         namespaces.set(prefix, value);
@@ -74,7 +74,8 @@ export class XmlSvgCodec implements SvgCodec {
     const parts = node.name.split(':');
     const local = parts.at(-1) ?? '';
     const prefix = parts.length === 1 ? '' : parts[0] ?? '';
-    if (parts.length > 2 || prefix === 'xmlns' || namespaces.get(prefix) !== 'http://www.w3.org/2000/svg') {
+    if (parts.length > 2 || !this.namespaceName(local) || (parts.length === 2 && !this.namespaceName(prefix))
+      || prefix === 'xmlns' || namespaces.get(prefix) !== 'http://www.w3.org/2000/svg') {
       throw new DomainError(`unsupported SVG namespace: ${node.name}`);
     }
     const children: SvgElement[] = [];
@@ -85,6 +86,11 @@ export class XmlSvgCodec implements SvgCodec {
       else if (child instanceof XmlProcessingInstruction) { throw new DomainError('SVG processing instructions are not supported'); }
     }
     return new SvgElement(local, attributes, children, content);
+  }
+
+  /** XML 解析器已验证 NameChar；命名空间的每一部分还须满足 NCName 首字符。 */
+  private namespaceName(value: string): boolean {
+    return !value.includes(':') && /^[_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}]/u.test(value);
   }
 
   private dimension(value: string | undefined, name: string): number {

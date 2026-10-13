@@ -64,7 +64,7 @@ doc/
 
 ```plantuml
 @startuml
-title CLI SVG Editor - dependency direction (SVG / files planned)
+title CLI SVG Editor - implemented dependency direction
 skinparam componentStyle rectangle
 left to right direction
 

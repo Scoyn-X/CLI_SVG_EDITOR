@@ -1,6 +1,6 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { XmlSvgCodec } from '../../src/adapters/svg/XmlSvgCodec.js';
@@ -17,6 +17,43 @@ beforeAll(() => {
 }, 35_000);
 
 describe('真实 CLI 进程', () => {
+  it('课程背景的嵌套变换与字体通过实际 read/save 保留', () => {
+    const input = 'read tests/fixtures/nested.svg\nsave artifacts/nested.svg\n';
+    const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });
+    expect(child.status).toBe(0); expect(child.stderr).toBe(''); expect(child.stdout).not.toContain('error:');
+    expect(child.stdout).toContain('warning: assigned id rect1 to unnamed <rect>');
+    expect(child.stdout).toContain('warning: assigned id text1 to unnamed <text>');
+    const codec = new XmlSvgCodec(new EditorComposition().createFactory());
+    const actual = codec.decode(readFileSync(resolve(root, 'artifacts/nested.svg'), 'utf8'));
+    const expected = codec.decode(readFileSync(resolve(root, 'tests/fixtures/nested.svg'), 'utf8'));
+    expect(actual.getDocument().describe()).toEqual(expected.getDocument().describe());
+  });
+  it('真实 IO 失败保留 redo，带空格读入路径与另存/默认保存可回放', () => {
+    const directory = mkdtempSync(resolve(root, 'artifacts/system-'));
+    try {
+      writeFileSync(resolve(directory, '来源 space.svg'), readFileSync(resolve(root, 'tests/fixtures/other.svg')));
+      writeFileSync(resolve(directory, 'bad.svg'), '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect/><rect width="-1"/></svg>');
+      mkdirSync(resolve(directory, 'directory.svg'));
+      const input = ['read "来源 space.svg"', 'move c1 10 0', 'undo', 'read missing.svg', 'read bad.svg', 'save directory.svg', 'redo', 'show c1', 'save copy.svg', 'undo', 'move c1 2 0', 'undo', 'save', 'init', 'save'].join('\n') + '\n';
+      const child = spawnSync(process.execPath, [entry], { cwd: directory, input, encoding: 'utf8', timeout: 5_000 });
+      expect(child.status).toBe(0); expect(child.stderr).toBe('');
+      expect(child.stdout).toContain('error: cannot read file: missing.svg');
+      expect(child.stdout).toContain('error: cannot write file: directory.svg');
+      expect(child.stdout).toContain('error: width must be non-negative');
+      expect(child.stdout).toContain('circle#c1 moved to (60,50)');
+      expect(child.stdout).toContain('circle#c1  parent=svg\n  cx=60 cy=50 r=10');
+      expect(child.stdout).toContain('error: undo not allowed after io command');
+      expect(child.stdout).toContain('error: no source path. specify a file');
+      expect(child.stdout.match(/warning:/g)).toHaveLength(1);
+      const codec = new XmlSvgCodec(new EditorComposition().createFactory());
+      for (const file of ['copy.svg', '来源 space.svg']) {
+        expect(codec.decode(readFileSync(resolve(directory, file), 'utf8')).getDocument().describeShape('c1').getAttributes()['cx']).toBe(60);
+      }
+    } finally {
+      expect(directory.startsWith(resolve(root, 'artifacts') + sep)).toBe(true);
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
   it('完整课程 transcript 包含准确编辑/错误/补 id 和保存产物', () => {
     const input = readFileSync(resolve(root, 'tests/fixtures/typical.cli'), 'utf8');
     const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });

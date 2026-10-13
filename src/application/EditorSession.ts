@@ -21,11 +21,12 @@ export class EditorSession {
   public getSourcePath(): string | undefined { return this.sourcePath; }
   public getHistoryStatus(): HistoryStatus { return this.history.status(); }
 
-  public readDocument(load: () => ImportedDocument, sourcePath: string, feedback: (loaded: ImportedDocument) => CommandResult): CommandResult {
+  public readDocument(load: (path: string) => ImportedDocument, resolvePath: () => string, feedback: (loaded: ImportedDocument) => CommandResult): CommandResult {
     return this.exclusive(() => {
+      const sourcePath = resolvePath();
       ValueValidation.text(sourcePath, 'source path');
       if (sourcePath.length === 0) { throw new DomainError('source path must be non-empty'); }
-      const loaded = load(); const owned = loaded.getDocument(); const result = feedback(loaded);
+      const loaded = load(sourcePath); const owned = loaded.getDocument(); const result = feedback(loaded);
       this.history.establishBarrier(); this.document = owned; this.sourcePath = sourcePath;
       return result;
     });
