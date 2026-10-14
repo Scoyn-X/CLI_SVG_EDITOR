@@ -41,7 +41,7 @@ box/插件、GUI 和完整 SVG 格式属于后续范围；跨父重组的局部�
 
 ## 验证与样例
 
-首轮审查整改后的完整检查通过：21 个测试文件、407 项测试，类型/lint/构建/依赖/组装检查通过；修改、处理选择及下轮复核入口见 [增量记录](doc/iteration-notes.md)。首次交付时的课程序列和浏览器预览见 [历史测试报告](doc/test-report.md)，本轮未改变图形展示或保存格式。
+第二轮开发跟进后的完整检查通过：21 个测试文件、413 项测试，类型/lint/构建/依赖/组装检查通过；新增自定义标签导入的数据保持与失败原子性测试，修改、勘误及下轮复核入口见 [增量记录](doc/iteration-notes.md)。首次交付时的课程序列和浏览器预览见 [历史测试报告](doc/test-report.md)，本轮未改变生产代码、图形展示或保存格式。
 
 [流程图](doc/examples/flowchart.svg)、[典型会话导出图](doc/examples/demo.svg)、[嵌套变换](doc/examples/nested.svg) 是实际保存产物。[回放说明](doc/development.md) 包含 Windows 运行方法；[typical.cli](tests/fixtures/typical.cli)、[flowchart.cli](tests/fixtures/flowchart.cli) 为可重复脚本。
 
