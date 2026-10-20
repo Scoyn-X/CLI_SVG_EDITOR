@@ -1,6 +1,6 @@
 # CLI SVG Editor
 
-软件设计课程的 TypeScript 面向对象 SVG 命令行编辑器。课程 Phase 1 的全部功能、测试及文档已完成，按阶段提交推送；本次按用户要求暂不创建 final 标签。
+软件设计课程的 TypeScript 面向对象 SVG 命令行编辑器。课程 Phase 1 的全部功能、测试及文档已完成，按阶段提交推送；最终交付版本以 [final 标签](https://github.com/Scoyn-X/CLI_SVG_EDITOR/tree/final)为准。
 
 仓库：[Scoyn-X/CLI_SVG_EDITOR](https://github.com/Scoyn-X/CLI_SVG_EDITOR)。交付记录见 [doc/delivery.md](doc/delivery.md)。
 
@@ -56,4 +56,4 @@ CLI显示修复后的完整检查通过：21 个测试文件、415 项测试，�
 - [领域](doc/domain-model.md)、[命令与历史](doc/command-history.md)、[树编辑](doc/tree-editing.md)、[完整 CLI](doc/cli.md)。
 - [协作规范](agent.md)、[课程原文](phase_cli_1.md)、[第一次设计讨论](think1.md)。
 
-提交信息为“类型 - 一句话说明工作内容”，任务分支为“类型-英文短描述”。2026-10-13 用户授权自动完成本次剩余阶段并 commit/push，取消 add 清单确认；只暂存任务路径，不强推。标签本次明确不执行，截止时间尚未提供。
+提交信息为“类型 - 一句话说明工作内容”，任务分支为“类型-英文短描述”。2026-10-13 用户授权自动完成本次剩余阶段并 commit/push，取消 add 清单确认；只暂存任务路径，不强推。2026-10-20用户已明确授权创建并推送本次final标签，其他标签操作仍须另行授权；截止时间尚未提供。
