@@ -21,20 +21,23 @@ export class CliPresenter implements CommandFormatter {
       ...extra.map(([name, value]) => `  ${name}=${this.value(value)}`)]);
   }
   private children(children: readonly ShapeDescription[], prefix: string, lines: string[]): void {
+    const width = children.reduce((longest, shape) => Math.max(longest, this.label(shape).length), 0);
     children.forEach((shape, index) => {
       const last = index === children.length - 1;
-      lines.push(`${prefix}${last ? '└── ' : '├── '}${this.inline(shape)}`);
+      lines.push(`${prefix}${last ? '└── ' : '├── '}${this.inline(shape, width)}`);
       this.children(shape.getChildren(), prefix + (last ? '    ' : '│   '), lines);
     });
   }
-  private inline(shape: ShapeDescription): string {
+  private label(shape: ShapeDescription): string { return `${shape.getTag()}#${shape.getId()}`; }
+  private inline(shape: ShapeDescription, width = 0): string {
     const geometry = shape.getGeometry();
     const attributes = Object.entries(geometry.getAttributes()).map(([name, value]) => [name === 'width' ? 'w' : name === 'height' ? 'h' : name, value] as const);
     const points = geometry.getPoints().map(([x, y]) => `(${x},${y})`).join(' -> ');
     const text = shape.getText();
     const extra = Object.entries(shape.getAttributes()).filter(([name, value]) => name !== 'id' && (typeof value === 'string' || name === 'stroke-width'));
     const details = [this.pairs(attributes), points, text === undefined ? '' : JSON.stringify(text), this.pairs(extra)].filter(Boolean).join(' ');
-    return `${shape.getTag()}#${shape.getId()}${details === '' ? '' : `  ${details}`}`;
+    const label = this.label(shape);
+    return details === '' ? label : `${label.padEnd(width)}  ${details}`;
   }
   private pairs(values: readonly (readonly [string, string | number])[]): string { return values.map(([name, value]) => `${name}=${this.value(value)}`).join(' '); }
   private value(value: string | number): string { return typeof value === 'string' && /[\r\n\t]/.test(value) ? JSON.stringify(value) : String(value); }

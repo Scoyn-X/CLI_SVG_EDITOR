@@ -9,7 +9,8 @@ export class GroupCommand extends EditCommand {
   protected override apply(document: SvgDocument): CommandResult {
     document.group(this.newId, this.ids);
     const shape = document.describeShape(this.newId);
-    return new CommandResult(`${shape.getTag()}#${this.newId} created with ${shape.getChildren().length} children`,
+    const count = shape.getChildren().length;
+    return new CommandResult(`${shape.getTag()}#${this.newId} created with ${count} ${count === 1 ? 'child' : 'children'}`,
       `${shape.getTag()}#${this.newId} grouping undone`);
   }
 }

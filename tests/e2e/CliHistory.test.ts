@@ -73,7 +73,7 @@ describe('真实 CLI 进程', () => {
     const input = readFileSync(resolve(root, 'tests/fixtures/flowchart.cli'), 'utf8');
     const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });
     expect(child.status).toBe(0); expect(child.stderr).toBe(''); expect(child.stdout).not.toContain('error:');
-    expect(child.stdout).toContain('rect#process  x=520 y=200 w=160 h=60 fill=#f5a623');
+    expect(child.stdout).toContain('rect#process        x=520 y=200 w=160 h=60 fill=#f5a623');
     expect(child.stdout).toContain('text#process-label  (545,235) "处理数据"');
     expect(child.stdout).toContain('g#node2 moved back by (0,-100)');
     expect(child.stdout).toContain('saved to artifacts/flowchart.svg (8 elements)');

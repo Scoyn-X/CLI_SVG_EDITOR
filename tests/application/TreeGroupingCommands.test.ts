@@ -7,6 +7,19 @@ import { Rect } from '../../src/domain/Rect.js';
 import { SvgDocument } from '../../src/domain/SvgDocument.js';
 
 describe('分组和归属命令与历史集成', () => {
+  it('单目标子树按直接子节点回显 1 child，撤销和重做保留完整结构与正确摘要', () => {
+    const session = new EditorSession(); const controller = new EditorComposition().createController(session);
+    for (const line of ['init', 'create g inner', 'create rect a 1 2 3 4 in inner', 'create circle b 5 6 7 in inner']) { controller.executeLine(line); }
+    const before = session.describe(); const count = session.getHistoryStatus().getUndoCount();
+    expect(controller.executeLine('group single inner')).toEqual(['g#single created with 1 child']);
+    const after = session.describe();
+    expect(session.getHistoryStatus().getUndoCount()).toBe(count + 1);
+    expect(session.describeShape('single').getChildren().map(child => child.getId())).toEqual(['inner']);
+    expect(session.describe().getElementCount()).toBe(4);
+    expect(controller.executeLine('undo')).toEqual(['g#single grouping undone']); expect(session.describe()).toEqual(before);
+    expect(controller.executeLine('redo')).toEqual(['g#single created with 1 child']); expect(session.describe()).toEqual(after);
+  });
+
   it('group 一条命令一个单元，undo 恢复原父级/位置/缺省属性及所有 id', () => {
     const session = new EditorSession();
     const controller = new EditorComposition().createController(session);
