@@ -4,6 +4,8 @@
 
 来源：[课程需求](../phase_cli_1.md)、[首次讨论](../think1.md)；授权：[agent.md](../agent.md)。实际规则见 [决策](decisions.md)，功能映射与结果见 [验收清单](acceptance.md) / [测试报告](test-report.md)。
 
+提交报告见 [Report.md](Report.md)，从项目负责人的架构思考和关键迭代展开，包含目录与可用于PDF的架构图；本文件保留完整工程方案及证据索引。
+
 ## 架构方案
 
 ### 模块划分与依赖方向

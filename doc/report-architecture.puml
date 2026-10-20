@@ -1,0 +1,38 @@
+@startuml
+!pragma layout smetana
+title Phase 1 - module dependencies
+top to bottom direction
+skinparam componentStyle rectangle
+skinparam defaultFontSize 14
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam nodesep 24
+skinparam ranksep 40
+
+component "Bootstrap\ncomposition / registration" as BOOT
+package "Adapters" {
+  component "CLI\nparser / presenter" as CLI
+  component "SVG\nXML codec" as SVG
+  component "Files\nsafe file IO" as FILES
+  component "Shapes\nbuilt-in providers" as PROVIDERS
+}
+component "Application\ncommands / session / history\nshared ShapeFactory" as APP
+component "Ports\nstorage / codec / provider" as PORTS
+component "Domain\nshapes / document / descriptions" as DOMAIN
+
+BOOT --> CLI
+BOOT --> APP
+BOOT --> SVG
+BOOT --> FILES
+BOOT --> PROVIDERS
+CLI --> APP
+CLI --> DOMAIN : read-only views
+APP --> PORTS
+APP --> DOMAIN
+SVG --> PORTS
+SVG --> DOMAIN
+FILES --> PORTS
+PROVIDERS --> PORTS
+PROVIDERS --> DOMAIN
+PORTS --> DOMAIN
+@enduml
