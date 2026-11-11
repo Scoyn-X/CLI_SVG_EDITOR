@@ -15,8 +15,9 @@ export class CreateCommand extends EditCommand {
   protected override apply(document: SvgDocument): CommandResult {
     const shape = this.creator.create(this.type, this.id, this.parameters);
     document.add(shape, this.parentId);
-    const label = `${shape.describe().getTag()}#${this.id}`;
+    const label = `${shape.getType()}#${this.id}`;
     const parent = this.parentId === undefined ? '' : ` in ${document.describeShape(this.parentId).getTag()}#${this.parentId}`;
-    return new CommandResult(`${label} created${parent}`, `${label} deleted`);
+    const details = shape.creationDetails();
+    return new CommandResult(`${label} created${details === undefined ? '' : ` (${details})`}${parent}`, `${label} deleted`);
   }
 }

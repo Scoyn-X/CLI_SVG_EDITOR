@@ -1,11 +1,18 @@
 import type { CommandFormatter } from '../../application/CommandFormatter.js';
 import type { DocumentDescription } from '../../domain/DocumentDescription.js';
 import type { ShapeDescription } from '../../domain/ShapeDescription.js';
+import type { TreeDecorator } from '../../ports/TreeDecorator.js';
 
 export class CliPresenter implements CommandFormatter {
-  public tree(document: DocumentDescription, root?: ShapeDescription): readonly string[] {
-    const lines = root === undefined ? [`svg (${document.getWidth()}x${document.getHeight()})`] : [this.inline(root)];
-    this.children(root?.getChildren() ?? document.getRoots(), '', lines);
+  public constructor(private readonly decorators: readonly TreeDecorator[] = []) {}
+
+  public tree(document: DocumentDescription, root?: ShapeDescription, saved?: DocumentDescription): readonly string[] {
+    const decorators = this.decorators.map(decorator => decorator.prepare(document, saved));
+    const suffix = (shape?: ShapeDescription): string => decorators.map(decorate => decorate(shape))
+      .filter(label => label !== undefined && label !== '').map(label => ` ${label}`).join('');
+    const heading = root === undefined ? `svg (${document.getWidth()}x${document.getHeight()})` : this.inline(root);
+    const lines = [heading + suffix(root)];
+    this.children(root?.getChildren() ?? document.getRoots(), '', lines, suffix);
     return Object.freeze(lines);
   }
   public show(shape: ShapeDescription, parent: string): readonly string[] {
@@ -20,12 +27,12 @@ export class CliPresenter implements CommandFormatter {
       ...text === undefined ? [] : [`  text=${JSON.stringify(text)}`],
       ...extra.map(([name, value]) => `  ${name}=${this.value(value)}`)]);
   }
-  private children(children: readonly ShapeDescription[], prefix: string, lines: string[]): void {
+  private children(children: readonly ShapeDescription[], prefix: string, lines: string[], suffix: (shape: ShapeDescription) => string): void {
     const width = children.reduce((longest, shape) => Math.max(longest, this.label(shape).length), 0);
     children.forEach((shape, index) => {
       const last = index === children.length - 1;
-      lines.push(`${prefix}${last ? '└── ' : '├── '}${this.inline(shape, width)}`);
-      this.children(shape.getChildren(), prefix + (last ? '    ' : '│   '), lines);
+      lines.push(`${prefix}${last ? '└── ' : '├── '}${this.inline(shape, width)}${suffix(shape)}`);
+      this.children(shape.getChildren(), prefix + (last ? '    ' : '│   '), lines, suffix);
     });
   }
   private label(shape: ShapeDescription): string { return `${shape.getTag()}#${shape.getId()}`; }
@@ -34,7 +41,10 @@ export class CliPresenter implements CommandFormatter {
     const attributes = Object.entries(geometry.getAttributes()).map(([name, value]) => [name === 'width' ? 'w' : name === 'height' ? 'h' : name, value] as const);
     const points = geometry.getPoints().map(([x, y]) => `(${x},${y})`).join(' -> ');
     const text = shape.getText();
-    const extra = Object.entries(shape.getAttributes()).filter(([name, value]) => name !== 'id' && (typeof value === 'string' || name === 'stroke-width'));
+    const typed = shape.getType() !== shape.getTag();
+    const extra = Object.entries(shape.getAttributes()).filter(([name, value]) =>
+      name !== 'id' && (typeof value === 'string' || name === 'stroke-width')
+      && !(typed && name === 'data-kind' && value === shape.getType()));
     const details = [this.pairs(attributes), points, text === undefined ? '' : JSON.stringify(text), this.pairs(extra)].filter(Boolean).join(' ');
     const label = this.label(shape);
     return details === '' ? label : `${label.padEnd(width)}  ${details}`;

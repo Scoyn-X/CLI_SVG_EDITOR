@@ -5,6 +5,8 @@ import type { SvgElement } from './SvgElement.js';
 export interface ShapeProvider {
   getType(): string;
   getUsage(): string;
+  /** Opt in to importing this type as data-kind on the given SVG tag. */
+  getSvgTag?(): string;
   create(id: string, parameters: readonly string[]): Shape;
   fromSvg(element: SvgElement, importChild: (element: SvgElement) => Shape): Shape;
 }

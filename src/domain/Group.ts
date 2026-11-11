@@ -25,11 +25,14 @@ export class Group extends Shape {
   }
 
   public override clone(): Group {
+    return this.copyStylesTo(this.createCopy(this.children.items()));
+  }
+
+  /** A composite subtype supplies its own constructor and consumes the current children. */
+  protected createCopy(children: readonly Shape[]): Group {
     const copy = new Group(this.getId());
-    for (const child of this.children.items()) {
-      copy.children.insert(child.clone());
-    }
-    return this.copyStylesTo(copy);
+    for (const child of children) { copy.children.insert(child.clone()); }
+    return copy;
   }
 
   protected override setSpecificAttribute(name: string): void {

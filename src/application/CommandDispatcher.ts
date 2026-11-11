@@ -4,9 +4,11 @@ import { CommandArguments } from './CommandArguments.js';
 import type { CommandRegistration } from './CommandRegistration.js';
 import type { InputArgument } from './InputArgument.js';
 
-/** 唯一命令名分派位置；后续插件阶段重构注册来源和生命周期。 */
+/** 唯一命令名分派位置。 */
 export class CommandDispatcher {
   private readonly commands = new Map<string, CommandRegistration>();
+
+  public has(name: string): boolean { return this.commands.has(name); }
 
   public getUsages(): readonly string[] { return Object.freeze([...this.commands.values()].map(command => command.getUsage())); }
 

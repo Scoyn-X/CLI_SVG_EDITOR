@@ -4,6 +4,8 @@
 
 仓库：[Scoyn-X/CLI_SVG_EDITOR](https://github.com/Scoyn-X/CLI_SVG_EDITOR)。交付记录见 [doc/delivery.md](doc/delivery.md)。
 
+为支持独立扩展，Phase 2 增加四类 CLI 扩展契约和统一加载器，提供 stats 图形统计与 dir 工作目录查询，并支持代码和配置两种装配方式。另提供 VS Code SVG 文件标记与原生 Outline 扩展。设计和运行说明见 [CLI 插件框架](doc/phase2-cli.md)及[VS Code 扩展](doc/phase2-vscode.md)。
+
 ## 运行
 
 需要 Node.js >=24.11.0 <25 和 npm 11：
@@ -12,6 +14,13 @@
 npm ci
 npm run check
 npm run cli
+```
+
+构建后可选择启用命令插件：
+
+```sh
+node dist/bootstrap/main.js --code-plugins
+node dist/bootstrap/main.js --config plugins.config.json
 ```
 
 例如输入：
@@ -37,11 +46,11 @@ save demo.svg
 - 每条编辑一个撤销单元，失败不改变文档/路径/历史；成功文档命令建立历史屏障，后续新编辑解禁。
 - 支持 SVG 嵌套与文本、样式存在性、受控 transform/字体/viewBox 保留；不支持内容明确拒绝。详细范围见 [SVG 与文件](doc/svg-io.md)。
 
-box/插件、GUI 和完整 SVG 格式属于后续范围；跨父重组的局部坐标/继承取舍及其他未定义语义在 [决策记录](doc/decisions.md) 明确标为工程假设。
+CLI 默认提供六种内置图形；加载器支持追加图形、命令、属性处理和树标签。当前生产插件为 stats/dir，后续功能包括 box 与 modified-star/(box) 标签。SVG 采用受控子集，跨父重组的局部坐标和样式继承规则见 [决策记录](doc/decisions.md)。
 
 ## 验证与样例
 
-CLI显示修复后的完整检查通过：21 个测试文件、415 项测试，类型/lint/构建/依赖/组装检查通过；tree按同级标签宽度对齐，单目标group回显1 child，增加相应显示与undo/redo验证。修改及下轮复核入口见 [增量记录](doc/iteration-notes.md)。首次交付时的课程序列和浏览器预览见 [历史测试报告](doc/test-report.md)；本次八套回放仅有预期排版/文案差异，保存SVG内容不变。
+2026-11-11 完整工程检查通过：24 个测试文件、426 项测试，依赖检查覆盖 112 模块和 351 条依赖。六组 Phase 1 会话比较原始输出、退出码和四份 SVG 字节；真实进程测试验证 stats/dir 的 A/B 装配一致性。VS Code 扩展的 4 项自动测试通过。Phase 1 的历史修复记录见 [增量记录](doc/iteration-notes.md)。
 
 [流程图](doc/examples/flowchart.svg)、[典型会话导出图](doc/examples/demo.svg)、[嵌套变换](doc/examples/nested.svg) 是实际保存产物。[回放说明](doc/development.md) 包含 Windows 运行方法；[typical.cli](tests/fixtures/typical.cli)、[flowchart.cli](tests/fixtures/flowchart.cli) 为可重复脚本。
 
@@ -56,4 +65,4 @@ CLI显示修复后的完整检查通过：21 个测试文件、415 项测试，�
 - [领域](doc/domain-model.md)、[命令与历史](doc/command-history.md)、[树编辑](doc/tree-editing.md)、[完整 CLI](doc/cli.md)。
 - [协作规范](agent.md)、[课程原文](phase_cli_1.md)、[第一次设计讨论](think1.md)。
 
-提交信息为“类型 - 一句话说明工作内容”，任务分支为“类型-英文短描述”。仅暂存任务路径，分支采用正常快进推送。`final` 交付快照包含代码、测试、正式课程 README、报告及 PDF；课程平台截止时间为2026-10-25 23:59。标签更新与验证过程见 [增量记录](doc/iteration-notes.md)。
+Phase 1 的固定交付快照为 final，包含源码、测试、课程文档、报告及 PDF。Phase 2 的最终交付标签为 p2。工程协作与提交约定见 [agent.md](agent.md)。

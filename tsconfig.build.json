@@ -6,6 +6,6 @@
     "noEmit": false,
     "sourceMap": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/plugins/*/package.json"],
   "exclude": ["tests", "node_modules", "dist", "coverage", "artifacts"]
 }

@@ -16,7 +16,7 @@ export class MoveCommand extends EditCommand {
   }
 
   private summary(shape: ShapeDescription, dx: number, dy: number, reversed: boolean): string {
-    const label = `${shape.getTag()}#${shape.getId()}`;
+    const label = `${shape.getType()}#${shape.getId()}`;
     const verb = reversed ? 'moved back' : 'moved';
     const position = shape.getPosition();
     return position === undefined ? `${label} ${verb} by (${dx},${dy})` : `${label} ${verb} to (${position[0]},${position[1]})`;

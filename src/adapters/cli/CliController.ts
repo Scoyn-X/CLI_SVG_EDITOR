@@ -18,8 +18,9 @@ export class CliController {
       const result = command.execute(this.session);
       return [...result.getWarnings().map(warning => `warning: ${warning}`), ...result.render(this.presenter)];
     } catch (error) {
-      if (!(error instanceof DomainError)) { throw error; }
-      return [`error: ${error.message.replace(/[\r\n]+/g, ' ')}`];
+      const message = error instanceof DomainError ? error.message
+        : `unexpected command failure: ${error instanceof Error ? error.message : typeof error === 'string' ? error : 'unexpected failure'}`;
+      return [`error: ${message.replace(/[\r\n]+/g, ' ')}`];
     }
   }
 }

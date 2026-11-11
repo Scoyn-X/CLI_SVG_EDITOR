@@ -33,6 +33,7 @@ export class ShapeTree {
 
   public remove(id: string): void {
     const shape = this.requireShape(id);
+    this.assertDetachable(id);
     this.container(this.parents.get(id)).remove(shape);
     this.rebuildIndex();
   }
@@ -53,6 +54,7 @@ export class ShapeTree {
           throw new DomainError(`cannot group a container into its own descendant: ${ancestor}`);
         }
       }
+      this.assertDetachable(id);
     }
 
     const ordered: Shape[] = [];
@@ -81,6 +83,7 @@ export class ShapeTree {
     if (!shape.canUngroup()) { throw new DomainError(`cannot ungroup composite shape: ${id}`); }
     const parentId = this.parents.get(id);
     if (parentId === undefined) { throw new DomainError(`cannot ungroup top-level container: ${id}`); }
+    this.assertDetachable(id);
     this.container(parentId).replace(shape, children.items());
     this.rebuildIndex();
   }
@@ -91,6 +94,7 @@ export class ShapeTree {
     if (parentId === id || this.parentChain(parentId).includes(id)) {
       throw new DomainError(`cannot add a shape into itself or its descendant: ${id}`);
     }
+    if (parentId !== this.parents.get(id)) { this.assertDetachable(id); }
     this.container(this.parents.get(id)).remove(shape);
     target.insert(shape);
     this.rebuildIndex();
@@ -119,6 +123,13 @@ export class ShapeTree {
       throw new DomainError(`no such shape: ${id}`);
     }
     return shape;
+  }
+
+  private assertDetachable(id: string): void {
+    const parent = this.parents.get(id);
+    if (parent !== undefined && !this.requireShape(parent).canDetachChild(id)) {
+      throw new DomainError(`cannot detach required child: ${id}`);
+    }
   }
 
   private reorder(id: string, front: boolean): void {

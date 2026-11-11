@@ -18,6 +18,7 @@ import { SetCommand } from '../application/SetCommand.js';
 import { ShapeFactory } from '../application/ShapeFactory.js';
 import { UndoCommand } from '../application/UndoCommand.js';
 import { CliController } from '../adapters/cli/CliController.js';
+import { CliPresenter } from '../adapters/cli/CliPresenter.js';
 import { Repl } from '../adapters/cli/Repl.js';
 import { CircleProvider } from '../adapters/shapes/CircleProvider.js';
 import { EllipseProvider } from '../adapters/shapes/EllipseProvider.js';
@@ -32,14 +33,25 @@ import { SaveCommand } from '../application/SaveCommand.js';
 import type { DocumentStorage } from '../ports/DocumentStorage.js';
 import { TreeCommand } from '../application/TreeCommand.js';
 import { ShowCommand } from '../application/ShowCommand.js';
+import { PluginRegistry } from './PluginRegistry.js';
 
 /** 集中组装依赖；这里只登记名字，不按名字比较或执行图形算法。 */
 export class EditorComposition {
+  public constructor(private readonly plugins?: PluginRegistry) {}
+
+  public createPluginRegistry(): PluginRegistry {
+    const factory = this.createFactory();
+    const dispatcher = this.createDispatcher(factory);
+    return new PluginRegistry((category, name) =>
+      (category === 'shapes' && factory.has(name)) || (category === 'commands' && dispatcher.has(name)));
+  }
+
   public createFactory(): ShapeFactory {
     const factory = new ShapeFactory();
     for (const provider of [new RectProvider(), new CircleProvider(), new EllipseProvider(), new LineProvider(), new TextProvider(), new GroupProvider()]) {
       factory.register(provider);
     }
+    for (const provider of this.plugins?.shapeProviders() ?? []) { factory.register(provider); }
     return factory;
   }
 
@@ -56,7 +68,9 @@ export class EditorComposition {
     }));
     dispatcher.register('move', new CommandRegistration('move <id> <dx> <dy>', 3, 3, args => new MoveCommand(args.required(0), args.required(1), args.required(2))));
     dispatcher.register('scale', new CommandRegistration('scale <id> <factor>', 2, 2, args => new ScaleCommand(args.required(0), args.required(1))));
-    dispatcher.register('set', new CommandRegistration('set <id> <attr> <value>', 3, 3, args => new SetCommand(args.required(0), args.required(1), args.required(2))));
+    const attributes = this.plugins?.attributeHandlers() ?? [];
+    dispatcher.register('set', new CommandRegistration('set <id> <attr> <value>', 3, 3,
+      args => new SetCommand(args.required(0), args.required(1), args.required(2), attributes)));
     dispatcher.register('group', new CommandRegistration('group <newGid> <id1> <id2>…', 2, undefined, args => new GroupCommand(args.required(0), args.values(1))));
     dispatcher.register('ungroup', new CommandRegistration('ungroup <gid>', 1, 1, args => new UngroupCommand(args.required(0))));
     dispatcher.register('addto', new CommandRegistration('addto <gid> <id>', 2, 2, args => new AddToCommand(args.required(0), args.required(1))));
@@ -68,9 +82,12 @@ export class EditorComposition {
     dispatcher.register('tree', new CommandRegistration('tree [id]', 0, 1, args => new TreeCommand(args.optional(0))));
     dispatcher.register('show', new CommandRegistration('show <id>', 1, 1, args => new ShowCommand(args.required(0))));
     dispatcher.register('help', new CommandRegistration('help', 0, 0, () => new HelpCommand([...dispatcher.getUsages(), ...factory.getUsages()])));
+    for (const [name, command] of this.plugins?.commandEntries() ?? []) { dispatcher.register(name, command); }
     return dispatcher;
   }
 
-  public createController(session: EditorSession = new EditorSession()): CliController { return new CliController(this.createDispatcher(), session); }
+  public createController(session: EditorSession = new EditorSession()): CliController {
+    return new CliController(this.createDispatcher(), session, new CliPresenter(this.plugins?.treeDecorators()));
+  }
   public createRepl(): Repl { return new Repl(this.createController()); }
 }

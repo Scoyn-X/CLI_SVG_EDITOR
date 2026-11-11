@@ -1,0 +1,6 @@
+{
+  "name": "@svgframe/plugin-stats",
+  "type": "module",
+  "main": "./StatsPlugin.js",
+  "contributes": { "commands": ["stats"] }
+}

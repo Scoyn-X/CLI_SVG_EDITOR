@@ -1,6 +1,6 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { resolve, sep } from 'node:path';
+import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { XmlSvgCodec } from '../../src/adapters/svg/XmlSvgCodec.js';
@@ -17,6 +17,74 @@ beforeAll(() => {
 }, 35_000);
 
 describe('真实 CLI 进程', () => {
+  it('runs identical command plugins through both assembly paths in a fixed working directory', () => {
+    const parent = realpathSync(resolve(root, 'artifacts'));
+    const workspace = mkdtempSync(resolve(parent, 'plugin-assembly-'));
+    try {
+      const cwd = resolve(workspace, 'fixed-cwd');
+      mkdirSync(cwd);
+      mkdirSync(resolve(cwd, 'z-dir'));
+      mkdirSync(resolve(cwd, 'a-dir'));
+      writeFileSync(resolve(cwd, 'z.svg'), '');
+      writeFileSync(resolve(cwd, '.hidden'), '');
+      writeFileSync(resolve(cwd, 'a-dir/input.svg'), readFileSync(resolve(root, 'tests/fixtures/other.svg')));
+      const config = resolve(workspace, 'plugins.json');
+      writeFileSync(config, JSON.stringify({ plugins: ['stats', 'dir'].map(name => ({ module: resolve(output, 'plugins', name) })) }));
+      const input = 'dir\ninit\nhelp\ncreate g empty\ncreate circle c 1 2 3\nstats\nread a-dir/input.svg\ndir\nstats\n';
+      const run = (args: string[]) => spawnSync(process.execPath, [entry, ...args], { cwd, input, timeout: 5_000 });
+      const a = run(['--code-plugins']);
+      const b = run(['--config', config]);
+      expect(a.status).toBe(0);
+      expect(b.status).toBe(0);
+      expect(a.stderr.length).toBe(0);
+      expect(b.stderr.equals(a.stderr)).toBe(true);
+      expect(b.stdout.equals(a.stdout)).toBe(true);
+      const transcript = a.stdout.toString('utf8');
+      expect(transcript.split('[DIR]  a-dir\n[DIR]  z-dir\n[FILE]  .hidden\n[FILE]  z.svg')).toHaveLength(3);
+      expect(transcript).not.toContain('[FILE]  input.svg');
+      expect(transcript).toContain('circle: 1  (total 1, containers 1)');
+      expect(transcript).toContain('rect: 2  text: 1  circle: 2  ellipse: 1  (total 6, containers 1)');
+
+      writeFileSync(config, JSON.stringify({ plugins: [
+        { module: resolve(output, 'plugins', 'stats'), enabled: false },
+        { module: resolve(output, 'plugins', 'dir') },
+      ] }));
+      const onlyDir = run(['--config', config]);
+      expect(onlyDir.status).toBe(0);
+      expect(onlyDir.stderr.length).toBe(0);
+      expect(onlyDir.stdout.toString('utf8')).toContain('error: unknown command: stats');
+      expect(onlyDir.stdout.toString('utf8')).toContain('[DIR]  a-dir');
+    } finally {
+      expect(dirname(realpathSync(workspace))).toBe(parent);
+      rmSync(workspace, { recursive: true, force: true });
+    }
+  });
+
+  it('continues after startup errors and command errors in an installed plugin', () => {
+    const parent = realpathSync(resolve(root, 'artifacts'));
+    const workspace = mkdtempSync(resolve(parent, 'plugin-runtime-'));
+    try {
+      writeFileSync(resolve(workspace, 'package.json'), JSON.stringify({ name: 'failing', contributes: { commands: ['crash'] } }));
+      writeFileSync(resolve(workspace, 'crash.mjs'), `export default {
+        activate(ctx) { ctx.registerCommand('crash', {
+          getUsage() { return 'crash'; },
+          create() { return { execute() { throw new Error('broken\\ncommand'); } }; }
+        }); }
+      };`);
+      const config = resolve(workspace, 'config.json');
+      writeFileSync(config, JSON.stringify({ plugins: [{ module: './missing.mjs' }, { module: './crash.mjs' }] }));
+      const child = spawnSync(process.execPath, [entry, '--config', config], {
+        cwd: workspace, input: 'crash\ninit\ncanvas\n', encoding: 'utf8', timeout: 5_000,
+      });
+      expect(child.status).toBe(0);
+      expect(child.stderr).toBe('error: plugin not found: ./missing.mjs\n');
+      expect(child.stdout).toContain('error: unexpected command failure: broken command\nsvg> canvas 800x600 created\nsvg> canvas 800x600');
+    } finally {
+      expect(dirname(realpathSync(workspace))).toBe(parent);
+      rmSync(workspace, { recursive: true, force: true });
+    }
+  });
+
   it('课程背景的嵌套变换与字体通过实际 read/save 保留', () => {
     const input = 'read tests/fixtures/nested.svg\nsave artifacts/nested.svg\n';
     const child = spawnSync(process.execPath, [entry], { cwd: root, input, encoding: 'utf8', timeout: 5_000 });
