@@ -1,0 +1,25 @@
+# Help and unknown commands before a document exists.
+help
+stats
+dir
+init
+help
+save
+# Both read and save failures must preserve the pending redo.
+read other.svg
+move c1 10 0
+undo
+read missing.svg
+read invalid.svg
+save missing-directory/out.svg
+redo
+show c1
+scale e1 2
+undo
+redo
+save artifacts/recovered.svg
+undo
+# Preserve supported nested transform and font metadata across read/save.
+read nested.svg
+save artifacts/nested.svg
+tree diagram
