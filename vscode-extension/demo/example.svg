@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="160" viewBox="0 0 320 160">
+  <g id="flowchart">
+    <rect id="start" x="20" y="30" width="120" height="55" fill="lightblue"/>
+    <g id="labels">
+      <text x="44" y="63">开始</text>
+      <text id="caption" x="20" y="115">SVG Outline</text>
+    </g>
+  </g>
+</svg>

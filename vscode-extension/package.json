@@ -1,0 +1,20 @@
+{
+  "name": "cli-svg-outline",
+  "displayName": "SVG Explorer and Outline",
+  "description": "Marks SVG files in Explorer and shows SVG elements in the native Outline.",
+  "version": "0.1.0",
+  "publisher": "svg-editor-course",
+  "private": true,
+  "engines": { "vscode": "^1.96.0" },
+  "main": "./dist/extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test tests/*.test.mjs"
+  },
+  "dependencies": { "saxes": "6.0.0" },
+  "devDependencies": {
+    "@types/vscode": "1.96.0",
+    "typescript": "6.0.3"
+  }
+}
