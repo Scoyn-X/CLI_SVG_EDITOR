@@ -1,10 +1,28 @@
-# CLI SVG Editor — Phase 1 项目文档
+# CLI SVG Editor — 项目文档
 
 本项目是软件设计课程的 SVG 命令行编辑器，使用 TypeScript 和面向对象设计，通过 REPL 完成文档读写、图形编辑、结构调整与撤销重做。课程 Phase 1 的六种内置图形和 19 个命令已实现，持续测试、独立系统验收及审查跟进均已完成。
 
 本文件是课程要求的 `doc/README.md`，集中说明架构、AI 协作中的关键迭代、一致性自查和质量保证。以项目负责人视角展开的补充报告见 [Report.md](Report.md) 和 [Report.pdf](Report.pdf)。需求依据为 [phase_cli_1.md](../phase_cli_1.md)，未明确语义的工程选择见 [决策记录](decisions.md)。
 
-文档更新：2026-10-20。实现与完整测试基线：`04cc97e`；此后的报告与 README 整理未改变代码、测试或依赖。
+文档更新：2026-11-11。Phase 1 冻结基线为 `final` / `ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a`。下文的 Phase 1 过程、架构和历史结果保留当时口径，当前增量以本节 Phase 2 记录为准。
+
+## Phase 2 当前状态
+
+为支持独立插件扩展，CLI 增加四个扩展点和统一加载器，并通过 stats/dir 验证命令接入。VS Code 扩展提供 SVG 文件标记和原生 Outline。当前默认启动保持 Phase 1；`node dist/bootstrap/main.js --code-plugins` 用代码装配，`node dist/bootstrap/main.js --config plugins.config.json` 用配置装配。两者共用注册、清单校验和回滚路径。
+
+| 内容 | 设计与验证入口 |
+| --- | --- |
+| 扩展点、调用位置、缺省和错误契约 | [CLI 说明](phase2-cli.md#扩展点清单)，逐项对应实际代码 |
+| 装配、配置和加载失败 | [两种装配](phase2-cli.md#运行与两种装配)；模块名通用解析，支持 import-only 包 |
+| stats/dir 与目录适配器 | [插件和适配器](phase2-cli.md#statsdir-与适配器)，含 Client/Target/Adapter/Adaptee 对照 |
+| 重构前后依赖及 ADR | [PlantUML 对比](phase2-cli.md#重构前后依赖plantuml)、[四条 ADR](phase2-cli.md#adr)，实现与拟议项分别标注 |
+| VS Code 模式分析与复用 | [VS Code 说明](phase2-vscode.md)，宿主注册/回调、Decorator/Adapter 对照及解析复用取舍 |
+| 当前检查 | 2026-11-11 完整 check 通过，24 文件 / 426 项，112 模块 / 351 依赖零违规；6 组 Phase 1 字节回归、4 份 SVG 通过；扩展 4 项自动测试通过 |
+| 界面与交互验证 | [集中验收清单](phase2-acceptance.md)，含开发宿主操作、预期结果、截图及哈希核对 |
+| 指标 | [脚本口径](../docs/metrics/README.md)及[历史报告](../docs/metrics/phase2-current.md)，按实际源码提交统计文件职责、三类 CLI 指标及单列 VS Code |
+| 工作入口与后续功能 | [工程指南](phase2-work-guide.md)，包含 box、modified-star、(box) 的实施重点与完整课程交付条件 |
+
+Phase 1 的行为以 final 为固定对照。新插件的接入按实际提交检查运行代码的变更边界；最终交付使用 p2 标签。
 
 ## 目录
 
@@ -57,7 +75,7 @@ save demo.svg
 
 图形通过唯一、大小写敏感的 id 定位。每条成功编辑构成一个撤销单元，失败不改变文档、路径、id 分配或历史。`tree/show/help` 和无参数 `canvas` 不进入历史；成功的文档操作建立历史屏障，下一条成功编辑解禁。细则见 [命令与历史](command-history.md)。
 
-本阶段不实现 `box`、插件加载或 GUI。SVG 读入采用明确的受支持子集；不支持的元素或属性报错，避免静默丢失数据。具体范围见 [svg-io.md](svg-io.md)。
+以上为 Phase 1 功能基线。Phase 2 当前已提供插件加载和独立 VS Code 扩展，生产 `box` 仍待接入。SVG 读入继续采用明确的受支持子集；不支持的元素或属性报错，避免静默丢失数据。具体范围见 [svg-io.md](svg-io.md)。
 
 ## 架构方案
 
@@ -168,7 +186,7 @@ save demo.svg
 
 ### 已执行验证与限制
 
-`04cc97e` 的 `npm run check` 完整通过，结果如下；本次 README 整理没有代码变化，不重复运行相同测试。
+以下保留 `04cc97e` 的 Phase 1 历史检查；最新 Phase 2 结果见本文开头及集中验收清单。
 
 | 检查 | 结果 |
 | --- | --- |

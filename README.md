@@ -58,6 +58,8 @@ CLI 默认提供六种内置图形；加载器支持追加图形、命令、属�
 
 ## 文档
 
+- [工程工作指南](doc/phase2-work-guide.md)、[集中验收清单](doc/phase2-acceptance.md)、[源码指标](docs/metrics/README.md)。
+
 - [正式课程文档](doc/README.md)：架构方案、过程记录、一致性自查、质量保证。
 - [架构图源](doc/architecture.puml) / [渲染图](doc/architecture.svg)。
 - [验收索引](doc/acceptance.md)、[测试计划](doc/testing.md)、[系统修复记录](doc/system-regression.md)、[审查后增量](doc/iteration-notes.md)。
