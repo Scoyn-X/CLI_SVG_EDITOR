@@ -24,6 +24,7 @@ it('box preserves composite invariants, transactions, history and SVG round trip
  const before = session.describe(); const result = cli.executeLine(input);
  if (input.startsWith('addto')) { expect(result[0]).not.toContain('error:'); } else { expect(result[0]).toContain('error:'); expect(session.describe()).toEqual(before); }
  }
+ cli.executeLine('create g target'); expect(cli.executeLine('addto target n-label')[0]).toContain('cannot detach required child');
  cli.executeLine('create rect collision-label 0 0 1 1'); const before = session.describe(); const history = session.getHistoryStatus();
  expect(cli.executeLine('create box collision 0 0 1 1 "x"')[0]).toContain('id already exists'); expect(session.describe()).toEqual(before); expect(session.getHistoryStatus()).toEqual(history);
  cli.executeLine('create box nested 1 2 3 4 "child" in n'); cli.executeLine('scale n 2'); cli.executeLine('undo');
@@ -34,4 +35,3 @@ it('box preserves composite invariants, transactions, history and SVG round trip
  }
  cli.executeLine('delete n'); cli.executeLine('undo'); expect(session.describeShape('n').getType()).toBe('box');
 });
-

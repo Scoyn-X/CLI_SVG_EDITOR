@@ -6,8 +6,8 @@ export class Box extends Group {
   public constructor(id: string, children: readonly Shape[]) {
     super(id, children);
     const parts = children.map(child => child.describe());
-    if (!parts.some(child => child.getId() === id + '-rect' && child.getTag() === 'rect')
-      || !parts.some(child => child.getId() === id + '-label' && child.getTag() === 'text')) {
+    const required = new Map([[id + '-rect', 'rect'], [id + '-label', 'text']]);
+    if ([...required].some(([childId, tag]) => !parts.some(child => child.getId() === childId && child.getTag() === tag))) {
       throw new DomainError('invalid box structure: ' + id);
     }
     this.preservePresentation(new PresentationAttributes({ 'data-kind': 'box' }));
