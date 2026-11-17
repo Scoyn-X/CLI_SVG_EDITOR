@@ -27,6 +27,6 @@ export class SetCommand extends EditCommand {
   private summary(shape: ShapeDescription): string {
     const value = this.attribute === 'text' ? shape.getText() : shape.getAttributes()[this.attribute];
     const display = value === undefined ? '(unset)' : typeof value === 'string' ? JSON.stringify(value) : String(value);
-    return `${shape.getTag()}#${this.id} updated: ${this.attribute}=${display}`;
+    return `${shape.getType()}#${this.id} updated: ${this.attribute}=${display}`;
   }
 }

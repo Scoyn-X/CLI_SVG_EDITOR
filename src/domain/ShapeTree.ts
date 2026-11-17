@@ -94,7 +94,7 @@ export class ShapeTree {
     if (parentId === id || this.parentChain(parentId).includes(id)) {
       throw new DomainError(`cannot add a shape into itself or its descendant: ${id}`);
     }
-    if (parentId !== this.parents.get(id)) { this.assertDetachable(id); }
+    this.assertDetachable(id);
     this.container(this.parents.get(id)).remove(shape);
     target.insert(shape);
     this.rebuildIndex();

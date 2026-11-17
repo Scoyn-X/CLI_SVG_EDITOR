@@ -16,7 +16,7 @@ export class CreateCommand extends EditCommand {
     const shape = this.creator.create(this.type, this.id, this.parameters);
     document.add(shape, this.parentId);
     const label = `${shape.getType()}#${this.id}`;
-    const parent = this.parentId === undefined ? '' : ` in ${document.describeShape(this.parentId).getTag()}#${this.parentId}`;
+    const parent = this.parentId === undefined ? '' : ` in ${document.describeShape(this.parentId).getType()}#${this.parentId}`;
     const details = shape.creationDetails();
     return new CommandResult(`${label} created${details === undefined ? '' : ` (${details})`}${parent}`, `${label} deleted`);
   }

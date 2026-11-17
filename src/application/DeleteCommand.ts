@@ -7,9 +7,9 @@ export class DeleteCommand extends EditCommand {
   protected override apply(document: SvgDocument): CommandResult {
     const shape = document.describeShape(this.id);
     const parentId = document.getParentId(this.id);
-    const parent = parentId === undefined ? 'svg' : `${document.describeShape(parentId).getTag()}#${parentId}`;
+    const parent = parentId === undefined ? 'svg' : `${document.describeShape(parentId).getType()}#${parentId}`;
     document.remove(this.id);
-    const label = `${shape.getTag()}#${this.id}`;
+    const label = `${shape.getType()}#${this.id}`;
     return new CommandResult(`${label} deleted`, `${label} restored into ${parent}`);
   }
 }

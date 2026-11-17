@@ -159,3 +159,14 @@ undo/redo 使用独立的领域对象副本，不共享可写快照；恢复包�
 
 
 交付复核补充：transform 列表分隔与数字列表空白按 SVG comma-wsp 校验，不接受无分隔函数或 NBSP；R04 与回归证据见 system-regression.md。
+
+## D11：复合图形的命令标识、结构查询与继承样式
+
+2026-11-17，根据第 005 轮审查确定：
+
+- 编辑命令回显使用 getType() 标识图形与父容器，使 box 的创建、移动、缩放、删除、属性及排序反馈一致。普通图形类型与 SVG 标签相同，Phase 1 输出保持原样。
+- show 展示该 SVG 元素自身的标签、父级和属性；box 显示 g 与 data-kind=box。子件结构通过 tree <id> 查询。这使 show 与序列化的元素属性逐项对应。
+- 导入的 g 容器 fill/stroke 保留在容器，继续作用于继承它们的子件和新增后代。set box fill 定义为框体编辑，只修改必要矩形的显式 fill；容器 fill 与矩形 fill 是两个不同属性。自动把容器 fill 移到矩形会改变文字或后代的继承效果，因此保持原 SVG 结构。
+- 必要子件的 addto 同父重挂也拒绝，防止矩形移至文字之后覆盖标题。该规则复用 canDetachChild 结构保护，普通 g 的同父 addto 继续调整顺序。front/back 仍按原有 z-order 命令定义处理。
+
+对应测试：tests/plugins/Box.test.ts 的语义反馈、受保护结构操作、继承样式及保存断言。样式和 show 属审查 Q7/Q16 的显式工程决策。
