@@ -29,7 +29,7 @@ describe('真实 CLI 进程', () => {
       writeFileSync(resolve(cwd, '.hidden'), '');
       writeFileSync(resolve(cwd, 'a-dir/input.svg'), readFileSync(resolve(root, 'tests/fixtures/other.svg')));
       const config = resolve(workspace, 'plugins.json');
-      writeFileSync(config, JSON.stringify({ plugins: ['stats', 'dir'].map(name => ({ module: resolve(output, 'plugins', name) })) }));
+      writeFileSync(config, JSON.stringify({ plugins: ['stats', 'dir', 'box'].map(name => ({ module: resolve(output, 'plugins', name) })) }));
       const input = 'dir\ninit\nhelp\ncreate g empty\ncreate circle c 1 2 3\nstats\nread a-dir/input.svg\ndir\nstats\n';
       const run = (args: string[]) => spawnSync(process.execPath, [entry, ...args], { cwd, input, timeout: 5_000 });
       const a = run(['--code-plugins']);

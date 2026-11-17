@@ -1,3 +1,5 @@
+import box from '../plugins/box/BoxPlugin.js';
+import boxManifest from '../plugins/box/package.json' with { type: 'json' };
 import dir from '../plugins/dir/DirPlugin.js';
 import dirManifest from '../plugins/dir/package.json' with { type: 'json' };
 import stats from '../plugins/stats/StatsPlugin.js';
@@ -9,5 +11,6 @@ export class CodePlugins {
   public async load(loader: PluginLoader): Promise<void> {
     await loader.activate(PluginManifest.parse(statsManifest), stats);
     await loader.activate(PluginManifest.parse(dirManifest), dir);
+    await loader.activate(PluginManifest.parse(boxManifest), box);
   }
 }
