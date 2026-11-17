@@ -1,0 +1,24 @@
+import { it, expect } from 'vitest';
+import { EditorComposition } from '../../src/bootstrap/EditorComposition.js';
+import { PluginManifest } from '../../src/bootstrap/PluginManifest.js';
+import { EditorSession } from '../../src/application/EditorSession.js';
+import { CliController } from '../../src/adapters/cli/CliController.js';
+import { CliPresenter } from '../../src/adapters/cli/CliPresenter.js';
+import { ModifiedStarPlugin } from '../../src/plugins/modified-star/ModifiedStarPlugin.js';
+import { ModifiedStar } from '../../src/plugins/modified-star/ModifiedStar.js';
+it('tracks content, ancestors, save points, undo/redo, failures and independent instances', async () => {
+ const registry = new EditorComposition().createPluginRegistry();
+ await registry.install(PluginManifest.parse({name:'star',contributes:{decorators:['modified-star']}}),new ModifiedStarPlugin(),undefined);
+ const composition = new EditorComposition(registry); const session = new EditorSession(); let fail = false;
+ const storage = {resolve:(p:string)=>p, read:()=>'',write:()=>{if(fail)throw new Error('failed');}};
+ const cli = new CliController(composition.createDispatcher(composition.createFactory(),storage),session,new CliPresenter(registry.treeDecorators()));
+ cli.executeLine('init'); expect(cli.executeLine('tree')).toEqual(['svg (800x600)']);
+ cli.executeLine('create g outer'); cli.executeLine('create rect r 0 0 1 1 in outer'); expect(cli.executeLine('tree').every(line=>line.endsWith('*'))).toBe(true);
+ cli.executeLine('save test.svg'); expect(cli.executeLine('tree').some(line=>line.endsWith('*'))).toBe(false);
+ cli.executeLine('move r 1 0'); expect(cli.executeLine('tree').every(line=>line.endsWith('*'))).toBe(true);
+ cli.executeLine('undo'); expect(cli.executeLine('tree').some(line=>line.endsWith('*'))).toBe(false);
+ cli.executeLine('redo'); fail=true; expect(cli.executeLine('save bad.svg')[0]).toContain('error:'); expect(cli.executeLine('tree')[0]).toContain('*');
+ cli.executeLine('delete r'); expect(cli.executeLine('tree outer')[0]).toBe('g#outer *'); cli.executeLine('undo'); cli.executeLine('undo'); expect(cli.executeLine('tree')[0]).not.toContain('*');
+ const other = new ModifiedStar(); expect(other.prepare(session.describe(),session.describeSaved())()).toBeUndefined();
+ cli.executeLine('canvas 900 600'); expect(cli.executeLine('tree')[0]).toContain('*'); cli.executeLine('init'); expect(cli.executeLine('tree')[0]).not.toContain('*');
+});

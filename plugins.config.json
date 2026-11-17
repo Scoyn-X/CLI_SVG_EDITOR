@@ -8,6 +8,9 @@
     },
     {
       "module": "./dist/plugins/box"
+    },
+    {
+      "module": "./dist/plugins/modified-star"
     }
   ]
 }

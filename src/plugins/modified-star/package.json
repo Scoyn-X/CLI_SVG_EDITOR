@@ -1,0 +1,10 @@
+{
+  "name": "@svgframe/plugin-modified-star",
+  "type": "module",
+  "main": "./ModifiedStarPlugin.js",
+  "contributes": {
+    "decorators": [
+      "modified-star"
+    ]
+  }
+}
