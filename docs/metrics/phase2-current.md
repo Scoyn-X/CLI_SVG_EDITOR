@@ -2,15 +2,15 @@
 
 基线 `final`（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a）
 
-目标 `5ec0a5573b1ae4fa3a246f9fb1dfc6d686ccf52b`（5ec0a5573b1ae4fa3a246f9fb1dfc6d686ccf52b）
+目标 `d48ae4cac68f2215ccd2e473ed1030278a6973b6`（d48ae4cac68f2215ccd2e473ed1030278a6973b6）
 
 口径：物理行含空行和注释；圈复杂度为有函数体的函数/方法/构造器/访问器/箭头函数的路径数之和。每个实现起点 1，if、三元、catch、非 default 的 case、循环及 && / || / ?? 各加 1；嵌套函数独立计数。接口、声明、模块顶层语句与类型表达式不计圈复杂度。VS Code 单列，不计入 CLI 增量。
 
 | 类别 | 文件数 基线 → 目标 | 行数 基线 → 目标 | 圈复杂度 基线 → 目标（增量） |
 | --- | ---: | ---: | ---: |
 | 内核 | 82 → 86 | 2057 → 2155 | 659 → 694（35） |
-| 装配 | 3 → 9 | 106 → 375 | 30 → 152（122） |
-| 插件 | 0 → 8 | 0 → 115 | 0 → 29（29） |
+| 装配 | 3 → 9 | 106 → 381 | 30 → 152（122） |
+| 插件 | 0 → 17 | 0 → 245 | 0 → 84（84） |
 | VS Code | 0 → 5 | 0 → 134 | 0 → 34（34） |
 
 ## 文件清单
@@ -69,7 +69,7 @@
 | `src/application/TreeDisplay.ts` | 内核 · 编辑命令、状态与扩展契约：TreeDisplay；公开操作 render | 9 → 10 | 2 → 2 |
 | `src/application/UndoCommand.ts` | 内核 · 编辑命令、状态与扩展契约：UndoCommand；公开操作 execute | 7 → 7 | 1 → 1 |
 | `src/application/UngroupCommand.ts` | 内核 · 编辑命令、状态与扩展契约：UngroupCommand | 12 → 12 | 2 → 2 |
-| `src/bootstrap/CodePlugins.ts` | 装配 · 启动、插件加载与依赖组装：CodePlugins；公开操作 load | 0 → 13 | 0 → 1 |
+| `src/bootstrap/CodePlugins.ts` | 装配 · 启动、插件加载与依赖组装：CodePlugins；公开操作 load | 0 → 19 | 0 → 1 |
 | `src/bootstrap/EditorComposition.ts` | 装配 · 启动、插件加载与依赖组装：EditorComposition；公开操作 createPluginRegistry、createFactory、createDispatcher、createController、createRepl | 76 → 93 | 25 → 36 |
 | `src/bootstrap/PluginConfigEntry.ts` | 装配 · 启动、插件加载与依赖组装：PluginConfigEntry | 0 → 5 | 0 → 0 |
 | `src/bootstrap/PluginContributions.ts` | 装配 · 启动、插件加载与依赖组装：PluginContributions；公开操作 registerShape、registerCommand、registerDecorator、registerAttribute、names、has、shapeProviders、commandEntries、treeDecorators、attributeHandlers、seal | 0 → 44 | 0 → 16 |
@@ -102,11 +102,20 @@
 | `src/domain/SvgDocument.ts` | 内核 · SVG 领域对象与结构：SvgDocument；公开操作 getWidth、getHeight、getElementCount、getParentId、describeShape、describe、resize、add、remove、group、ungroup、addTo、front、back、move、scale、set、clone | 51 → 51 | 19 → 19 |
 | `src/domain/Text.ts` | 内核 · SVG 领域对象与结构：Text；公开操作 clone | 32 → 32 | 7 → 7 |
 | `src/domain/ValueValidation.ts` | 内核 · SVG 领域对象与结构：ValueValidation；公开操作 finite、nonNegative、positive、number、text、numbers、id | 59 → 59 | 29 → 29 |
+| `src/plugins/box/Box.ts` | 插件 · 独立插件实现与清单：Box；公开操作 getType、canUngroup、canDetachChild、creationDetails | 0 → 20 | 0 → 12 |
+| `src/plugins/box/BoxAttributes.ts` | 插件 · 独立插件实现与清单：BoxAttributes；公开操作 handles、apply、summarize | 0 → 14 | 0 → 9 |
+| `src/plugins/box/BoxPlugin.ts` | 插件 · 独立插件实现与清单：BoxPlugin；公开操作 activate | 0 → 10 | 0 → 1 |
+| `src/plugins/box/BoxProvider.ts` | 插件 · 独立插件实现与清单：BoxProvider；公开操作 getType、getSvgTag、getUsage、create、fromSvg | 0 → 30 | 0 → 20 |
+| `src/plugins/box/BoxTypeLabel.ts` | 插件 · 独立插件实现与清单：BoxTypeLabel；公开操作 prepare | 0 → 5 | 0 → 3 |
+| `src/plugins/box/package.json` | 插件 · 独立插件包入口与 contributes 清单 | 0 → 16 | 0 → 0 |
 | `src/plugins/dir/DirCommand.ts` | 插件 · 独立插件实现与清单：DirCommand；公开操作 execute | 0 → 25 | 0 → 12 |
 | `src/plugins/dir/DirPlugin.ts` | 插件 · 独立插件实现与清单：DirPlugin；公开操作 activate | 0 → 16 | 0 → 3 |
 | `src/plugins/dir/DirectoryReader.ts` | 插件 · 独立插件实现与清单：DirectoryEntry、DirectoryReader；公开操作 currentDirectory、read | 0 → 9 | 0 → 0 |
 | `src/plugins/dir/NodeDirectoryReader.ts` | 插件 · 独立插件实现与清单：NodeDirectoryReader；公开操作 currentDirectory、read | 0 → 14 | 0 → 5 |
 | `src/plugins/dir/package.json` | 插件 · 独立插件包入口与 contributes 清单 | 0 → 6 | 0 → 0 |
+| `src/plugins/modified-star/ModifiedStar.ts` | 插件 · 独立插件实现与清单：ModifiedStar；公开操作 prepare | 0 → 19 | 0 → 9 |
+| `src/plugins/modified-star/ModifiedStarPlugin.ts` | 插件 · 独立插件实现与清单：ModifiedStarPlugin；公开操作 activate | 0 → 6 | 0 → 1 |
+| `src/plugins/modified-star/package.json` | 插件 · 独立插件包入口与 contributes 清单 | 0 → 10 | 0 → 0 |
 | `src/plugins/stats/StatsCommand.ts` | 插件 · 独立插件实现与清单：StatsCommand；公开操作 execute | 0 → 27 | 0 → 7 |
 | `src/plugins/stats/StatsPlugin.ts` | 插件 · 独立插件实现与清单：StatsPlugin；公开操作 activate | 0 → 12 | 0 → 2 |
 | `src/plugins/stats/package.json` | 插件 · 独立插件包入口与 contributes 清单 | 0 → 6 | 0 → 0 |

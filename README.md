@@ -46,11 +46,11 @@ save demo.svg
 - 每条编辑一个撤销单元，失败不改变文档/路径/历史；成功文档命令建立历史屏障，后续新编辑解禁。
 - 支持 SVG 嵌套与文本、样式存在性、受控 transform/字体/viewBox 保留；不支持内容明确拒绝。详细范围见 [SVG 与文件](doc/svg-io.md)。
 
-CLI 默认提供六种内置图形；加载器支持追加图形、命令、属性处理和树标签。当前生产插件为 stats/dir，后续功能包括 box 与 modified-star/(box) 标签。SVG 采用受控子集，跨父重组的局部坐标和样式继承规则见 [决策记录](doc/decisions.md)。
+CLI 默认提供六种内置图形；加载器支持追加图形、命令、属性处理和树标签。当前生产插件为 stats/dir、box（含类型标签）和 modified-star。SVG 采用受控子集，跨父重组的局部坐标和样式继承规则见 [决策记录](doc/decisions.md)。
 
 ## 验证与样例
 
-2026-11-11 完整工程检查通过：24 个测试文件、426 项测试，依赖检查覆盖 112 模块和 351 条依赖。六组 Phase 1 会话比较原始输出、退出码和四份 SVG 字节；真实进程测试验证 stats/dir 的 A/B 装配一致性。VS Code 扩展的 4 项自动测试通过。Phase 1 的历史修复记录见 [增量记录](doc/iteration-notes.md)。
+2026-11-11 完整工程检查通过：26 个测试文件、428 项测试，依赖检查覆盖 121 模块和 381 条依赖。六组 Phase 1 会话比较原始输出、退出码和四份 SVG 字节；真实进程测试验证 stats/dir 的 A/B 装配一致性。VS Code 扩展的 4 项自动测试通过。Phase 1 的历史修复记录见 [增量记录](doc/iteration-notes.md)。
 
 [流程图](doc/examples/flowchart.svg)、[典型会话导出图](doc/examples/demo.svg)、[嵌套变换](doc/examples/nested.svg) 是实际保存产物。[回放说明](doc/development.md) 包含 Windows 运行方法；[typical.cli](tests/fixtures/typical.cli)、[flowchart.cli](tests/fixtures/flowchart.cli) 为可重复脚本。
 

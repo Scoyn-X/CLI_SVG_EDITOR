@@ -15,12 +15,12 @@
 | 扩展点、调用位置、缺省和错误契约 | [CLI 说明](phase2-cli.md#扩展点清单)，逐项对应实际代码 |
 | 装配、配置和加载失败 | [两种装配](phase2-cli.md#运行与两种装配)；模块名通用解析，支持 import-only 包 |
 | stats/dir 与目录适配器 | [插件和适配器](phase2-cli.md#statsdir-与适配器)，含 Client/Target/Adapter/Adaptee 对照 |
-| 重构前后依赖及 ADR | [PlantUML 对比](phase2-cli.md#重构前后依赖plantuml)、[四条 ADR](phase2-cli.md#adr)，实现与拟议项分别标注 |
+| 重构前后依赖及 ADR | [PlantUML 对比](phase2-cli.md#重构前后依赖plantuml)、[四条 ADR](phase2-cli.md#adr)，属性事务、读回拒绝、dirty 语义与清单校验 |
 | VS Code 模式分析与复用 | [VS Code 说明](phase2-vscode.md)，宿主注册/回调、Decorator/Adapter 对照及解析复用取舍 |
-| 当前检查 | 2026-11-11 完整 check 通过，24 文件 / 426 项，112 模块 / 351 依赖零违规；6 组 Phase 1 字节回归、4 份 SVG 通过；扩展 4 项自动测试通过 |
+| 当前检查 | 2026-11-17 完整 check 通过，26 文件 / 428 项，121 模块 / 381 依赖零违规；6 组 Phase 1 字节回归、4 份 SVG 通过；扩展 4 项自动测试通过 |
 | 界面与交互验证 | [集中验收清单](phase2-acceptance.md)，含开发宿主操作、预期结果、截图及哈希核对 |
 | 指标 | [脚本口径](../docs/metrics/README.md)及[历史报告](../docs/metrics/phase2-current.md)，按实际源码提交统计文件职责、三类 CLI 指标及单列 VS Code |
-| 工作入口与后续功能 | [工程指南](phase2-work-guide.md)，包含 box、modified-star、(box) 的实施重点与完整课程交付条件 |
+| 工程入口与交付条件 | [工程指南](phase2-work-guide.md)，包含 box、modified-star、(box) 的实施重点与完整课程交付条件 |
 
 Phase 1 的行为以 final 为固定对照。新插件的接入按实际提交检查运行代码的变更边界；最终交付使用 p2 标签。
 
@@ -75,7 +75,7 @@ save demo.svg
 
 图形通过唯一、大小写敏感的 id 定位。每条成功编辑构成一个撤销单元，失败不改变文档、路径、id 分配或历史。`tree/show/help` 和无参数 `canvas` 不进入历史；成功的文档操作建立历史屏障，下一条成功编辑解禁。细则见 [命令与历史](command-history.md)。
 
-以上为 Phase 1 功能基线。Phase 2 当前已提供插件加载和独立 VS Code 扩展，生产 `box` 仍待接入。SVG 读入继续采用明确的受支持子集；不支持的元素或属性报错，避免静默丢失数据。具体范围见 [svg-io.md](svg-io.md)。
+以上为 Phase 1 功能基线。Phase 2 当前已提供插件加载和独立 VS Code 扩展，生产 box 和两类树标签已接入。SVG 读入继续采用明确的受支持子集；不支持的元素或属性报错，避免静默丢失数据。具体范围见 [svg-io.md](svg-io.md)。
 
 ## 架构方案
 
@@ -217,3 +217,5 @@ save demo.svg
 | [roadmap.md](roadmap.md) / [historical-checks.md](historical-checks.md) / [delivery.md](delivery.md) | 工程里程碑、历史验证及交付记录 |
 
 GitHub 仓库：[Scoyn-X/CLI_SVG_EDITOR](https://github.com/Scoyn-X/CLI_SVG_EDITOR)。已发布交付快照：[final](https://github.com/Scoyn-X/CLI_SVG_EDITOR/tree/final)。
+
+生产插件的独立提交、零内核差异、版本 B 和单/双标签回放见 [Phase 2 交付证据](evidence/phase2/README.md)。

@@ -1,6 +1,6 @@
 # Phase 2 CLI 框架与命令插件
 
-为支持新增命令、图形类型和显示规则，CLI 将四类变化封装为扩展契约，通过统一的注册与加载流程接入插件。当前提供 stats 和 dir 命令，默认装配保留 Phase 1 的六种图形与 19 条命令。
+为支持新增命令、图形类型和显示规则，CLI 将四类变化封装为扩展契约，通过统一的注册与加载流程接入插件。当前提供 stats、dir、box 及 modified-star，默认装配保留 Phase 1 的六种图形与 19 条命令。
 
 ## 运行与两种装配
 
@@ -21,7 +21,9 @@ node dist/bootstrap/main.js --config plugins.config.json
 {
   "plugins": [
     { "module": "./dist/plugins/stats" },
-    { "module": "./dist/plugins/dir", "enabled": true, "options": {} }
+    { "module": "./dist/plugins/dir", "enabled": true, "options": {} },
+    { "module": "./dist/plugins/box" },
+    { "module": "./dist/plugins/modified-star" }
   ]
 }
 ```
@@ -49,12 +51,12 @@ node dist/bootstrap/main.js --config plugins.config.json
 
 | 接口与职责 | 实际调用位置 | 当前实现 | 禁用可选插件时 | 契约与失败处理 |
 | --- | --- | --- | --- | --- |
-| `ports/ShapeProvider`：创建、SVG 读回和帮助语法 | `application/ShapeFactory.create/fromSvg/getUsages`；`CreateCommand.apply` 使用创建结果 | `adapters/shapes/*Provider` 六类；测试 `MarkerProvider` | 六种内置类型仍注册；未知类型保留 Phase 1 错误 | 类型重名拒绝注册；provider 校验参数/子树，错误向 CLI 返回；创建/导入成功后才发布。自定义复合子类必须实现多态复制 |
+| `ports/ShapeProvider`：创建、SVG 读回和帮助语法 | `application/ShapeFactory.create/fromSvg/getUsages`；`CreateCommand.apply` 使用创建结果 | `adapters/shapes/*Provider` 六类；生产 `plugins/box/BoxProvider`；测试 `MarkerProvider` | 六种内置类型仍注册；未知类型保留 Phase 1 错误 | 类型重名拒绝注册；provider 校验参数/子树，错误向 CLI 返回；创建/导入成功后才发布。自定义复合子类必须实现多态复制 |
 | `application/Command` 抽象类及 `CommandRegistration`：命令执行、参数规则、帮助 | `CommandDispatcher.create` 查表并调用 `CommandRegistration.create`；`adapters/cli/CliController.executeLine` 调用 execute | 原 19 命令、`plugins/stats/StatsCommand`、`plugins/dir/DirCommand` | stats/dir 不在 help，执行报 `error: unknown command: <name>` | 重名拒绝注册；参数数目错误为 `error: usage: <usage>`；普通异常转成单行 unexpected command failure，下一条仍可执行。编辑命令须通过会话事务 |
-| `ports/TreeDecorator`：逐树准备、逐行追加标签 | `adapters/cli/CliPresenter.tree` 调用 prepare，再在标题和 children 的每行调用回调 | 测试 `MarkerTreeDecorator` 及独立后缀探针；生产标签待做 | 空列表，不附加空格或标签，旧 tree 字节保持 | prepare 收到不可写的当前/干净描述；画布行 shape 为 undefined；空标签忽略。异常由控制器转单行错误，不发布部分树输出，不更改文档 |
-| `ports/AttributeHandler`：属性匹配、受控修改及摘要 | `application/SetCommand.apply` 调用 handles/apply/summarize | 测试 `MarkerAttribute`；生产 box handler 待做 | 零命中，走原属性白名单 | 多重命中报 `error: conflicting attribute handlers: <attr>`；处理失败不再回退默认规则，丢弃候选文档并保留历史 |
+| `ports/TreeDecorator`：逐树准备、逐行追加标签 | `adapters/cli/CliPresenter.tree` 调用 prepare，再在标题和 children 的每行调用回调 | 生产 `BoxTypeLabel`、`ModifiedStar`；测试树标签探针 | 空列表，不附加空格或标签，旧 tree 字节保持 | prepare 收到不可写的当前/干净描述；画布行 shape 为 undefined；空标签忽略。异常由控制器转单行错误，不发布部分树输出，不更改文档 |
+| `ports/AttributeHandler`：属性匹配、受控修改及摘要 | `application/SetCommand.apply` 调用 handles/apply/summarize | 生产 `BoxAttributes`；测试 `MarkerAttribute` | 零命中，走原属性白名单 | 多重命中报 `error: conflicting attribute handlers: <attr>`；处理失败不再回退默认规则，丢弃候选文档并保留历史 |
 
-测试专属实现位于 `tests/integration/PluginFramework.test.ts`，验证四类扩展的注册、调用和默认行为。生产插件的当前范围为 stats/dir；box 及两个树标签属于后续功能。
+测试专属实现位于 `tests/integration/PluginFramework.test.ts`，验证四类扩展的注册、调用和默认行为。生产插件包括 stats、dir、box（含类型标签）和 modified-star。
 
 注册错误由加载器写 stderr，均以 `error:` 开头；交互命令错误沿用 Phase 1 的 stdout 诊断行为。
 
@@ -91,15 +93,15 @@ handles 接收不可变 `ShapeDescription`，通过 getType、getChildren 等公
 
 ### P2-02：语义类型与 SVG 标签分离，未知标记降级（框架已实现）
 
-`Shape.getType()` 可与 SVG 标签不同。provider 必须显式声明 getSvgTag，且标签匹配时才消费 data-kind；否则按普通 SVG 标签 provider 读回。未安装对应插件的 g 保留 data-kind 和子树，降为普通 Group；不另造导入分派。复合子类通过 Group.createCopy 保留子类型，通过 canUngroup/canDetachChild 声明结构保护。完整子树附着时校验全局 id。生产 box 接入时须实现子件模板校验，并覆盖坏结构的拒绝策略。
+`Shape.getType()` 可与 SVG 标签不同。provider 必须显式声明 getSvgTag，且标签匹配时才消费 data-kind；否则按普通 SVG 标签 provider 读回。未安装对应插件的 g 保留 data-kind 和子树，降为普通 Group；不另造导入分派。复合子类通过 Group.createCopy 保留子类型，通过 canUngroup/canDetachChild 声明结构保护。完整子树附着时校验全局 id。Box 构造按直接子节点 id/tag schema 校验必要矩形和文本；缺件、类型错误或重复 id 拒绝整份 read，原文档和历史保持。子件脱离被拒绝；删除整个 box 使用单个历史单元。
 
 ### P2-03：注册暂存，激活后校验清单（已实现）
 
 先建立插件独立的 PluginContributions，再执行 activate；结束后封闭上下文、按四类集合核对 manifest，全部成功才提交。A/B 共用此路径，防止代码装配绕过校验。重复名立即失败并记忆错误；失败贡献不泄漏，已成功插件不回滚。先解析顶层模块、再求值，区分模块缺失与内部依赖失败。代价是激活期不能直接看到其他插件的内部对象，也不支持启动后动态卸载。
 
-### P2-04：干净基准与标签顺序（基准已实现，dirty 插件待实现）
+### P2-04：干净基准与标签顺序（已实现）
 
-会话在 init、成功 read/save 后保存不可变描述；失败 IO 不更新，canvas 调整不重置基准。tree 每次把当前描述和基准交给 prepare，按注册顺序追加各标签。后续 modified-star 拟按内容与基准不同判断：新节点立即标记、变化向祖先和画布传播、undo 回保存点清除；该变化集合应封装在插件实例，不使用模块变量。当前探针覆盖基准传递和多标签顺序；dirty 状态机随 modified-star 插件实现和验证。
+会话在 init、成功 read/save 后保存不可变描述；失败 IO 不更新，canvas 调整不重置基准。tree 每次把当前描述和基准交给 prepare，按注册顺序追加各标签。ModifiedStar 按内容与干净基准比较：新节点立即标记，子树内容或顺序变化标记祖先及画布，undo 回保存点清除。变化集合封装在实例字段。比较包含语义类型、属性、文本、有序子树及画布尺寸/属性。装配顺序为 box-type-label 后 modified-star，同一行输出 `(box) *`。状态机测试覆盖保存、失败保存、再编辑、undo/redo、删除、画布变更和重新 init；生产回放覆盖单标签及双标签组合。
 
 ## 重构前后依赖（PlantUML）
 
@@ -171,3 +173,9 @@ L 按配置字符串动态装入模块，无具体插件静态依赖。Node 内�
 ### AI 协作中的修正
 
 为处理复合子类在历史恢复后丢失语义类型的问题，Group 通过 createCopy 让子类提供复制构造；探针验证分组与 undo/redo 后的类型和结构保护。属性处理采用候选文档，部分修改后抛错时整体丢弃，保留既有 redo。包加载的初稿只使用 require 解析，修订后按 ESM import 条件解析安装包，并以 import-only 入口和 hook 释放测试验证。
+
+## 生产插件验证
+
+Box 和 ModifiedStar 的独立测试位于 tests/plugins。版本 B 输入与预期字节存于 doc/transcript/phase2，执行 `node doc/transcript/phase2/production.mjs` 检查冻结结果。`--capture` 用于显式更新预期。当前完整 check 为 26 文件/428 项通过。
+
+接入提交与原始检查输出见 [验证证据](evidence/phase2/README.md)。配置装配依次启用 stats、dir、box、modified-star；代码装配使用相同顺序。
