@@ -27,3 +27,19 @@ git diff 7c0a4d5^ 7c0a4d5 -- src ':(exclude)src/plugins/modified-star'
 ## 验收范围
 
 自动证据覆盖生产插件、加载器、历史、序列化、默认兼容和两种装配。VS Code 原生 Outline 操作及截图使用集中验收清单中的人工项目记录。按本次任务约束，p2 标签不创建；当前源码指标以候选提交复算。
+
+## 方式 A：独立代码装配接入
+
+演示分支 demo-assembly-a 从 d0fd1fa 建立，接入提交 C=937dbb32d52a909fb074c0493a5bbdc4ad1e6100。box 包逐文件与主线 d2722d5 完全一致。运行代码新增 src/plugins/box，仅修改 src/bootstrap/CodePlugins.ts，按 stats、dir、box 顺序激活。两个测试文件分别验证 box 与同步后的 A/B 插件集合。
+
+原始证据位于 assembly-a/：names.txt 为 git diff --name-status C^ C；outside-box.txt 为 git diff C^ C -- src ':(exclude)src/plugins/box'，只包含 CodePlugins.ts；它是方式 A 唯一允许修改的顶层装配文件。进一步排除该文件后的 protected.txt 为 0 字节。git cat-file -e C:src/plugins/box/Box.ts 的 stdout/stderr 均为空，cat-file-exit.txt 为 0。
+
+check.txt 记录完整检查：25 文件/427 项通过；phase1.txt 为六组字节回归。comparison.txt 为八组 A/B 比较，包括版本 B 与 stats/dir 会话。比较双方均加载 stats、dir、box，主线 B 关闭 modified-star，工作目录与夹具逐次还原。每次的原始 stdout/stderr 单独保存，比较同时核对退出码、产物名称与 SVG 字节。
+
+复算（在主线仓库根目录）：
+
+```powershell
+node doc/evidence/phase2/assembly-a/compare.mjs <演示分支构建入口> dist/bootstrap/main.js
+```
+
+该独立提交是方式 A 的接入边界证据；d48ae4c 记录主线集成与验证。
