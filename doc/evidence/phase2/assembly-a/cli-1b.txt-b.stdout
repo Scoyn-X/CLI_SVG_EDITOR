@@ -1,0 +1,52 @@
+svg-editor 0.1 — type 'help' for commands
+
+svg> canvas 800x600 created
+svg> box#n1 created (g#n1 + rect#n1-rect + text#n1-label)
+svg> box#n2 created (g#n2 + rect#n2-rect + text#n2-label)
+svg> line#arrow1 created
+svg> g#flowchart created with 3 children
+svg> box#n2 moved by (0,100)
+svg> box#n2 moved back by (0,-100)
+svg> box#n2 fill propagated to n2-rect
+svg> box#n2 label updated: "处理数据 v2"
+svg> box#n2 label restored: "处理数据"
+svg> svg (800x600)
+└── g#flowchart
+    ├── g#n1 (box)
+    │   ├── rect#n1-rect   x=120 y=100 w=160 h=60 fill=#4a90d9
+    │   └── text#n1-label  (140,135) "开始"
+    ├── g#n2 (box)
+    │   ├── rect#n2-rect   x=520 y=100 w=160 h=60 fill=#f5a623
+    │   └── text#n2-label  (540,135) "处理数据"
+    └── line#arrow1  (280,130) -> (520,130) stroke=black
+svg> saved to artifacts/flowchart-box.svg (8 elements)
+svg> svg (800x600)
+└── g#flowchart
+    ├── g#n1 (box)
+    │   ├── rect#n1-rect   x=120 y=100 w=160 h=60 fill=#4a90d9
+    │   └── text#n1-label  (140,135) "开始"
+    ├── g#n2 (box)
+    │   ├── rect#n2-rect   x=520 y=100 w=160 h=60 fill=#f5a623
+    │   └── text#n2-label  (540,135) "处理数据"
+    └── line#arrow1  (280,130) -> (520,130) stroke=black
+svg> box#n2 label updated: "again"
+svg> svg (800x600)
+└── g#flowchart
+    ├── g#n1 (box)
+    │   ├── rect#n1-rect   x=120 y=100 w=160 h=60 fill=#4a90d9
+    │   └── text#n1-label  (140,135) "开始"
+    ├── g#n2 (box)
+    │   ├── rect#n2-rect   x=520 y=100 w=160 h=60 fill=#f5a623
+    │   └── text#n2-label  (540,135) "again"
+    └── line#arrow1  (280,130) -> (520,130) stroke=black
+svg> box#n2 label restored: "处理数据"
+svg> svg (800x600)
+└── g#flowchart
+    ├── g#n1 (box)
+    │   ├── rect#n1-rect   x=120 y=100 w=160 h=60 fill=#4a90d9
+    │   └── text#n1-label  (140,135) "开始"
+    ├── g#n2 (box)
+    │   ├── rect#n2-rect   x=520 y=100 w=160 h=60 fill=#f5a623
+    │   └── text#n2-label  (540,135) "处理数据"
+    └── line#arrow1  (280,130) -> (520,130) stroke=black
+svg> 

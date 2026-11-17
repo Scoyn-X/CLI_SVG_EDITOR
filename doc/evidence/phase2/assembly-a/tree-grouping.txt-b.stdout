@@ -1,0 +1,47 @@
+svg-editor 0.1 — type 'help' for commands
+
+svg> svg> canvas 800x600 created
+svg> g#outer created
+svg> rect#a created in g#outer
+svg> circle#b created in g#outer
+svg> g#pair created with 2 children
+svg> g#pair grouping undone
+svg> g#pair created with 2 children
+svg> g#pair ungrouped
+svg> g#pair grouping restored
+svg> error: cannot group a container into its own descendant: pair
+svg> g#target created
+svg> g#pair moved into g#target
+svg> g#pair restored into g#outer
+svg> g#pair moved into g#target
+svg> error: cannot ungroup top-level container: target
+svg> error: cannot add a shape into itself or its descendant: target
+svg> init [w] [h]
+canvas [w] [h]
+read <file.svg>
+save [file.svg]
+create <type> <id> [params…] [in <containerId>]
+move <id> <dx> <dy>
+scale <id> <factor>
+set <id> <attr> <value>
+group <newGid> <id1> <id2>…
+ungroup <gid>
+addto <gid> <id>
+delete <id>
+front <id>
+back <id>
+undo
+redo
+tree [id]
+show <id>
+help
+stats
+dir
+create rect <id> <x> <y> <w> <h> [fill] [in <containerId>]
+create circle <id> <cx> <cy> <r> [fill] [in <containerId>]
+create ellipse <id> <cx> <cy> <rx> <ry> [fill] [in <containerId>]
+create line <id> <x1> <y1> <x2> <y2> [stroke] [in <containerId>]
+create text <id> <x> <y> "content" [in <containerId>]
+create g <id> [in <containerId>]
+create box <id> <x> <y> <w> <h> "<title>" [in <containerId>]
+svg> 

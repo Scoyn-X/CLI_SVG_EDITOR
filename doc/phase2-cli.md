@@ -171,3 +171,7 @@ L 按配置字符串动态装入模块，无具体插件静态依赖。Node 内�
 ### AI 协作中的修正
 
 为处理复合子类在历史恢复后丢失语义类型的问题，Group 通过 createCopy 让子类提供复制构造；探针验证分组与 undo/redo 后的类型和结构保护。属性处理采用候选文档，部分修改后抛错时整体丢弃，保留既有 redo。包加载的初稿只使用 require 解析，修订后按 ESM import 条件解析安装包，并以 import-only 入口和 hook 释放测试验证。
+
+## 代码装配接入证据
+
+演示分支 demo-assembly-a 的 937dbb3 从框架基线新增最终版 box，仅修改 CodePlugins.ts 装配文件。独立完整检查 427 项及六组 Phase 1 回归通过；与主线配置装配的八组会话输出和 SVG 字节一致。命令与原始输出见 [方式 A 证据](evidence/phase2/README.md#方式-a独立代码装配接入)。
