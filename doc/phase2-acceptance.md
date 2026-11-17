@@ -4,11 +4,11 @@
 
 ## 自动验证记录
 
-验证日期：2026-11-11。环境：Windows，Node.js 24.11.0、npm 11.6.1。兼容基线为 final（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a），源码版本为 `d48ae4cac68f2215ccd2e473ed1030278a6973b6`。
+验证日期：2026-11-17。环境：Windows，Node.js 24.11.0、npm 11.6.1。兼容基线为 final（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a），源码版本为 `53614aa1f264d251e1685b2522c0286698bce578`。
 
 | 检查 | 验证结果 | 证据入口 |
 | --- | --- | --- |
-| `npm run check` | 完整通过：26 文件 / 428 项，121 模块 / 381 依赖零违规 | typecheck、lint、build、architecture、test、runtime 全部通过 |
+| `npm run check` | 完整通过：26 文件 / 449 项，121 模块 / 381 依赖零违规 | typecheck、lint、build、architecture、test、runtime 全部通过 |
 | Phase 1 字节级回归 | 六组均通过，四份 SVG 一致 | `node doc/transcript/phase1/replay.mjs dist/bootstrap/main.js`；比较 stdout/stderr、退出码、产物名称及原始字节 |
 | A/B 双装配 | 六组旧会话及四份 SVG 字节一致；stats/dir 固定目录真实进程比较通过 | `node doc/transcript/phase2/replay.mjs dist/bootstrap/main.js plugins.config.json`；新增命令场景在 CliHistory 测试中 |
 | 五文件定向检查 | 5 文件 / 48 项通过 | C05 的完整命令，含真实进程、框架探针、加载器、插件及 OOP 规范 |
@@ -268,3 +268,5 @@ node scripts/phase2-metrics.mjs --self-test
 - [x] 独立提交的受保护源码 diff 为空，指标从 final 与候选提交复算。
 
 人工操作：以配置或代码装配启动，执行 doc/transcript/phase2/inputs/cli-1b.txt 中命令。预期创建摘要包含三个部件，move 使用 box 名称，fill 回显 propagated，label 回显 updated/restored；保存前为 `(box) *`，保存后及 undo 回保存点为 `(box)`。截图包含启动命令、源码树、属性摘要和保存/undo 前后树。仅 modified-star 配置只加载该包并用普通 rect 演示；仅类型标签配置加载 box 包；完整配置加载两包。人工勾选项仍按实际界面观察记录。
+
+第 005 轮审核整改的逐项处理、语义决策和验证结果见 [整改记录](phase2-review-fixes.md)。

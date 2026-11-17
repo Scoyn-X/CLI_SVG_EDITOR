@@ -1,6 +1,6 @@
 # Phase 2 源码指标复算
 
-为衡量插件式重构的影响，指标脚本从两个 Git 版本读取源码，统计文件职责、物理行数和函数圈复杂度。当前报告的基线为 final，目标为插件框架源码提交 `d48ae4cac68f2215ccd2e473ed1030278a6973b6`。
+为衡量插件式重构的影响，指标脚本从两个 Git 版本读取源码，统计文件职责、物理行数和函数圈复杂度。当前报告的基线为 final，目标为插件框架源码提交 `53614aa1f264d251e1685b2522c0286698bce578`。
 
 ## 生成报告
 
@@ -8,7 +8,7 @@
 
 ```powershell
 node scripts/phase2-metrics.mjs --self-test
-node scripts/phase2-metrics.mjs final d48ae4cac68f2215ccd2e473ed1030278a6973b6 | Set-Content -Encoding utf8 docs/metrics/phase2-current.md
+node scripts/phase2-metrics.mjs final 53614aa1f264d251e1685b2522c0286698bce578 | Set-Content -Encoding utf8 docs/metrics/phase2-current.md
 ```
 
 [当前报告](phase2-current.md)固定了基线与目标的完整提交 SHA。后续版本可将目标参数替换为对应提交；最终课程报告使用 final 和 p2。开发期间使用 `--worktree` 参数查看即时统计。

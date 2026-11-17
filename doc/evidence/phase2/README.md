@@ -43,3 +43,7 @@ node doc/evidence/phase2/assembly-a/compare.mjs <演示分支构建入口> dist/
 ```
 
 该独立提交是方式 A 的接入边界证据；d48ae4c 记录主线集成与验证。
+
+## 第 005 轮审核整改验证
+
+候选源码 53614aa，完整检查 26 文件/449 项通过。整改后的 Phase 1、A/B、生产回放、扩展测试与指标夹具输出保存于 round005-fixes/。逐项处理见 [整改记录](../../phase2-review-fixes.md)。本页前述 d48ae4c 和方式 A 的原始记录保留其对应版本。

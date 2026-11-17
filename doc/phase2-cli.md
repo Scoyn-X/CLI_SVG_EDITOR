@@ -91,7 +91,7 @@ node dist/bootstrap/main.js --config plugins.config.json
 
 handles 接收不可变 `ShapeDescription`，通过 getType、getChildren 等公开接口判断，不能更改活文档。apply 额外收到受控 set 回调，操作的是 `EditorSession.edit` 创建的候选文档；可以修改多个子件。零命中回原白名单；多命中直接拒绝，不采用不明确的覆盖顺序。apply 或 summarize 抛错均丢弃候选，历史和 redo 保持；成功发布独立副本并形成一个历史条目。可选 summarize 描述整个语义操作。代价是复制整份文档，处理器只能通过公开 set 修改既有节点。
 
-### P2-02：语义类型与 SVG 标签分离，未知标记降级（框架已实现）
+### P2-02：语义类型与 SVG 标签分离，未知标记降级（已实现）
 
 `Shape.getType()` 可与 SVG 标签不同。provider 必须显式声明 getSvgTag，且标签匹配时才消费 data-kind；否则按普通 SVG 标签 provider 读回。未安装对应插件的 g 保留 data-kind 和子树，降为普通 Group；不另造导入分派。复合子类通过 Group.createCopy 保留子类型，通过 canUngroup/canDetachChild 声明结构保护。完整子树附着时校验全局 id。Box 构造按直接子节点 id/tag schema 校验必要矩形和文本；缺件、类型错误或重复 id 拒绝整份 read，原文档和历史保持。子件脱离被拒绝；删除整个 box 使用单个历史单元。
 
@@ -176,10 +176,12 @@ L 按配置字符串动态装入模块，无具体插件静态依赖。Node 内�
 
 ## 生产插件验证
 
-Box 和 ModifiedStar 的独立测试位于 tests/plugins。版本 B 输入与预期字节存于 doc/transcript/phase2，执行 `node doc/transcript/phase2/production.mjs` 检查冻结结果。`--capture` 用于显式更新预期。当前完整 check 为 26 文件/428 项通过。
+Box 和 ModifiedStar 的独立测试位于 tests/plugins。版本 B 输入与预期字节存于 doc/transcript/phase2，执行 `node doc/transcript/phase2/production.mjs` 检查冻结结果。`--capture` 用于显式更新预期。当前完整 check 为 26 文件/449 项通过。
 
 接入提交与原始检查输出见 [验证证据](evidence/phase2/README.md)。配置装配依次启用 stats、dir、box、modified-star；代码装配使用相同顺序。
 
 ## 代码装配接入证据
 
 演示分支 demo-assembly-a 的 937dbb3 从框架基线新增最终版 box，仅修改 CodePlugins.ts 装配文件。独立完整检查 427 项及六组 Phase 1 回归通过；与主线配置装配的八组会话输出和 SVG 字节一致。命令与原始输出见 [方式 A 证据](evidence/phase2/README.md#方式-a独立代码装配接入)。
+
+第 005 轮审核整改的逐项处理、语义决策和验证结果见 [整改记录](phase2-review-fixes.md)。
