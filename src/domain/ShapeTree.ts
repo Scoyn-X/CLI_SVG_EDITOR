@@ -134,6 +134,7 @@ export class ShapeTree {
 
   private reorder(id: string, front: boolean): void {
     const shape = this.requireShape(id);
+    this.assertDetachable(id);
     const siblings = this.container(this.parents.get(id));
     siblings.remove(shape);
     siblings.insert(shape, front ? siblings.items().length : 0);
