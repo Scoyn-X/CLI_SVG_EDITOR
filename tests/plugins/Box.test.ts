@@ -31,8 +31,27 @@ it('moves and scales a nested box with semantic feedback and exact undo',async()
 it.each(['set n fill red','set n label "处理数据"'])('records one undo unit for %s',async input=>{
  const {cli,session}=await fixture(); const before=session.describe();cli.executeLine(input);const after=session.describe();cli.executeLine('undo');expect(session.describe()).toEqual(before);cli.executeLine('redo');expect(session.describe()).toEqual(after);
 });
-it.each(['delete n-rect','group steal n-label','addto n n-label','addto n n-rect','addto target n-label','ungroup n','front n-rect','back n-label'])('rejects protected structure edits: %s',async input=>{
- const {cli,session}=await fixture();cli.executeLine('create g target');cli.executeLine('move n 1 0');cli.executeLine('undo');const before=session.describe(),history=session.getHistoryStatus();expect(cli.executeLine(input)[0]).toContain('error:');expect(session.describe()).toEqual(before);expect(session.getHistoryStatus()).toEqual(history);expect(cli.executeLine('redo')[0]).toContain('box#n moved');
+it.each([
+  ['delete n-rect', 'cannot detach required child: n-rect'],
+  ['group steal n-label', 'cannot detach required child: n-label'],
+  ['addto n n-label', 'cannot detach required child: n-label'],
+  ['addto n n-rect', 'cannot detach required child: n-rect'],
+  ['addto target n-label', 'cannot detach required child: n-label'],
+  ['ungroup n', 'cannot ungroup composite shape: n'],
+  ['front n-rect', 'cannot reorder required child: n-rect'],
+  ['back n-label', 'cannot reorder required child: n-label'],
+])('rejects protected structure edits: %s', async (input, message) => {
+  const { cli, session } = await fixture();
+  cli.executeLine('create g target');
+  cli.executeLine('move n 1 0');
+  cli.executeLine('undo');
+
+  const before = session.describe();
+  const history = session.getHistoryStatus();
+  expect(cli.executeLine(input)).toEqual(['error: ' + message]);
+  expect(session.describe()).toEqual(before);
+  expect(session.getHistoryStatus()).toEqual(history);
+  expect(cli.executeLine('redo')[0]).toContain('box#n moved');
 });
 it('deletes and restores the complete semantic box',async()=>{
  const {cli,session}=await fixture();const before=session.describe();expect(cli.executeLine('delete n')).toEqual(['box#n deleted']);expect(cli.executeLine('undo')).toEqual(['box#n restored into svg']);expect(session.describe()).toEqual(before);
