@@ -34,3 +34,13 @@
 | P2-12 / F1 | D12 记录列宽、SVG 属性顺序和显式 stroke 的口径。冻结输出保持一致。F1 的逐字评分口径待教师确认。 |
 
 全量检查通过 26 个测试文件、453 项测试，依赖检查覆盖 121 个模块和 381 条依赖。Phase 1 六组字节回放、A/B 六组与生产插件回放通过。VS Code 自动测试 4 项通过，指标自检 5 项通过。命令输出见 [第 006 轮验证记录](evidence/phase2/round006-fixes/check.txt)。
+
+## 第 007 轮
+
+审查基线为 2c58b84，整改源码为 92eb0bb0bf8d1b5128c6fd41b3ecf06077dd6d8c。依据审查 skill v1.4 和仓库外第 007 轮报告，2026-11-21 完成开发验证。
+
+P2-13 / Q19 已处理。front/back 重排 box 必要子件时返回 cannot reorder required child。删除或重挂必要子件时返回 cannot detach required child。两类操作沿用同一结构检查。21 项 box 测试覆盖完整提示、拒绝后文档与历史保持以及 redo 恢复。真实 CLI 中，front n-rect 和 back n-label 均返回重排错误，delete n-rect 返回摘除错误，后续 redo 成功重做 box 的移动。
+
+F1 沿用 D12 的显式 stroke 显示口径。课程示例的逐字评分口径待教师确认。
+
+完整检查通过 26 个文件、453 项测试，依赖检查覆盖 121 个模块和 381 条依赖。Phase 1 和 A/B 各六组回放通过，生产插件回放通过。扩展自动测试 4 项通过，指标自检 5 项通过。指标基于 final 和本轮整改源码复算。[验证输出](evidence/phase2/round007-fixes/check.txt)

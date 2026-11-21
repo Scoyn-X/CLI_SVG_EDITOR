@@ -4,7 +4,7 @@
 
 ## 自动验证记录
 
-验证日期：2026-11-21。环境：Windows，Node.js 24.11.0、npm 11.6.1。兼容基线为 final（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a），源码版本为 `887f23cd408f825d97afa4dcbb6f97610a9b1090`。
+验证日期：2026-11-21。环境：Windows，Node.js 24.11.0、npm 11.6.1。兼容基线为 final（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a），源码版本为 `92eb0bb0bf8d1b5128c6fd41b3ecf06077dd6d8c`。
 
 | 检查 | 验证结果 | 证据入口 |
 | --- | --- | --- |

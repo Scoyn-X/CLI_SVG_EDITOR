@@ -51,3 +51,7 @@ node doc/evidence/phase2/assembly-a/compare.mjs <演示分支构建入口> dist/
 ## 第 006 轮审核整改验证
 
 候选源码为 887f23cd408f825d97afa4dcbb6f97610a9b1090。完整检查通过 26 个文件、453 项测试。Phase 1、双装配、生产插件、扩展测试与指标自检的输出保存在 round006-fixes/。逐项处理见 [整改记录](../../phase2-review-fixes.md#第-006-轮)。
+
+## 第 007 轮审核整改验证
+
+候选源码为 92eb0bb0bf8d1b5128c6fd41b3ecf06077dd6d8c。完整检查通过 26 个文件、453 项测试。Phase 1、双装配、生产插件、扩展自动测试与指标自检的输出保存在 round007-fixes/。[逐项整改](../../phase2-review-fixes.md#第-007-轮)
