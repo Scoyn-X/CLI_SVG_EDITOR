@@ -1,0 +1,46 @@
+
+> cli-svg-editor@0.1.0 check
+> npm run typecheck && npm run lint && npm run build && npm run check:architecture && npm test && npm run check:runtime
+
+
+> cli-svg-editor@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> cli-svg-editor@0.1.0 lint
+> eslint . --max-warnings 0
+
+
+> cli-svg-editor@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> cli-svg-editor@0.1.0 check:architecture
+> depcruise --config dependency-cruiser.config.json --output-type err-long src
+
+
+✔ no dependency violations found (121 modules, 381 dependencies cruised)
+
+
+> cli-svg-editor@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.3 D:/Secret/Courses/Sem5/SD/pj1/CLI_SVG_EDITOR
+
+
+ Test Files  26 passed (26)
+      Tests  453 passed (453)
+   Start at  17:09:28
+   Duration  25.66s (tests 76%, import 14%, transform 8%, worker 2%)
+
+
+> cli-svg-editor@0.1.0 check:runtime
+> node dist/bootstrap/main.js --check
+
+编辑器组装检查通过（Node.js 24.11.0）。
+npm notice
+npm notice New minor version of npm available! 11.6.1 -> 11.21.3
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.21.3
+npm notice To update run: npm install -g npm@11.21.3
+npm notice

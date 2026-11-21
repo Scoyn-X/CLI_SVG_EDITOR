@@ -17,7 +17,7 @@
 | stats/dir 与目录适配器 | [插件和适配器](phase2-cli.md#statsdir-与适配器)，含 Client/Target/Adapter/Adaptee 对照 |
 | 重构前后依赖及 ADR | [PlantUML 对比](phase2-cli.md#重构前后依赖plantuml)、[四条 ADR](phase2-cli.md#adr)，属性事务、读回拒绝、dirty 语义与清单校验 |
 | VS Code 模式分析与复用 | [VS Code 说明](phase2-vscode.md)，宿主注册/回调、Decorator/Adapter 对照及解析复用取舍 |
-| 当前检查 | 2026-11-17 完整 check 通过，26 文件 / 449 项，121 模块 / 381 依赖零违规；6 组 Phase 1 字节回归、4 份 SVG 通过；扩展 4 项自动测试通过 |
+| 当前检查 | 2026-11-21 完整 check 通过，26 文件 / 453 项，121 模块 / 381 依赖零违规；6 组 Phase 1 字节回归、4 份 SVG 通过；扩展 4 项自动测试通过 |
 | 界面与交互验证 | [集中验收清单](phase2-acceptance.md)，含开发宿主操作、预期结果、截图及哈希核对 |
 | 指标 | [脚本口径](../docs/metrics/README.md)及[历史报告](../docs/metrics/phase2-current.md)，按实际源码提交统计文件职责、三类 CLI 指标及单列 VS Code |
 | 工程入口与交付条件 | [工程指南](phase2-work-guide.md)，包含 box、modified-star、(box) 的实施重点与完整课程交付条件 |

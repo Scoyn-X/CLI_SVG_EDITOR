@@ -50,7 +50,7 @@ CLI 默认提供六种内置图形；加载器支持追加图形、命令、属�
 
 ## 验证与样例
 
-2026-11-17 完整工程检查通过：26 个测试文件、449 项测试，依赖检查覆盖 121 模块和 381 条依赖。六组 Phase 1 会话比较原始输出、退出码和四份 SVG 字节；真实进程测试验证 stats/dir 的 A/B 装配一致性。VS Code 扩展的 4 项自动测试通过。Phase 1 的历史修复记录见 [增量记录](doc/iteration-notes.md)。
+2026-11-21 完整工程检查通过：26 个测试文件、453 项测试，依赖检查覆盖 121 模块和 381 条依赖。六组 Phase 1 会话比较原始输出、退出码和四份 SVG 字节；真实进程测试验证 stats/dir 的 A/B 装配一致性。VS Code 扩展的 4 项自动测试通过。Phase 1 的历史修复记录见 [增量记录](doc/iteration-notes.md)。
 
 [流程图](doc/examples/flowchart.svg)、[典型会话导出图](doc/examples/demo.svg)、[嵌套变换](doc/examples/nested.svg) 是实际保存产物。[回放说明](doc/development.md) 包含 Windows 运行方法；[typical.cli](tests/fixtures/typical.cli)、[flowchart.cli](tests/fixtures/flowchart.cli) 为可重复脚本。
 

@@ -2,13 +2,13 @@
 
 基线 `final`（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a）
 
-目标 `53614aa1f264d251e1685b2522c0286698bce578`（53614aa1f264d251e1685b2522c0286698bce578）
+目标 `887f23cd408f825d97afa4dcbb6f97610a9b1090`（887f23cd408f825d97afa4dcbb6f97610a9b1090）
 
 口径：物理行含空行和注释；圈复杂度为有函数体的函数/方法/构造器/访问器/箭头函数的路径数之和。每个实现起点 1，if、三元、catch、非 default 的 case、循环及 && / || / ?? 各加 1；嵌套函数独立计数。接口、声明、模块顶层语句与类型表达式不计圈复杂度。VS Code 单列，不计入 CLI 增量。
 
 | 类别 | 文件数 基线 → 目标 | 行数 基线 → 目标 | 圈复杂度 基线 → 目标（增量） |
 | --- | ---: | ---: | ---: |
-| 内核 | 82 → 86 | 2057 → 2155 | 659 → 693（34） |
+| 内核 | 82 → 86 | 2057 → 2156 | 659 → 693（34） |
 | 装配 | 3 → 9 | 106 → 381 | 30 → 152（122） |
 | 插件 | 0 → 17 | 0 → 245 | 0 → 84（84） |
 | VS Code | 0 → 5 | 0 → 134 | 0 → 34（34） |
@@ -97,7 +97,7 @@
 | `src/domain/ShapeChange.ts` | 内核 · SVG 领域对象与结构：ShapeChange；公开操作 combine、apply | 20 → 20 | 5 → 5 |
 | `src/domain/ShapeDescription.ts` | 内核 · SVG 领域对象与结构：ShapeDescription；公开操作 getId、getTag、getType、isContainer、getAttributes、getChildren、getText、getPosition、getGeometry | 31 → 35 | 9 → 11 |
 | `src/domain/ShapeTraversal.ts` | 内核 · SVG 领域对象与结构：ShapeTraversal；公开操作 visit、assertValidIds | 42 → 42 | 11 → 11 |
-| `src/domain/ShapeTree.ts` | 内核 · SVG 领域对象与结构：ShapeTree；公开操作 insert、remove、group、ungroup、addTo、front、back、move、scale、set、describe、describeRoots、getElementCount、getParentId、clone | 181 → 192 | 58 → 61 |
+| `src/domain/ShapeTree.ts` | 内核 · SVG 领域对象与结构：ShapeTree；公开操作 insert、remove、group、ungroup、addTo、front、back、move、scale、set、describe、describeRoots、getElementCount、getParentId、clone | 181 → 193 | 58 → 61 |
 | `src/domain/StyleAttributes.ts` | 内核 · SVG 领域对象与结构：StyleAttributes；公开操作 empty、supports、attributes、withAttribute | 36 → 36 | 10 → 10 |
 | `src/domain/SvgDocument.ts` | 内核 · SVG 领域对象与结构：SvgDocument；公开操作 getWidth、getHeight、getElementCount、getParentId、describeShape、describe、resize、add、remove、group、ungroup、addTo、front、back、move、scale、set、clone | 51 → 51 | 19 → 19 |
 | `src/domain/Text.ts` | 内核 · SVG 领域对象与结构：Text；公开操作 clone | 32 → 32 | 7 → 7 |

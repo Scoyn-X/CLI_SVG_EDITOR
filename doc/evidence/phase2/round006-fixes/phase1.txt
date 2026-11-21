@@ -1,0 +1,6 @@
+cli-1.txt OK (1 SVG)
+cli-1a.txt OK (1 SVG)
+errors-and-io.txt OK (2 SVG)
+history.txt OK (0 SVG)
+tree-grouping.txt OK (0 SVG)
+tree-order.txt OK (0 SVG)

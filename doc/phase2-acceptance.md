@@ -4,11 +4,11 @@
 
 ## 自动验证记录
 
-验证日期：2026-11-17。环境：Windows，Node.js 24.11.0、npm 11.6.1。兼容基线为 final（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a），源码版本为 `53614aa1f264d251e1685b2522c0286698bce578`。
+验证日期：2026-11-21。环境：Windows，Node.js 24.11.0、npm 11.6.1。兼容基线为 final（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a），源码版本为 `887f23cd408f825d97afa4dcbb6f97610a9b1090`。
 
 | 检查 | 验证结果 | 证据入口 |
 | --- | --- | --- |
-| `npm run check` | 完整通过：26 文件 / 449 项，121 模块 / 381 依赖零违规 | typecheck、lint、build、architecture、test、runtime 全部通过 |
+| `npm run check` | 完整通过：26 文件 / 453 项，121 模块 / 381 依赖零违规 | typecheck、lint、build、architecture、test、runtime 全部通过 |
 | Phase 1 字节级回归 | 六组均通过，四份 SVG 一致 | `node doc/transcript/phase1/replay.mjs dist/bootstrap/main.js`；比较 stdout/stderr、退出码、产物名称及原始字节 |
 | A/B 双装配 | 六组旧会话及四份 SVG 字节一致；stats/dir 固定目录真实进程比较通过 | `node doc/transcript/phase2/replay.mjs dist/bootstrap/main.js plugins.config.json`；新增命令场景在 CliHistory 测试中 |
 | 五文件定向检查 | 5 文件 / 48 项通过 | C05 的完整命令，含真实进程、框架探针、加载器、插件及 OOP 规范 |

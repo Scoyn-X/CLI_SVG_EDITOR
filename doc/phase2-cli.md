@@ -176,7 +176,7 @@ L 按配置字符串动态装入模块，无具体插件静态依赖。Node 内�
 
 ## 生产插件验证
 
-Box 和 ModifiedStar 的独立测试位于 tests/plugins。版本 B 输入与预期字节存于 doc/transcript/phase2，执行 `node doc/transcript/phase2/production.mjs` 检查冻结结果。`--capture` 用于显式更新预期。当前完整 check 为 26 文件/449 项通过。
+Box 和 ModifiedStar 的独立测试位于 tests/plugins。版本 B 输入与预期字节存于 doc/transcript/phase2，执行 `node doc/transcript/phase2/production.mjs` 检查冻结结果。`--capture` 用于显式更新预期。当前完整 check 为 26 文件/453 项通过。
 
 接入提交与原始检查输出见 [验证证据](evidence/phase2/README.md)。配置装配依次启用 stats、dir、box、modified-star；代码装配使用相同顺序。
 
