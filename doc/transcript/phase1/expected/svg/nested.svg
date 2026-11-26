@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200">
+  <g id="diagram" transform="translate(60,40)">
+    <rect id="a" x="0" y="0" width="120" height="60" fill="#4a90d9"/>
+    <line id="e" x1="120" x2="200" y1="30" y2="30" stroke="black"/>
+    <g id="nodeB" transform="translate(200,0) scale(0.8)">
+      <rect id="rect1" x="0" y="0" width="120" height="60" fill="#f5a623"/>
+      <text id="text1" x="60" y="38" fill="white" font-size="16" text-anchor="middle">End</text>
+    </g>
+  </g>
+</svg>

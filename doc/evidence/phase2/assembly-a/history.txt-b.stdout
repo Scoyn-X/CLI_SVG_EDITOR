@@ -1,0 +1,23 @@
+svg-editor 0.1 — type 'help' for commands
+
+svg> svg> canvas 400x200 created
+svg> error: undo not allowed after io command
+svg> circle#c1 created
+svg> circle#c1 moved to (130,100)
+svg> circle#c1 moved back to (100,100)
+svg> error: id already exists: c1
+svg> canvas 400x200
+svg> circle#c1 moved to (130,100)
+svg> g#node created
+svg> text#title created in g#node
+svg> text#title updated: text="My Diagram v2"
+svg> text#title updated: text="in"
+svg> text#title updated: text="My Diagram v2"
+svg> canvas 500x300
+svg> error: undo not allowed after io command
+svg> error: undo not allowed after io command
+svg> g#node moved by (0,100)
+svg> g#node moved back by (0,-100)
+svg> error: nothing to undo
+svg> box#n1 created (g#n1 + rect#n1-rect + text#n1-label)
+svg> 

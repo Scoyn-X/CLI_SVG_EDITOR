@@ -1,0 +1,16 @@
+{
+  "plugins": [
+    {
+      "module": "./dist/plugins/stats"
+    },
+    {
+      "module": "./dist/plugins/dir"
+    },
+    {
+      "module": "./dist/plugins/box"
+    },
+    {
+      "module": "./dist/plugins/modified-star"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "cli-1.txt": {
+    "exitCode": 0,
+    "stdout": "svg-editor 0.1 — type 'help' for commands\n\nsvg> canvas 800x600 created\nsvg> rect#bg created\nsvg> text#title created\nsvg> circle#c1 created\nsvg> rect#box created\nsvg> g#markers created with 2 children\nsvg> svg (800x600)\n├── rect#bg     x=0 y=0 w=800 h=600 fill=#ffffff\n├── text#title  (20,40) \"My Diagram\"\n└── g#markers\n    ├── circle#c1  cx=100 cy=100 r=20 fill=red\n    └── rect#box   x=200 y=80 w=60 h=60 fill=#3366ff\nsvg> circle#c1 moved to (130,100)\nsvg> circle#c1 moved back to (100,100)\nsvg> circle#c1 moved to (130,100)\nsvg> text#title updated: text=\"My Diagram v2\"\nsvg> text#title updated: text=\"My Diagram\"\nsvg> error: cannot group a container into its own descendant: markers\nsvg> rect#box deleted\nsvg> rect#box restored into g#markers\nsvg> saved to artifacts/demo.svg (5 elements)\nsvg> error: undo not allowed after io command\nsvg> warning: assigned id rect1 to unnamed <rect>\nread other.svg (7 elements)\nsvg> svg (400x300)\n├── rect#rect1  x=0 y=0 w=400 h=300 fill=#ffffff\n├── text#t1     (10,290) \"imported\"\n├── circle#c1   cx=50 cy=50 r=10\n├── g#g1\n│   ├── rect#r2    x=0 y=0 w=10 h=10\n│   └── circle#c2  cx=5 cy=5 r=2\n└── ellipse#e1  cx=1 cy=2 rx=3 ry=4\nsvg> ",
+    "stderr": "",
+    "svg": [
+      "demo.svg"
+    ]
+  },
+  "cli-1a.txt": {
+    "exitCode": 0,
+    "stdout": "svg-editor 0.1 — type 'help' for commands\n\nsvg> canvas 800x600 created\nsvg> g#flowchart created\nsvg> g#node1 created in g#flowchart\nsvg> rect#start created in g#node1\nsvg> text#start-label created in g#node1\nsvg> g#node2 created in g#flowchart\nsvg> rect#process created in g#node2\nsvg> text#process-label created in g#node2\nsvg> line#arrow1 created in g#flowchart\nsvg> svg (800x600)\n└── g#flowchart\n    ├── g#node1\n    │   ├── rect#start        x=120 y=100 w=160 h=60 fill=#4a90d9\n    │   └── text#start-label  (155,135) \"开始\"\n    ├── g#node2\n    │   ├── rect#process        x=520 y=100 w=160 h=60 fill=#f5a623\n    │   └── text#process-label  (545,135) \"处理数据\"\n    └── line#arrow1  (280,130) -> (520,130) stroke=black\nsvg> g#node2 moved by (0,100)\nsvg> g#node2\n├── rect#process        x=520 y=200 w=160 h=60 fill=#f5a623\n└── text#process-label  (545,235) \"处理数据\"\nsvg> g#node2 moved back by (0,-100)\nsvg> text#process-label updated: text=\"处理数据 v2\"\nsvg> saved to artifacts/flowchart.svg (8 elements)\nsvg> ",
+    "stderr": "",
+    "svg": [
+      "flowchart.svg"
+    ]
+  },
+  "errors-and-io.txt": {
+    "exitCode": 0,
+    "stdout": "svg-editor 0.1 — type 'help' for commands\n\nsvg> svg> error: no document. use 'init' or 'read' first\nsvg> error: unknown command: stats\nsvg> error: unknown command: dir\nsvg> canvas 800x600 created\nsvg> init [w] [h]\ncanvas [w] [h]\nread <file.svg>\nsave [file.svg]\ncreate <type> <id> [params…] [in <containerId>]\nmove <id> <dx> <dy>\nscale <id> <factor>\nset <id> <attr> <value>\ngroup <newGid> <id1> <id2>…\nungroup <gid>\naddto <gid> <id>\ndelete <id>\nfront <id>\nback <id>\nundo\nredo\ntree [id]\nshow <id>\nhelp\ncreate rect <id> <x> <y> <w> <h> [fill] [in <containerId>]\ncreate circle <id> <cx> <cy> <r> [fill] [in <containerId>]\ncreate ellipse <id> <cx> <cy> <rx> <ry> [fill] [in <containerId>]\ncreate line <id> <x1> <y1> <x2> <y2> [stroke] [in <containerId>]\ncreate text <id> <x> <y> \"content\" [in <containerId>]\ncreate g <id> [in <containerId>]\nsvg> error: no source path. specify a file\nsvg> svg> warning: assigned id rect1 to unnamed <rect>\nread other.svg (7 elements)\nsvg> circle#c1 moved to (60,50)\nsvg> circle#c1 moved back to (50,50)\nsvg> error: cannot read file: missing.svg\nsvg> error: width must be non-negative\nsvg> error: cannot write file: missing-directory/out.svg\nsvg> circle#c1 moved to (60,50)\nsvg> circle#c1  parent=svg\n  cx=60 cy=50 r=10\nsvg> ellipse#e1 scaled by 2\nsvg> ellipse#e1 scaling undone\nsvg> ellipse#e1 scaled by 2\nsvg> saved to artifacts/recovered.svg (7 elements)\nsvg> error: undo not allowed after io command\nsvg> svg> warning: assigned id rect1 to unnamed <rect>\nwarning: assigned id text1 to unnamed <text>\nread nested.svg (6 elements)\nsvg> saved to artifacts/nested.svg (6 elements)\nsvg> g#diagram  transform=translate(60,40)\n├── rect#a   x=0 y=0 w=120 h=60 fill=#4a90d9\n├── line#e   (120,30) -> (200,30) stroke=black\n└── g#nodeB  transform=translate(200,0) scale(0.8)\n    ├── rect#rect1  x=0 y=0 w=120 h=60 fill=#f5a623\n    └── text#text1  (60,38) \"End\" fill=white font-size=16 text-anchor=middle\nsvg> ",
+    "stderr": "",
+    "svg": [
+      "nested.svg",
+      "recovered.svg"
+    ]
+  },
+  "history.txt": {
+    "exitCode": 0,
+    "stdout": "svg-editor 0.1 — type 'help' for commands\n\nsvg> svg> canvas 400x200 created\nsvg> error: undo not allowed after io command\nsvg> circle#c1 created\nsvg> circle#c1 moved to (130,100)\nsvg> circle#c1 moved back to (100,100)\nsvg> error: id already exists: c1\nsvg> canvas 400x200\nsvg> circle#c1 moved to (130,100)\nsvg> g#node created\nsvg> text#title created in g#node\nsvg> text#title updated: text=\"My Diagram v2\"\nsvg> text#title updated: text=\"in\"\nsvg> text#title updated: text=\"My Diagram v2\"\nsvg> canvas 500x300\nsvg> error: undo not allowed after io command\nsvg> error: undo not allowed after io command\nsvg> g#node moved by (0,100)\nsvg> g#node moved back by (0,-100)\nsvg> error: nothing to undo\nsvg> error: unknown shape type: box (is the plugin loaded?)\nsvg> ",
+    "stderr": "",
+    "svg": []
+  },
+  "tree-grouping.txt": {
+    "exitCode": 0,
+    "stdout": "svg-editor 0.1 — type 'help' for commands\n\nsvg> svg> canvas 800x600 created\nsvg> g#outer created\nsvg> rect#a created in g#outer\nsvg> circle#b created in g#outer\nsvg> g#pair created with 2 children\nsvg> g#pair grouping undone\nsvg> g#pair created with 2 children\nsvg> g#pair ungrouped\nsvg> g#pair grouping restored\nsvg> error: cannot group a container into its own descendant: pair\nsvg> g#target created\nsvg> g#pair moved into g#target\nsvg> g#pair restored into g#outer\nsvg> g#pair moved into g#target\nsvg> error: cannot ungroup top-level container: target\nsvg> error: cannot add a shape into itself or its descendant: target\nsvg> init [w] [h]\ncanvas [w] [h]\nread <file.svg>\nsave [file.svg]\ncreate <type> <id> [params…] [in <containerId>]\nmove <id> <dx> <dy>\nscale <id> <factor>\nset <id> <attr> <value>\ngroup <newGid> <id1> <id2>…\nungroup <gid>\naddto <gid> <id>\ndelete <id>\nfront <id>\nback <id>\nundo\nredo\ntree [id]\nshow <id>\nhelp\ncreate rect <id> <x> <y> <w> <h> [fill] [in <containerId>]\ncreate circle <id> <cx> <cy> <r> [fill] [in <containerId>]\ncreate ellipse <id> <cx> <cy> <rx> <ry> [fill] [in <containerId>]\ncreate line <id> <x1> <y1> <x2> <y2> [stroke] [in <containerId>]\ncreate text <id> <x> <y> \"content\" [in <containerId>]\ncreate g <id> [in <containerId>]\nsvg> ",
+    "stderr": "",
+    "svg": []
+  },
+  "tree-order.txt": {
+    "exitCode": 0,
+    "stdout": "svg-editor 0.1 — type 'help' for commands\n\nsvg> svg> canvas 800x600 created\nsvg> g#outer created\nsvg> rect#before created in g#outer\nsvg> rect#box created in g#outer\nsvg> rect#after created in g#outer\nsvg> rect#box moved to front\nsvg> rect#box order restored\nsvg> rect#box moved to back\nsvg> rect#box order restored\nsvg> rect#box deleted\nsvg> rect#box restored into g#outer\nsvg> rect#box deleted\nsvg> error: no such shape: missing\nsvg> rect#box restored into g#outer\nsvg> g#inner created in g#outer\nsvg> text#label created in g#inner\nsvg> g#inner deleted\nsvg> g#inner restored into g#outer\nsvg> g#inner moved by (0,10)\nsvg> g#inner moved back by (0,-10)\nsvg> g#inner moved by (0,10)\nsvg> init [w] [h]\ncanvas [w] [h]\nread <file.svg>\nsave [file.svg]\ncreate <type> <id> [params…] [in <containerId>]\nmove <id> <dx> <dy>\nscale <id> <factor>\nset <id> <attr> <value>\ngroup <newGid> <id1> <id2>…\nungroup <gid>\naddto <gid> <id>\ndelete <id>\nfront <id>\nback <id>\nundo\nredo\ntree [id]\nshow <id>\nhelp\ncreate rect <id> <x> <y> <w> <h> [fill] [in <containerId>]\ncreate circle <id> <cx> <cy> <r> [fill] [in <containerId>]\ncreate ellipse <id> <cx> <cy> <rx> <ry> [fill] [in <containerId>]\ncreate line <id> <x1> <y1> <x2> <y2> [stroke] [in <containerId>]\ncreate text <id> <x> <y> \"content\" [in <containerId>]\ncreate g <id> [in <containerId>]\nsvg> ",
+    "stderr": "",
+    "svg": []
+  }
+}

@@ -8,6 +8,6 @@ export class TreeCommand extends Command {
   public override execute(session: EditorSession): CommandResult {
     const document = session.describe();
     const root = this.id === undefined ? undefined : session.describeShape(this.id);
-    return new CommandResult('', undefined, [], new TreeDisplay(document, root));
+    return new CommandResult('', undefined, [], new TreeDisplay(document, root, session.describeSaved()));
   }
 }

@@ -5,9 +5,11 @@ import type { ShapeProvider } from '../ports/ShapeProvider.js';
 import type { ShapeImporter } from '../ports/ShapeImporter.js';
 import type { SvgElement } from '../ports/SvgElement.js';
 
-/** 唯一图形类型名分派位置；后续插件阶段重构注册来源和生命周期。 */
+/** 唯一图形类型名分派位置。 */
 export class ShapeFactory implements ShapeCreator, ShapeImporter {
   private readonly providers = new Map<string, ShapeProvider>();
+
+  public has(name: string): boolean { return this.providers.has(name); }
 
   public register(provider: ShapeProvider): void {
     const type = provider.getType();
@@ -20,7 +22,11 @@ export class ShapeFactory implements ShapeCreator, ShapeImporter {
   }
 
   public fromSvg(element: SvgElement): Shape {
-    return this.provider(element.getTag()).fromSvg(element, child => this.fromSvg(child));
+    const kind = element.getAttribute('data-kind');
+    const marked = kind === undefined ? undefined : this.providers.get(kind);
+    const tag = element.getTag();
+    const provider = marked !== undefined && marked.getSvgTag?.() === tag ? marked : this.provider(tag);
+    return provider.fromSvg(element, child => this.fromSvg(child));
   }
   public getUsages(): readonly string[] { return Object.freeze([...this.providers.values()].map(provider => provider.getUsage())); }
 

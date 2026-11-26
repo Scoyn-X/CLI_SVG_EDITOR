@@ -11,11 +11,13 @@ import type { ImportedDocument } from '../ports/ImportedDocument.js';
 
 export class EditorSession {
   private document: SvgDocument | undefined;
+  private saved: DocumentDescription | undefined;
   private sourcePath: string | undefined;
   private readonly history = new HistoryManager();
   private executing = false;
 
   public describe(): DocumentDescription { return this.requireDocument().describe(); }
+  public describeSaved(): DocumentDescription | undefined { return this.saved; }
   public describeShape(id: string): ShapeDescription { return this.requireDocument().describeShape(id); }
   public getParentId(id: string): string | undefined { return this.requireDocument().getParentId(id); }
   public getSourcePath(): string | undefined { return this.sourcePath; }
@@ -27,14 +29,18 @@ export class EditorSession {
       ValueValidation.text(sourcePath, 'source path');
       if (sourcePath.length === 0) { throw new DomainError('source path must be non-empty'); }
       const loaded = load(sourcePath); const owned = loaded.getDocument(); const result = feedback(loaded);
+      const saved = owned.describe();
       this.history.establishBarrier(); this.document = owned; this.sourcePath = sourcePath;
+      this.saved = saved;
       return result;
     });
   }
 
   public saveDocument(write: (document: DocumentDescription, sourcePath: string | undefined) => CommandResult): CommandResult {
     return this.exclusive(() => {
-      const result = write(this.requireDocument().describe(), this.sourcePath);
+      const saved = this.requireDocument().describe();
+      const result = write(saved, this.sourcePath);
+      this.saved = saved;
       this.history.establishBarrier(); return result;
     });
   }
@@ -61,9 +67,11 @@ export class EditorSession {
         if (sourcePath.length === 0) { throw new DomainError('source path must be non-empty'); }
       }
       const owned = document.clone();
+      const saved = owned.describe();
       this.history.establishBarrier();
       this.document = owned;
       this.sourcePath = sourcePath;
+      this.saved = saved;
     });
   }
 

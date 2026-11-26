@@ -1,0 +1,52 @@
+svg-editor 0.1 — type 'help' for commands
+
+svg> svg> canvas 800x600 created
+svg> g#outer created
+svg> rect#before created in g#outer
+svg> rect#box created in g#outer
+svg> rect#after created in g#outer
+svg> rect#box moved to front
+svg> rect#box order restored
+svg> rect#box moved to back
+svg> rect#box order restored
+svg> rect#box deleted
+svg> rect#box restored into g#outer
+svg> rect#box deleted
+svg> error: no such shape: missing
+svg> rect#box restored into g#outer
+svg> g#inner created in g#outer
+svg> text#label created in g#inner
+svg> g#inner deleted
+svg> g#inner restored into g#outer
+svg> g#inner moved by (0,10)
+svg> g#inner moved back by (0,-10)
+svg> g#inner moved by (0,10)
+svg> init [w] [h]
+canvas [w] [h]
+read <file.svg>
+save [file.svg]
+create <type> <id> [params…] [in <containerId>]
+move <id> <dx> <dy>
+scale <id> <factor>
+set <id> <attr> <value>
+group <newGid> <id1> <id2>…
+ungroup <gid>
+addto <gid> <id>
+delete <id>
+front <id>
+back <id>
+undo
+redo
+tree [id]
+show <id>
+help
+stats
+dir
+create rect <id> <x> <y> <w> <h> [fill] [in <containerId>]
+create circle <id> <cx> <cy> <r> [fill] [in <containerId>]
+create ellipse <id> <cx> <cy> <rx> <ry> [fill] [in <containerId>]
+create line <id> <x1> <y1> <x2> <y2> [stroke] [in <containerId>]
+create text <id> <x> <y> "content" [in <containerId>]
+create g <id> [in <containerId>]
+create box <id> <x> <y> <w> <h> "<title>" [in <containerId>]
+svg> 

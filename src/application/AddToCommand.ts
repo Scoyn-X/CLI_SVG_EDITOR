@@ -7,10 +7,10 @@ export class AddToCommand extends EditCommand {
   protected override apply(document: SvgDocument): CommandResult {
     const shape = document.describeShape(this.id);
     const oldParentId = document.getParentId(this.id);
-    const oldParent = oldParentId === undefined ? 'svg' : `${document.describeShape(oldParentId).getTag()}#${oldParentId}`;
+    const oldParent = oldParentId === undefined ? 'svg' : `${document.describeShape(oldParentId).getType()}#${oldParentId}`;
     document.addTo(this.parentId, this.id);
     const parent = document.describeShape(this.parentId);
-    const label = `${shape.getTag()}#${this.id}`;
-    return new CommandResult(`${label} moved into ${parent.getTag()}#${this.parentId}`, `${label} restored into ${oldParent}`);
+    const label = `${shape.getType()}#${this.id}`;
+    return new CommandResult(`${label} moved into ${parent.getType()}#${this.parentId}`, `${label} restored into ${oldParent}`);
   }
 }

@@ -1,0 +1,25 @@
+
+> cli-svg-outline@0.1.0 test
+> npm run build && node --test tests/*.test.mjs
+
+
+> cli-svg-outline@0.1.0 build
+> tsc -p tsconfig.json
+
+✔ activation registers Explorer and native Outline providers for SVG (0.9106ms)
+✔ decoration only marks SVG files and tolerates stat failures and cancellation (0.2562ms)
+✔ outline contains nested symbols and selects tag names at exact UTF-16 offsets (1.8338ms)
+✔ outline recomputes after edits and recovers from invalid XML (1.4005ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 301.9737
+npm notice
+npm notice New minor version of npm available! 11.6.1 -> 11.21.3
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.21.3
+npm notice To update run: npm install -g npm@11.21.3
+npm notice
