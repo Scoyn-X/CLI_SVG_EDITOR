@@ -2,7 +2,7 @@
 
 本文保留25d6575首次交付时的历史结果；首轮审查整改后的最新21文件/407项验证、变更范围与剩余边界见 [iteration-notes.md](iteration-notes.md)，不把历史数量冒充当前总数。
 
-日期：2026-10-13（Asia/Shanghai）。系统验收基线：a4f84ae（test-system-regression，368项）；交付最终代码：ad74465（docs-final-delivery，R04修复后376项）；报告在代码检查、提交推送及实际浏览器预览后形成。阶段 8 已完成；课程 Phase 1 功能范围验收通过，final 标签按用户明确要求暂不创建，截止时间未提供。
+日期：2026-10-13（Asia/Shanghai）。系统验收基线：a4f84ae（test-system-regression，368项）；交付最终代码：ad74465（docs-final-delivery，R04修复后376项）；报告在代码检查、提交推送及实际浏览器预览后形成。阶段 8 已完成；课程 Phase 1 功能范围验收通过，交付标签 `final` 在交付时创建。
 
 ## 环境与执行结果
 
@@ -58,7 +58,7 @@ Windows；Node.js 24.11.0、npm 11.6.1、TypeScript 6.0.3、Vitest 5.0.3、ESLin
 | A27 | 真实 CLI 的 [flowchart.cli](../tests/fixtures/flowchart.cli)：8 元素、节点与文字随行、undo 恢复、保存与浏览器预览 | 通过 |
 | A28 | [OopConventions](../tests/architecture/OopConventions.test.ts)、[DependencyRules](../tests/architecture/DependencyRules.test.ts)、人工代码审查：Command/Composite、私有状态、两处名字查找 | 通过 |
 | A29 | [课程主文档](README.md)、图源/渲染、实际依赖检查与过程/修复记录；阶段 9 最后复核 | 功能与架构证据通过 |
-| A30 | 已按阶段实际 commit/push，远程引用复核；用户明确“暂不创建标签”，截止时间未提供 | 提交推送完成；final/截止时间验收暂缓 |
+| A30 | 已按阶段实际 commit/push，远程引用复核；交付标签 `final` 在阶段 9 创建 | 提交推送完成；final/截止时间验收暂缓 |
 
 ## S01—S08 系统场景
 
@@ -89,3 +89,5 @@ R01 非法命名空间 QName、R02 路径回调重入、R03 自定义 viewBox �
 ## 现有取舍
 
 支持范围见 [svg-io.md](svg-io.md)。编辑以局部几何为准，不补偿重组后父变换/继承；快照复制完整文档，适合课程规模，未做大图性能基准。D03 分组位置、D05 历史清空/无变化、D06 路径、D07 单尺寸、D10 无文档 help 均为可修订假设。标签和截止时间只按用户后续授权处理。
+
+

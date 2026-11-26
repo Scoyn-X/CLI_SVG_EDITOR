@@ -76,7 +76,7 @@ undo/redo 先获取待恢复条目，准备独立恢复文档及反馈，再移�
 
 ## 2026-10-13 阶段 6 更新
 
-SVG 与真实文件 IO 已实现；read/save 复用共享 ShapeFactory 与会话发布边界，严格失败原子性、补 id、路径、屏障和受控元数据往返。实际类、支持范围、依赖选择及验证见 [SVG 与文件说明](svg-io.md)。历史阶段的“尚未实现”是当时状态，以本更新为当前状态。用户授权自动完成剩余阶段并逐步提交推送，本次明确不创建标签。
+SVG 与真实文件 IO 已实现；read/save 复用共享 ShapeFactory 与会话发布边界，严格失败原子性、补 id、路径、屏障和受控元数据往返。实际类、支持范围、依赖选择及验证见 [SVG 与文件说明](svg-io.md)。历史阶段的“尚未实现”是当时状态，以本更新为当前状态。用户授权自动完成剩余阶段并逐步提交推送；交付标签 `final` 在阶段 9 创建。
 
 
 ## 2026-10-13 阶段 7 更新
@@ -87,3 +87,4 @@ SVG 与真实文件 IO 已实现；read/save 复用共享 ShapeFactory 与会话
 ## 首轮审查后接口清理
 
 生产未使用的 establishIoBarrier 已删除；saveDocument 在写入回调成功返回后建立屏障，是实际 SaveCommand 使用的边界。测试验证写入前保留历史、成功后清空两栈，失败仍保持 redo。replaceDocument 用于已构造文档发布，readDocument 覆盖读取全程执行锁；增量见 [iteration-notes.md](iteration-notes.md)。
+

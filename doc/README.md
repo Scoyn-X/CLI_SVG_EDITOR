@@ -2,7 +2,7 @@
 
 本项目是软件设计课程的 SVG 命令行编辑器，使用 TypeScript 和面向对象设计，通过 REPL 完成文档读写、图形编辑、结构调整与撤销重做。课程 Phase 1 的六种内置图形和 19 个命令已实现，持续测试、独立系统验收及审查跟进均已完成。
 
-本文件是课程要求的 `doc/README.md`，集中说明架构、AI 协作中的关键迭代、一致性自查和质量保证。以项目负责人视角展开的项目报告见 [Report.md](Report.md)；[Report.pdf](Report.pdf) 是 Phase 1 的导出件。需求依据为 [phase_cli_1.md](../phase_cli_1.md)，未明确语义的工程选择见 [决策记录](decisions.md)。
+本文件是课程要求的 `doc/README.md`，集中说明架构、AI 协作中的关键迭代、一致性自查和质量保证。以项目负责人视角展开的项目报告见 [Report.md](Report.md)；[Report.pdf](Report.pdf) 是同一报告的 PDF 导出。需求依据为 [phase_cli_1.md](../phase_cli_1.md)，未明确语义的工程选择见 [决策记录](decisions.md)。
 
 文档更新：2026-11-26。Phase 1 冻结基线为 `final` / `ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a`。下文的 Phase 1 过程、架构和历史结果保留当时口径，当前增量以本节 Phase 2 记录为准。
 
@@ -351,7 +351,7 @@ save demo.svg
 
 | 文档 | 用途 |
 | --- | --- |
-| [Report.md](Report.md) / [Report.pdf](Report.pdf) | 两阶段项目报告（负责人视角的架构思考与迭代）；PDF 为 Phase 1 导出 |
+| [Report.md](Report.md) / [Report.pdf](Report.pdf) | 两阶段项目报告（负责人视角的架构思考与迭代），含 PDF 导出 |
 | [phase2-cli.md](phase2-cli.md) / [phase2-vscode.md](phase2-vscode.md) | Phase 2 的扩展点、装配、加载失败契约与 VS Code 实现细节 |
 | [phase2-acceptance.md](phase2-acceptance.md) / [evidence/phase2/](evidence/phase2/README.md) | Phase 2 的集中验收步骤、执行记录与原始证据 |
 | [development.md](development.md) / [cli.md](cli.md) | 环境、运行、脚本回放及命令交互 |
@@ -365,5 +365,6 @@ GitHub 仓库：[Scoyn-X/CLI_SVG_EDITOR](https://github.com/Scoyn-X/CLI_SVG_EDIT
 生产插件的独立提交、零内核差异、版本 B 和单/双标签回放见 [Phase 2 交付证据](evidence/phase2/README.md)。
 
 第 005 轮审核整改的逐项处理、语义决策和验证结果见 [整改记录](phase2-review-fixes.md)。
+
 
 

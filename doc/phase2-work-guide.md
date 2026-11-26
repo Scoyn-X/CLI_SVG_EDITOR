@@ -56,10 +56,11 @@ Phase 1 回放使用独立临时目录，比较 final 的冻结输出。A/B 回�
 
 ## 生产插件完成记录
 
-2026-11-17：box、BoxTypeLabel 与 ModifiedStar 已接入双装配。26 文件/449 项全量测试、扩展 4 项测试、六组 Phase 1 和 A/B 字节回放均通过。生产回放覆盖版本 B 与三种标签组合。提交差异及命令输出见 [证据目录](evidence/phase2/README.md)。课程最终标签按交付安排创建；当前指标以候选源码提交为目标。
+2026-11-17：box、BoxTypeLabel 与 ModifiedStar 已接入双装配。26 文件/449 项全量测试、扩展 4 项测试、六组 Phase 1 和 A/B 字节回放均通过。生产回放覆盖版本 B 与三种标签组合。提交差异及命令输出见 [证据目录](evidence/phase2/README.md)。指标按 `final` 与交付提交复算。
 
 ## 代码装配接入证据
 
 演示分支 demo-assembly-a 的 937dbb3 从框架基线新增最终版 box，仅修改 CodePlugins.ts 装配文件。独立完整检查 427 项及六组 Phase 1 回归通过；与主线配置装配的八组会话输出和 SVG 字节一致。命令与原始输出见 [方式 A 证据](evidence/phase2/README.md#方式-a独立代码装配接入)。
 
 第 005 轮审核整改的逐项处理、语义决策和验证结果见 [整改记录](phase2-review-fixes.md)。
+
