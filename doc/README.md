@@ -165,7 +165,15 @@ npm run check
 npm run cli
 ```
 
-项目使用 TypeScript strict、Vitest、ESLint 和 dependency-cruiser；SVG 解析使用 `@rgrove/parse-xml`。具体版本由 `package-lock.json` 固定。`npm run check` 依次执行类型检查、lint、构建、依赖检查、测试和编译后运行时组装检查。
+VS Code 扩展是独立包，依赖、构建与测试都在包内完成：
+
+```sh
+npm --prefix vscode-extension ci
+npm --prefix vscode-extension test
+code --new-window --extensionDevelopmentPath="$PWD/vscode-extension" "$PWD/vscode-extension/demo"
+```
+
+项目使用 TypeScript strict、Vitest、ESLint 和 dependency-cruiser；SVG 解析使用 `@rgrove/parse-xml`。具体版本由 `package-lock.json` 固定。`npm run check` 针对 CLI 依次执行类型检查、lint、构建、依赖检查、测试和编译后运行时组装检查；根目录 lint 不覆盖独立的扩展包，扩展源码由包内 `tsc` 严格构建校验。
 
 进入 `svg>` 提示符后，可输入以下命令：
 

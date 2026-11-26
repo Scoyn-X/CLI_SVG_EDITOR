@@ -2,7 +2,8 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['node_modules/**', 'dist/**', 'vscode-extension/dist/**', 'coverage/**', 'artifacts/**'] },
+  // vscode-extension 是独立包，依赖与 tsconfig 在包内；根目录只检查 CLI 与其测试/脚本。
+  { ignores: ['node_modules/**', 'dist/**', 'vscode-extension/**', 'coverage/**', 'artifacts/**'] },
   js.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   {

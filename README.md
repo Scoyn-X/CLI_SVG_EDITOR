@@ -23,6 +23,14 @@ node dist/bootstrap/main.js --code-plugins
 node dist/bootstrap/main.js --config plugins.config.json
 ```
 
+VS Code 扩展是独立包，依赖与构建在包内：
+
+```sh
+npm --prefix vscode-extension ci
+npm --prefix vscode-extension test
+code --new-window --extensionDevelopmentPath="$PWD/vscode-extension" "$PWD/vscode-extension/demo"
+```
+
 例如输入：
 
 ```text
