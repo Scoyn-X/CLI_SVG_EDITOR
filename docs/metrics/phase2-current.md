@@ -2,7 +2,7 @@
 
 基线 `final`（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a）
 
-目标 `92eb0bb0bf8d1b5128c6fd41b3ecf06077dd6d8c`（92eb0bb0bf8d1b5128c6fd41b3ecf06077dd6d8c）
+目标 `2e53fbf`（2e53fbf676df2164e66ff0d97927234db87ea1ea）
 
 口径：物理行含空行和注释；圈复杂度为有函数体的函数/方法/构造器/访问器/箭头函数的路径数之和。每个实现起点 1，if、三元、catch、非 default 的 case、循环及 && / || / ?? 各加 1；嵌套函数独立计数。接口、声明、模块顶层语句与类型表达式不计圈复杂度。VS Code 单列，不计入 CLI 增量。
 
