@@ -4,25 +4,144 @@
 
 本文件是课程要求的 `doc/README.md`，集中说明架构、AI 协作中的关键迭代、一致性自查和质量保证。以项目负责人视角展开的补充报告见 [Report.md](Report.md) 和 [Report.pdf](Report.pdf)。需求依据为 [phase_cli_1.md](../phase_cli_1.md)，未明确语义的工程选择见 [决策记录](decisions.md)。
 
-文档更新：2026-11-11。Phase 1 冻结基线为 `final` / `ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a`。下文的 Phase 1 过程、架构和历史结果保留当时口径，当前增量以本节 Phase 2 记录为准。
+文档更新：2026-11-26。Phase 1 冻结基线为 `final` / `ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a`。下文的 Phase 1 过程、架构和历史结果保留当时口径，当前增量以本节 Phase 2 记录为准。
 
-## Phase 2 当前状态
+## Phase 2：插件式重构
 
-为支持独立插件扩展，CLI 增加四个扩展点和统一加载器，并通过 stats/dir 验证命令接入。VS Code 扩展提供 SVG 文件标记和原生 Outline。当前默认启动保持 Phase 1；`node dist/bootstrap/main.js --code-plugins` 用代码装配，`node dist/bootstrap/main.js --config plugins.config.json` 用配置装配。两者共用注册、清单校验和回滚路径。
+### 从 Phase 1 到 Phase 2
 
-| 内容 | 设计与验证入口 |
+Phase 1 的命令、图形与历史都写在内核里，新增一种图形或一条命令必须改工厂或分发表。Phase 2 把四处变化点抽成内核侧的稳定契约——图形类型、命令、树标签、属性语义——内核只依赖接口，实现放在独立插件包里；装配方式也收拢为一处注册路径，插件既能用代码装入，也能用配置装入。CLI 之外另有一个独立的 VS Code 扩展，用宿主提供的文件装饰与文档符号接口实现 SVG 标记和大纲。
+
+这次重构没有改动 Phase 1 的命令语义：默认启动仍是六种图形与 19 条命令，`final` 的六组会话在字节级一致。变化集中在内核新增的契约与加载器、应用层的三个调用点，以及四个插件包。详细实现与取舍见 [CLI 插件框架](phase2-cli.md)；VS Code 部分见 [VS Code 扩展](phase2-vscode.md)。
+
+### 扩展点清单
+
+下表源码路径省略 `src/` 前缀。接口定义在内核侧，插件只依赖公开契约与公开领域抽象，依赖检查禁止内核反向导入插件。`PluginContext` 提供四种注册方法，`PluginModule` 描述激活协议。
+
+| 接口与职责 | 内核调用位置 | 生产实现 | 禁用可选插件时 | 契约与失败处理 |
+| --- | --- | --- | --- | --- |
+| `ports/ShapeProvider`：图形创建、SVG 读回与帮助语法 | `application/ShapeFactory.create/fromSvg/getUsages`；`CreateCommand.apply` | 六个内置 Provider；`plugins/box/BoxProvider` | 六种内置类型仍注册，未知类型保留原错误 | 类型重名拒绝注册；provider 校验参数与子树；创建/导入成功后才发布；复合子类必须实现多态复制 |
+| `application/Command` 抽象类与 `CommandRegistration`：命令执行、参数规则、帮助 | `CommandDispatcher.create` 查表；`adapters/cli/CliController.executeLine` 执行 | 19 条内置命令；`plugins/stats/StatsCommand`、`plugins/dir/DirCommand` | 插件命令不在 help 中，执行报 `error: unknown command: <name>` | 重名拒绝；参数错误报 `usage:`；普通异常转为单行错误，下一条命令仍可执行；编辑命令必须经过会话事务 |
+| `ports/TreeDecorator`：逐树准备、逐行追加标签 | `adapters/cli/CliPresenter.tree` 先 `prepare`，再对标题与每行调用回调 | `plugins/box/BoxTypeLabel`、`plugins/modified-star/ModifiedStar` | 空列表，不附加标签，`tree` 字节不变 | 传入不可写的当前/干净描述；画布行 shape 为 undefined；空标签忽略；异常转为单行错误且不发布部分输出 |
+| `ports/AttributeHandler`：属性匹配、受控修改与摘要 | `application/SetCommand.apply` 调用 `handles/apply/summarize` | `plugins/box/BoxAttributes` | 零命中，回退到原属性白名单 | 多命中报 `error: conflicting attribute handlers: <attr>`；处理失败不再回退默认规则，丢弃候选文档并保留历史 |
+
+插件以类或类实例实现扩展点，并用自己的 `package.json` 的 `contributes` 声明提供哪些扩展；加载器在激活后按四类名称集合比对声明与实际注册。
+
+### 两种装配方式
+
+```powershell
+node dist/bootstrap/main.js                 # 默认：仅 Phase 1 能力
+node dist/bootstrap/main.js --code-plugins  # 方式 A：代码装配
+node dist/bootstrap/main.js --config plugins.config.json  # 方式 B：配置装配
+```
+
+方式 A 的 `bootstrap/CodePlugins.ts` 是唯一具体插件装配文件；方式 B 由 `PluginLoader.loadConfig` 按配置顺序解析模块。两者都进入 `PluginLoader.activate → PluginRegistry.install`，共用暂存注册、冲突检查、清单校验与提交路径，因此装入同一插件集合时行为与输出完全一致。
+
+```json
+{
+  "plugins": [
+    { "module": "./dist/plugins/stats" },
+    { "module": "./dist/plugins/dir", "enabled": true, "options": {} },
+    { "module": "./dist/plugins/box" },
+    { "module": "./dist/plugins/modified-star" }
+  ]
+}
+```
+
+每项只接受非空 `module`、布尔 `enabled` 和任意 JSON `options`；`enabled: false` 完全跳过；相对路径以配置文件目录为基准，包名按 Node 的 ESM 解析规则处理。配置结构非法时报 `error: invalid plugin config` 并以默认能力启动；模块缺失、无默认导出、清单不符、激活失败各有独立错误信息，均不终止主程序。
+
+### 重构前后的模块依赖
+
+```plantuml
+@startuml
+title Phase 1 / final
+package bootstrap as B
+package "adapters (CLI / SVG / shapes / files)" as A
+package application as U
+package ports as P
+package domain as D
+B --> A
+B --> U
+A --> U : CLI
+A --> P
+A --> D
+U --> P
+U --> D
+P --> D
+@enduml
+```
+
+```plantuml
+@startuml
+title Phase 2 / 插件框架
+package "bootstrap (main / CodePlugins / composition)" as B
+package "bootstrap (loader / registry / manifest)" as L
+package "plugins (stats / dir + directory adapter)" as X
+package "adapters (CLI renderer / SVG / built-in providers / files)" as A
+package "application (commands / session / plugin contracts)" as U
+package "ports (shape / attribute / tree / IO)" as P
+package domain as D
+B --> L
+B --> X : 仅 CodePlugins 具体导入
+B --> A
+B --> U
+L --> U
+L --> P
+X --> U : 公开扩展契约
+X --> P
+X --> D : 公开领域抽象
+A --> U : CLI
+A --> P
+A --> D
+U --> P
+U --> D
+P --> D
+@enduml
+```
+
+加载器按配置字符串动态装入模块，没有具体插件的静态依赖；Node 内置依赖只出现在装配、IO 适配器与 `dir` 的 `NodeDirectoryReader`。VS Code 扩展是独立包，不进入 CLI 依赖图。
+
+### 架构决策
+
+- **P2-01 属性处理用候选文档与单次提交**：`AttributeHandler.apply` 只操作 `EditorSession.edit` 创建的候选文档，可以改多个子件；零命中回退白名单，多命中直接拒绝；apply/summarize 抛错则整体丢弃候选并保留 redo。一次 `set` 仍是一个 undo 单元。
+- **P2-02 语义类型与 SVG 标签分离**：`Shape.getType()` 可以与 SVG 标签不同，provider 显式声明 `getSvgTag` 并只在标签匹配时消费 `data-kind`；未安装对应插件时 `<g data-kind="box">` 降级为普通组并保留子树。`box` 构造按子件 id/标签模式校验，缺件、类型错误或重复 id 拒绝整份读入。
+- **P2-03 注册暂存、激活后校验清单**：每个插件先拿到独立的 `PluginContributions`，`activate` 结束后封闭上下文并按四类集合核对 `contributes`，全部成功才提交；失败插件不留下任何注册，已成功的插件不回滚。A/B 共用这条路径，代码装配不能绕过校验。
+- **P2-04 干净基准与标签顺序**：`init` 与成功的 `read`/`save` 后保存不可变的干净描述，`tree` 每次把当前与干净描述交给各标签；`ModifiedStar` 按内容比较（新节点立即标记、变化向祖先与画布传播、`undo` 回保存点后清除），标签状态封装在实例字段，按注册顺序拼接，同一行输出 `(box) *`。
+
+完整 ADR 正文、失败契约与序列化细节见 [CLI 插件框架](phase2-cli.md#adr)。
+
+### `dir` 的目录访问适配器
+
+| 适配器角色 | 接口/类 | 职责 |
+| --- | --- | --- |
+| Client | `plugins/dir/DirCommand` | 请求工作目录、读取、排序与输出，不直接使用 Node fs |
+| Target | `plugins/dir/DirectoryReader` | `currentDirectory`/`read`，返回中立的名称与类型 |
+| Adapter | `plugins/dir/NodeDirectoryReader` | 把 `process.cwd()` 与 `Dirent` 转换成 Target 的结果 |
+| Adaptee | Node `process.cwd`、`fs.readdirSync` | 提供真实进程路径与文件系统信息 |
+
+`DirPlugin` 接受可替换的 `DirectoryReader`，默认注入 `NodeDirectoryReader`；两种装配激活同一个插件实现，使用同一接口。测试替身覆盖读取失败与特殊项，真实 CLI 测试使用固定临时目录验证命令与适配器的组合。
+
+### VS Code 扩展
+
+扩展在 [`vscode-extension`](../vscode-extension/package.json) 下独立构建，提供两项能力：Explorer 中为 `.svg` 文件显示 `[]` 标记，以及在原生 Outline 中显示 SVG 元素的嵌套层级并在点击时定位源码。
+
+`activate` 由宿主在启动后调用。扩展把 `SvgFileDecorationProvider` 与 `SvgDocumentSymbolProvider` 注册给 VS Code，并把注册句柄交给扩展上下文释放。Explorer 需要呈现资源时向文件装饰提供者查询，Outline 需要结构时按 `.svg` 选择器调用符号提供者；宿主负责渲染、文档更新与跳转，扩展只返回 `FileDecoration`、层级 `DocumentSymbol` 和源码区间。
+
+文件标记体现 Decorator 的思路：资源本身不变，Explorer 获得额外显示信息；与经典 Decorator 的区别在于 VS Code 通过提供者接口查询元数据、由宿主完成组合和渲染。Adapter 方面，Explorer 期望的目标契约是 `FileDecorationProvider`，实现把 URI 后缀与 `workspace.fs.stat` 的结果转成 `FileDecoration`；符号提供者同样适配一层，把解析节点与 UTF-16 区间转成宿主的 `DocumentSymbol`、`range` 和 `selectionRange`。
+
+Phase 1 的解析与模型没有被直接复用：`XmlSvgCodec` 为 CLI 领域文档服务，不暴露源码区间且会补全 id、校验受支持图形；Outline 需要保留无 id 节点、遍历任意 SVG 元素并随未保存文本更新。扩展因此使用独立的 SAX 解析层和带区间的 `SvgOutlineNode`，再经宿主适配器映射。复用面在领域之外：示例 SVG、有序树与容器遍历的思路。
+
+### Phase 2 验证入口
+
+| 内容 | 入口 |
 | --- | --- |
-| 扩展点、调用位置、缺省和错误契约 | [CLI 说明](phase2-cli.md#扩展点清单)，逐项对应实际代码 |
-| 装配、配置和加载失败 | [两种装配](phase2-cli.md#运行与两种装配)；模块名通用解析，支持 import-only 包 |
-| stats/dir 与目录适配器 | [插件和适配器](phase2-cli.md#statsdir-与适配器)，含 Client/Target/Adapter/Adaptee 对照 |
-| 重构前后依赖及 ADR | [PlantUML 对比](phase2-cli.md#重构前后依赖plantuml)、[四条 ADR](phase2-cli.md#adr)，属性事务、读回拒绝、dirty 语义与清单校验 |
-| VS Code 模式分析与复用 | [VS Code 说明](phase2-vscode.md)，宿主注册/回调、Decorator/Adapter 对照及解析复用取舍 |
-| 当前检查 | 2026-11-21 完整 check 通过，26 文件 / 453 项，121 模块 / 381 依赖零违规；6 组 Phase 1 字节回归、4 份 SVG 通过；扩展 4 项自动测试通过 |
-| 界面与交互验证 | [集中验收清单](phase2-acceptance.md)，含开发宿主操作、预期结果、截图及哈希核对 |
-| 指标 | [脚本口径](../docs/metrics/README.md)及[历史报告](../docs/metrics/phase2-current.md)，按实际源码提交统计文件职责、三类 CLI 指标及单列 VS Code |
-| 工程入口与交付条件 | [工程指南](phase2-work-guide.md)，包含 box、modified-star、(box) 的实施重点与完整课程交付条件 |
+| 四扩展点、装配、加载失败与回滚 | [CLI 插件框架](phase2-cli.md) |
+| `stats`、`dir` 与目录适配器 | [CLI 插件框架](phase2-cli.md#statsdir-与适配器) |
+| VS Code 的宿主机制、模式分析与复用 | [VS Code 扩展](phase2-vscode.md) |
+| 操作步骤、预期结果与截图 | [集中验收清单](phase2-acceptance.md) |
+| 源码指标与统计口径 | [指标口径](../docs/metrics/README.md)、[当前报告](../docs/metrics/phase2-current.md) |
 
-Phase 1 的行为以 final 为固定对照。新插件的接入按实际提交检查运行代码的变更边界；最终交付使用 p2 标签。
+当前检查：26 个测试文件、453 项测试通过，依赖检查覆盖 121 个模块与 381 条依赖、零违规；Phase 1 六组会话与双装配回放逐字节一致；VS Code 扩展 4 项自动测试通过。Phase 1 的行为以 `final` 为固定对照，Phase 2 的交付标签为 `p2`。
 
 ## 目录
 

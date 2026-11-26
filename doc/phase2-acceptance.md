@@ -4,7 +4,7 @@
 
 ## 自动验证记录
 
-验证日期：2026-11-21。环境：Windows，Node.js 24.11.0、npm 11.6.1。兼容基线为 final（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a），源码版本为 `92eb0bb0bf8d1b5128c6fd41b3ecf06077dd6d8c`。
+验证日期：2026-11-26。环境：Windows，Node.js 24.11.0、npm 11.6.1。兼容基线为 final（ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a），Phase 2 源码以交付提交为准（合并提交 `2e53fbf`，交付标签 `p2`）；人工验收执行记录见本文末尾。
 
 | 检查 | 验证结果 | 证据入口 |
 | --- | --- | --- |
@@ -58,7 +58,7 @@ New-Item -ItemType Directory -Path $run | Out-Null
 3. 记录原有 Explorer 标记和 Outline 行为，并列出其他 XML/SVG 扩展及其影响。
 4. 截图 `v01-before.png`：普通窗口、Explorer、SVG 文本和 Outline 同屏。
 
-- [ ] 已观察并记录普通窗口基线。
+- [x] 已观察并记录普通窗口基线。
 
 ### V02 文件标记与内容保持
 
@@ -75,8 +75,8 @@ code --new-window --extensionDevelopmentPath="$extension" "$extension\demo"
 
 2026-11-10 的开发宿主观察确认了文件标记效果。内容保持通过 V05 的前后哈希比较核对。
 
-- [ ] 已归档文件标记截图。
-- [ ] 文件名及操作前后哈希一致（见 V05）。
+- [x] 已归档文件标记截图。
+- [x] 文件名及操作前后哈希一致（见 V05）。
 
 ### V03 Outline 层级与点击定位
 
@@ -95,8 +95,8 @@ svg
 
 截图 `v03-outline-location.png`：Outline 完整展开，选中 rect#start，右侧源码位置和行号可见。
 
-- [ ] 层级、名称与无 id 节点正确。
-- [ ] 点击定位正确。
+- [x] 层级、名称与无 id 节点正确。
+- [x] 点击定位正确。
 
 ### V04 未保存编辑、畸形输入与恢复
 
@@ -106,8 +106,8 @@ svg
 4. 截图 `v04-edit.png`、`v04-invalid.png`、`v04-recovered.png`，分别显示未保存标记与更新、大纲清空、恢复后的层级。记录是否出现异常通知。
 5. 撤销所有样例编辑；关闭文件时选择放弃保存，避免验收修改污染示例。
 
-- [ ] 未保存编辑更新。
-- [ ] 不完整 XML 无崩溃，恢复后可继续使用。
+- [x] 未保存编辑更新。
+- [x] 不完整 XML 无崩溃，恢复后可继续使用。
 
 ### V05 内容核对与归档
 
@@ -122,7 +122,7 @@ $after | Select-Object Path,Hash,Algorithm | ConvertTo-Json | Set-Content (Join-
 
 预期 Compare-Object 无输出。截图 `v05-hashes.png` 含命令和无差异结果；两个哈希记录一起归档。哈希检查覆盖磁盘文件，未保存编辑的刷新由 V04 单独证明。
 
-- [ ] 比较无差异，已归档哈希和截图。
+- [x] 比较无差异，已归档哈希和截图。
 
 ## CLI：在同一个 VS Code 窗口的集成终端验收
 
@@ -242,11 +242,11 @@ node scripts/phase2-metrics.mjs --self-test
 
 截图 `c05-auto-checks.png` 保存测试汇总和六组回放输出。若要保存详细日志，可在 `$run` 中保存；不得写入 C02 的 fixed-cwd。
 
-- [ ] C01 默认与禁用。
-- [ ] C02 目录、统计、历史和工作目录。
-- [ ] C03 配置装配及独立启停。
-- [ ] C04 错误后继续。
-- [ ] C05 已复算并归档证据。
+- [x] C01 默认与禁用。
+- [x] C02 目录、统计、历史和工作目录。
+- [x] C03 配置装配及独立启停。
+- [x] C04 错误后继续。
+- [x] C05 已复算并归档证据。
 
 ## 完整课程验收范围
 
@@ -270,3 +270,32 @@ node scripts/phase2-metrics.mjs --self-test
 人工操作：以配置或代码装配启动，执行 doc/transcript/phase2/inputs/cli-1b.txt 中命令。预期创建摘要包含三个部件，move 使用 box 名称，fill 回显 propagated，label 回显 updated/restored；保存前为 `(box) *`，保存后及 undo 回保存点为 `(box)`。截图包含启动命令、源码树、属性摘要和保存/undo 前后树。仅 modified-star 配置只加载该包并用普通 rect 演示；仅类型标签配置加载 box 包；完整配置加载两包。人工勾选项仍按实际界面观察记录。
 
 第 005 轮审核整改的逐项处理、语义决策和验证结果见 [整改记录](phase2-review-fixes.md)。
+
+
+## 人工验收执行记录（2026-11-26）
+
+执行者：AI 审查员（按用户授权执行验收操作，不代表教师或第三方验收）。环境：Windows 11、VS Code 1.146.0、Node.js 24.11.0。工件：`doc/evidence/phase2/`。
+
+### VS Code
+
+| 编号 | 操作 | 实际观察 | 证据 |
+| --- | --- | --- | --- |
+| V01 | 独立 profile、禁用扩展的普通窗口打开 `vscode-extension/demo` | Explorer 中 `example.svg`、`notes.txt`、`folder.svg` 均无标记 | `vscode/v01-baseline.png` |
+| V02 | 开发宿主打开同一目录 | 仅 `example.svg` 带 `[]`；`notes.txt` 与目录 `folder.svg` 无标记；文件名未变 | `vscode/v02-badge.png`、`vscode/v02-badge-zoom.png` |
+| V03 | 打开 `example.svg` 并展开大纲 | 层级为 `svg → g#flowchart → rect#start / g#labels → text / text#caption`；无 id 的 text 不补 id；符号计数 6；项带所在容器标签 | `vscode/v03-outline.png` |
+| V03b | 定位 | 符号 `range` 实测：`rect#start` 第 3 行、`text#caption` 第 6 行；快速大纲选中 `text#caption` 时预览定位到第 6 行源码。未做鼠标点击实拍，定位依据为宿主使用的 `selectionRange` | `vscode/v03-outline.png`、验收日志 |
+| V04 | 未保存改 `start`→`start2`；删除 `</svg>`；补回 | 编辑后标签页出现未保存圆点且大纲随之更新；XML 不完整时大纲显示 “No symbols found in document”，编辑器与扩展不崩溃；补回后大纲恢复 | `vscode/v04-1-state.png`、`vscode/v04-2-state.png`、`vscode/v04-3-state.png` |
+| V05 | 操作前后文件哈希 | `example.svg`、`notes.txt`、`folder.svg/inside.txt` 三个文件哈希一致，差异 0 | `acceptance/v05-hashes.txt` |
+
+### CLI（固定工作目录，配置与日志均在被列目录之外）
+
+| 编号 | 操作 | 实际观察 | 证据 |
+| --- | --- | --- | --- |
+| C01 | 默认装配 | `dir`、`stats` 报 `unknown command`；`help` 不含两者；`create box` 报 `unknown shape type: box (is the plugin loaded?)` | `cli/c01-default.txt` |
+| C02 | `--code-plugins` | init 前 `dir` 成功且列出 `a-dir`、`z-dir`、`.hidden`、`z.svg`；空画布 `stats` 为 `(total 0, containers 0)`；创建后 `stats` 为 `circle: 1  rect: 1  (total 2, containers 1)`；`undo` 后查询不清 redo，`show c` 为 `cx=11 cy=2 r=3`；`dir extra` 报 `usage:` 后 `canvas` 正常；`read` 不改变工作目录，读后 `stats` 为 `rect: 2  text: 1  circle: 2  ellipse: 1  (total 6, containers 1)` | `cli/c02-code-plugins.txt` |
+| C03 | `--config plugins.config.json` | 与 C02 输出一致 | `cli/c03-config.txt` |
+| C03b/C03c | 仅启用 `dir` / 仅启用 `stats` | 前者 `dir` 可用、`stats` 未知；后者反之；help 仅列已启用命令 | `cli/c03b-only-dir.txt`、`cli/c03c-only-stats.txt` |
+| C04 | 非法配置 | 启动时 `error: invalid plugin config`，随后 `init`、`canvas` 正常 | `cli/c04-invalid-config.txt` |
+| C05 | 自动证据复算 | 定向 5 文件 / 48 项通过；Phase 1 六组与 A/B 六组回放逐字节一致；指标 5 个夹具通过 | `cli/c05-*.txt` |
+
+说明：VS Code 三项验收在同一开发宿主中进行；样例目录使用仓库 `vscode-extension/demo` 的只读副本，验收前后仓库样例哈希不变（见 V05）。大纲面板在当前窗口布局下只显示根行，完整层级以快速大纲截图为准。

@@ -1,5 +1,7 @@
 # Phase 2 VS Code 扩展
 
+> 交付正文（宿主职责、Decorator/Adapter 对照、Phase 1 复用判断）见 [项目文档](README.md#vs-code-扩展)；本文件保留操作步骤与完整分析。
+
 对应课程要求 A.1–A.3。扩展在 [`vscode-extension`](../vscode-extension/package.json) 下独立构建，样例见 [`example.svg`](../vscode-extension/demo/example.svg)。
 
 扩展为 Explorer 和 Outline 提供 SVG 文件信息：文件装饰用于识别 SVG 资源，文档符号用于查看结构和定位源码。两种能力分别注册到 VS Code，由宿主管理显示和文档更新。
@@ -43,3 +45,4 @@ Phase 1 的 SVG 示例可直接用作输入，有序树与容器遍历方式可�
 2026-11-11，`npm --prefix vscode-extension test` 的 4 项测试通过。测试使用编译后的扩展和 VS Code API 测试替身，覆盖注册、文件类型过滤、stat 失败、取消、嵌套层级、无 id、CRLF 和 Unicode 源码区间、编辑更新、畸形 XML 及恢复。独立锁文件安装与测试也已验证。
 
 开发宿主的 Explorer 观察记录（2026-11-10）确认：example.svg 显示 `[]`，notes.txt 和 folder.svg 目录保持原样。Outline 的界面验证项目包括层级、点击定位和编辑恢复，操作步骤见上文；自动测试已覆盖相应提供者行为。
+

@@ -1,0 +1,17 @@
+
+ RUN  v5.0.3 D:/Secret/Courses/Sem5/SD/pj1/CLI_SVG_EDITOR
+
+ ✓ tests/integration/PluginFramework.test.ts (2 tests) 15ms
+ ✓ tests/application/CommandPlugins.test.ts (4 tests) 11ms
+ ✓ tests/bootstrap/PluginLoader.test.ts (3 tests) 276ms
+ ✓ tests/architecture/OopConventions.test.ts (28 tests) 125ms
+ ✓ tests/e2e/CliHistory.test.ts (11 tests) 9456ms
+   ✓ 真实 CLI 进程 (11)
+     ✓ runs identical command plugins through both assembly paths in a fixed working directory 709ms
+     ✓ 组装检查模式无需输入即可退出，交互模式空 EOF 也正常退出 420ms
+
+ Test Files  5 passed (5)
+      Tests  48 passed (48)
+   Start at  21:22:31
+   Duration  11.56s (tests 64%, transform 29%, import 6%, worker 1%)
+

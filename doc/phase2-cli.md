@@ -1,5 +1,7 @@
 # Phase 2 CLI 框架与命令插件
 
+> 交付正文（扩展点清单、两种装配、依赖图、ADR 摘要）见 [项目文档](README.md#phase-2插件式重构)；本文件保留完整实现细节、失败契约与验证记录。
+
 为支持新增命令、图形类型和显示规则，CLI 将四类变化封装为扩展契约，通过统一的注册与加载流程接入插件。当前提供 stats、dir、box 及 modified-star，默认装配保留 Phase 1 的六种图形与 19 条命令。
 
 ## 运行与两种装配
@@ -185,3 +187,4 @@ Box 和 ModifiedStar 的独立测试位于 tests/plugins。版本 B 输入与预
 演示分支 demo-assembly-a 的 937dbb3 从框架基线新增最终版 box，仅修改 CodePlugins.ts 装配文件。独立完整检查 427 项及六组 Phase 1 回归通过；与主线配置装配的八组会话输出和 SVG 字节一致。命令与原始输出见 [方式 A 证据](evidence/phase2/README.md#方式-a独立代码装配接入)。
 
 第 005 轮审核整改的逐项处理、语义决策和验证结果见 [整改记录](phase2-review-fixes.md)。
+

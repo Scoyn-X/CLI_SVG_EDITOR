@@ -1,0 +1,10 @@
+== C04 非法配置
+cmd: node dist/bootstrap/main.js --config D:\Secret\Courses\Sem5\SD\pj1\review\sandbox\round-009\bad.json
+
+error: invalid plugin config
+svg-editor 0.1 — type 'help' for commands
+
+svg> canvas 800x600 created
+svg> canvas 800x600
+svg> 
+
