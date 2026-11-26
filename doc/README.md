@@ -145,6 +145,7 @@ Phase 1 的解析与模型没有被直接复用：`XmlSvgCodec` 为 CLI 领域�
 
 ## 目录
 
+- [Phase 2：插件式重构](#phase-2插件式重构)
 - [项目概况与运行](#项目概况与运行)
 - [架构方案](#架构方案)
 - [过程记录](#过程记录)
@@ -324,18 +325,20 @@ save demo.svg
 
 ## 交付与文档索引
 
-代码、测试和文档通过分步 Git 提交保留真实开发过程。课程平台截图给出的截止时间为 **2026-10-25 23:59**。`final` 标记包含本次 README 整理、修改后报告及 PDF 的交付版本；标签更新过程见 [增量记录](iteration-notes.md)。后续分支提交或 push 不会自动移动标签。
+代码、测试和文档通过分步 Git 提交保留真实开发过程。两个交付标签：`final` 对应 Phase 1 的完整交付（`ba7b418`），`p2` 对应 Phase 2 的交付提交；标签创建后不再移动，后续分支提交不会自动改变已发布的标签。
 
 | 文档 | 用途 |
 | --- | --- |
 | [Report.md](Report.md) / [Report.pdf](Report.pdf) | 补充课程报告，采用项目负责人视角叙述架构思考和关键迭代 |
+| [phase2-cli.md](phase2-cli.md) / [phase2-vscode.md](phase2-vscode.md) | Phase 2 的扩展点、装配、加载失败契约与 VS Code 实现细节 |
+| [phase2-acceptance.md](phase2-acceptance.md) / [evidence/phase2/](evidence/phase2/README.md) | Phase 2 的集中验收步骤、执行记录与原始证据 |
 | [development.md](development.md) / [cli.md](cli.md) | 环境、运行、脚本回放及命令交互 |
 | [domain-model.md](domain-model.md) / [command-history.md](command-history.md) / [tree-editing.md](tree-editing.md) / [svg-io.md](svg-io.md) | 各部分设计与实现细节 |
 | [decisions.md](decisions.md) / [iteration-notes.md](iteration-notes.md) | 工程假设、修改原因及逐次增量 |
 | [testing.md](testing.md) / [acceptance.md](acceptance.md) | 测试安排、需求映射和关键验收场景 |
 | [roadmap.md](roadmap.md) / [historical-checks.md](historical-checks.md) / [delivery.md](delivery.md) | 工程里程碑、历史验证及交付记录 |
 
-GitHub 仓库：[Scoyn-X/CLI_SVG_EDITOR](https://github.com/Scoyn-X/CLI_SVG_EDITOR)。已发布交付快照：[final](https://github.com/Scoyn-X/CLI_SVG_EDITOR/tree/final)。
+GitHub 仓库：[Scoyn-X/CLI_SVG_EDITOR](https://github.com/Scoyn-X/CLI_SVG_EDITOR)。交付快照：[final](https://github.com/Scoyn-X/CLI_SVG_EDITOR/tree/final)、`p2`。
 
 生产插件的独立提交、零内核差异、版本 B 和单/双标签回放见 [Phase 2 交付证据](evidence/phase2/README.md)。
 
