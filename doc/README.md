@@ -2,7 +2,7 @@
 
 本项目是软件设计课程的 SVG 命令行编辑器，使用 TypeScript 和面向对象设计，通过 REPL 完成文档读写、图形编辑、结构调整与撤销重做。课程 Phase 1 的六种内置图形和 19 个命令已实现，持续测试、独立系统验收及审查跟进均已完成。
 
-本文件是课程要求的 `doc/README.md`，集中说明架构、AI 协作中的关键迭代、一致性自查和质量保证。以项目负责人视角展开的补充报告见 [Report.md](Report.md) 和 [Report.pdf](Report.pdf)。需求依据为 [phase_cli_1.md](../phase_cli_1.md)，未明确语义的工程选择见 [决策记录](decisions.md)。
+本文件是课程要求的 `doc/README.md`，集中说明架构、AI 协作中的关键迭代、一致性自查和质量保证。以项目负责人视角展开的项目报告见 [Report.md](Report.md)；[Report.pdf](Report.pdf) 是 Phase 1 的导出件。需求依据为 [phase_cli_1.md](../phase_cli_1.md)，未明确语义的工程选择见 [决策记录](decisions.md)。
 
 文档更新：2026-11-26。Phase 1 冻结基线为 `final` / `ba7b418cb5554d6e2a3c8e1d66f9940fb3c40e3a`。下文的 Phase 1 过程、架构和历史结果保留当时口径，当前增量以本节 Phase 2 记录为准。
 
@@ -129,7 +129,7 @@ P --> D
 
 文件标记体现 Decorator 的思路：资源本身不变，Explorer 获得额外显示信息；与经典 Decorator 的区别在于 VS Code 通过提供者接口查询元数据、由宿主完成组合和渲染。Adapter 方面，Explorer 期望的目标契约是 `FileDecorationProvider`，实现把 URI 后缀与 `workspace.fs.stat` 的结果转成 `FileDecoration`；符号提供者同样适配一层，把解析节点与 UTF-16 区间转成宿主的 `DocumentSymbol`、`range` 和 `selectionRange`。
 
-Phase 1 的解析与模型没有被直接复用：`XmlSvgCodec` 为 CLI 领域文档服务，不暴露源码区间且会补全 id、校验受支持图形；Outline 需要保留无 id 节点、遍历任意 SVG 元素并随未保存文本更新。扩展因此使用独立的 SAX 解析层和带区间的 `SvgOutlineNode`，再经宿主适配器映射。复用面在领域之外：示例 SVG、有序树与容器遍历的思路。
+开发宿主的实际操作与截图见 [验收证据](evidence/phase2/acceptance/README.md)。Phase 1 的解析与模型没有被直接复用：`XmlSvgCodec` 为 CLI 领域文档服务，不暴露源码区间且会补全 id、校验受支持图形；Outline 需要保留无 id 节点、遍历任意 SVG 元素并随未保存文本更新。扩展因此使用独立的 SAX 解析层和带区间的 `SvgOutlineNode`，再经宿主适配器映射。复用面在领域之外：示例 SVG、有序树与容器遍历的思路。
 
 ### Phase 2 验证入口
 
@@ -337,7 +337,7 @@ save demo.svg
 
 | 文档 | 用途 |
 | --- | --- |
-| [Report.md](Report.md) / [Report.pdf](Report.pdf) | 补充课程报告，采用项目负责人视角叙述架构思考和关键迭代 |
+| [Report.md](Report.md) / [Report.pdf](Report.pdf) | 两阶段项目报告（负责人视角的架构思考与迭代）；PDF 为 Phase 1 导出 |
 | [phase2-cli.md](phase2-cli.md) / [phase2-vscode.md](phase2-vscode.md) | Phase 2 的扩展点、装配、加载失败契约与 VS Code 实现细节 |
 | [phase2-acceptance.md](phase2-acceptance.md) / [evidence/phase2/](evidence/phase2/README.md) | Phase 2 的集中验收步骤、执行记录与原始证据 |
 | [development.md](development.md) / [cli.md](cli.md) | 环境、运行、脚本回放及命令交互 |
@@ -351,3 +351,4 @@ GitHub 仓库：[Scoyn-X/CLI_SVG_EDITOR](https://github.com/Scoyn-X/CLI_SVG_EDIT
 生产插件的独立提交、零内核差异、版本 B 和单/双标签回放见 [Phase 2 交付证据](evidence/phase2/README.md)。
 
 第 005 轮审核整改的逐项处理、语义决策和验证结果见 [整改记录](phase2-review-fixes.md)。
+
