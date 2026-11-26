@@ -18,9 +18,13 @@ export abstract class Shape {
   }
 
   public getId(): string { return this.id; }
+  public getType(): string { return this.tag; }
+  public creationDetails(): string | undefined { return undefined; }
 
   /** 容纳子节点和允许解散是独立能力；无需通过类型名判断。 */
   public canUngroup(): boolean { return false; }
+
+  public canDetachChild(id: string): boolean { void id; return true; }
 
   public preservePresentation(attributes: PresentationAttributes): void { this.presentation = attributes; }
 
@@ -41,9 +45,11 @@ export abstract class Shape {
   }
 
   public describe(): ShapeDescription {
+    const children = this[ShapeAccess.children]();
     return new ShapeDescription(this.id, this.tag,
       { id: this.id, ...this.geometryAttributes(), ...this.styles.attributes(), ...this.presentation.attributes() },
-      this[ShapeAccess.children]()?.items().map(child => child.describe()) ?? [], this.textContent(), this.position(), this.geometrySummary());
+      children?.items().map(child => child.describe()) ?? [], this.textContent(), this.position(), this.geometrySummary(),
+      children !== undefined, this.getType());
   }
 
   /** @internal 仅用于领域对象间的两阶段几何修改。 */

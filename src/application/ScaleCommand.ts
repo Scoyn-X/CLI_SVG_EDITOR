@@ -9,7 +9,7 @@ export class ScaleCommand extends EditCommand {
   protected override apply(document: SvgDocument): CommandResult {
     document.scale(this.id, ValueValidation.number(this.factor, 'scale factor'));
     const shape = document.describeShape(this.id);
-    const label = `${shape.getTag()}#${this.id}`;
+    const label = `${shape.getType()}#${this.id}`;
     return new CommandResult(`${label} scaled by ${this.factor}`, `${label} scaling undone`);
   }
 }

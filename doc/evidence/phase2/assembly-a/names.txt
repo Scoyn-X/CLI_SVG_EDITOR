@@ -1,0 +1,9 @@
+M	src/bootstrap/CodePlugins.ts
+A	src/plugins/box/Box.ts
+A	src/plugins/box/BoxAttributes.ts
+A	src/plugins/box/BoxPlugin.ts
+A	src/plugins/box/BoxProvider.ts
+A	src/plugins/box/BoxTypeLabel.ts
+A	src/plugins/box/package.json
+M	tests/e2e/CliHistory.test.ts
+A	tests/plugins/Box.test.ts

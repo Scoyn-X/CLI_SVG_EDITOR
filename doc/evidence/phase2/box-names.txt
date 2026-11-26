@@ -1,0 +1,8 @@
+M	plugins.config.json
+A	src/plugins/box/Box.ts
+A	src/plugins/box/BoxAttributes.ts
+A	src/plugins/box/BoxPlugin.ts
+A	src/plugins/box/BoxProvider.ts
+A	src/plugins/box/BoxTypeLabel.ts
+A	src/plugins/box/package.json
+A	tests/plugins/Box.test.ts

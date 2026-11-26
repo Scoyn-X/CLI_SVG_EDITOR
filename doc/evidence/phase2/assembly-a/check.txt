@@ -1,0 +1,41 @@
+
+> cli-svg-editor@0.1.0 check
+> npm run typecheck && npm run lint && npm run build && npm run check:architecture && npm test && npm run check:runtime
+
+
+> cli-svg-editor@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> cli-svg-editor@0.1.0 lint
+> eslint . --max-warnings 0
+
+
+> cli-svg-editor@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> cli-svg-editor@0.1.0 check:architecture
+> depcruise --config dependency-cruiser.config.json --output-type err-long src
+
+
+✔ no dependency violations found (118 modules, 374 dependencies cruised)
+
+
+> cli-svg-editor@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.3 C:/Users/lwy13/.codex/worktrees/demo-assembly-a/CLI_SVG_EDITOR
+
+
+ Test Files  25 passed (25)
+      Tests  427 passed (427)
+   Start at  15:54:47
+   Duration  29.77s (tests 59%, transform 21%, import 18%, worker 1%)
+
+
+> cli-svg-editor@0.1.0 check:runtime
+> node dist/bootstrap/main.js --check
+
+编辑器组装检查通过（Node.js 24.11.0）。

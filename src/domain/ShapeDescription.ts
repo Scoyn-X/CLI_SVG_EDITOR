@@ -14,6 +14,8 @@ export class ShapeDescription {
     private readonly text: string | undefined,
     position?: readonly [number, number],
     private readonly geometry: GeometrySummary = new GeometrySummary(),
+    private readonly container: boolean = children.length > 0,
+    private readonly type: string = tag,
   ) {
     this.attributes = Object.freeze({ ...attributes });
     this.children = Object.freeze([...children]);
@@ -23,6 +25,8 @@ export class ShapeDescription {
 
   public getId(): string { return this.id; }
   public getTag(): string { return this.tag; }
+  public getType(): string { return this.type; }
+  public isContainer(): boolean { return this.container; }
   public getAttributes(): Readonly<Record<string, string | number>> { return this.attributes; }
   public getChildren(): readonly ShapeDescription[] { return this.children; }
   public getText(): string | undefined { return this.text; }

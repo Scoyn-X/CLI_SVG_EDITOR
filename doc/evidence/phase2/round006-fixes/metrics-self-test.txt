@@ -1,0 +1,1 @@
+metrics self-test OK (5 fixtures)

@@ -1,0 +1,36 @@
+== C03c 仅 stats（dir 禁用）
+cmd: node dist/bootstrap/main.js --config D:\Secret\Courses\Sem5\SD\pj1\review\sandbox\round-009\only-stats.json
+
+svg-editor 0.1 — type 'help' for commands
+
+svg> canvas 800x600 created
+svg> (total 0, containers 0)
+svg> init [w] [h]
+canvas [w] [h]
+read <file.svg>
+save [file.svg]
+create <type> <id> [params…] [in <containerId>]
+move <id> <dx> <dy>
+scale <id> <factor>
+set <id> <attr> <value>
+group <newGid> <id1> <id2>…
+ungroup <gid>
+addto <gid> <id>
+delete <id>
+front <id>
+back <id>
+undo
+redo
+tree [id]
+show <id>
+help
+stats
+create rect <id> <x> <y> <w> <h> [fill] [in <containerId>]
+create circle <id> <cx> <cy> <r> [fill] [in <containerId>]
+create ellipse <id> <cx> <cy> <rx> <ry> [fill] [in <containerId>]
+create line <id> <x1> <y1> <x2> <y2> [stroke] [in <containerId>]
+create text <id> <x> <y> "content" [in <containerId>]
+create g <id> [in <containerId>]
+svg> error: unknown command: dir
+svg> 
+

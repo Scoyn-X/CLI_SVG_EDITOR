@@ -4,6 +4,7 @@ import type { CommandDisplay } from './CommandDisplay.js';
 import type { CommandFormatter } from './CommandFormatter.js';
 
 export class TreeDisplay implements CommandDisplay {
-  public constructor(private readonly document: DocumentDescription, private readonly root?: ShapeDescription) { Object.freeze(this); }
-  public render(formatter: CommandFormatter): readonly string[] { return formatter.tree(this.document, this.root); }
+  public constructor(private readonly document: DocumentDescription, private readonly root?: ShapeDescription,
+    private readonly saved?: DocumentDescription) { Object.freeze(this); }
+  public render(formatter: CommandFormatter): readonly string[] { return formatter.tree(this.document, this.root, this.saved); }
 }

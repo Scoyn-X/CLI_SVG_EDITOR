@@ -1,0 +1,16 @@
+svg-editor 0.1 — type 'help' for commands
+
+svg> canvas 800x600 created
+svg> rect#r created
+svg> svg (800x600) *
+└── rect#r  x=1 y=2 w=3 h=4 *
+svg> saved to artifacts/simple.svg (1 elements)
+svg> svg (800x600)
+└── rect#r  x=1 y=2 w=3 h=4
+svg> rect#r moved to (2,2)
+svg> svg (800x600) *
+└── rect#r  x=2 y=2 w=3 h=4 *
+svg> rect#r moved back to (1,2)
+svg> svg (800x600)
+└── rect#r  x=1 y=2 w=3 h=4
+svg> 

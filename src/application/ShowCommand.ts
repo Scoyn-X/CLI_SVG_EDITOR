@@ -7,7 +7,7 @@ export class ShowCommand extends Command {
   public constructor(private readonly id: string) { super(); }
   public override execute(session: EditorSession): CommandResult {
     const shape = session.describeShape(this.id); const parentId = session.getParentId(this.id);
-    const parent = parentId === undefined ? 'svg' : `${session.describeShape(parentId).getTag()}#${parentId}`;
+    const parent = parentId === undefined ? 'svg' : `${session.describeShape(parentId).getType()}#${parentId}`;
     return new CommandResult('', undefined, [], new ShapeDisplay(shape, parent));
   }
 }

@@ -1,0 +1,18 @@
+# 分组、解组与归属的真实回放
+init
+create g outer
+create rect a 1 2 3 4 in outer
+create circle b 5 6 7 in outer
+group pair b a
+undo
+redo
+ungroup pair
+undo
+group bad a pair
+create g target
+addto target pair
+undo
+redo
+ungroup target
+addto pair target
+help

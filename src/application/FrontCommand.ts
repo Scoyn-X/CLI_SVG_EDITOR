@@ -7,7 +7,7 @@ export class FrontCommand extends EditCommand {
   protected override apply(document: SvgDocument): CommandResult {
     const shape = document.describeShape(this.id);
     document.front(this.id);
-    const label = `${shape.getTag()}#${this.id}`;
+    const label = `${shape.getType()}#${this.id}`;
     return new CommandResult(`${label} moved to front`, `${label} order restored`);
   }
 }

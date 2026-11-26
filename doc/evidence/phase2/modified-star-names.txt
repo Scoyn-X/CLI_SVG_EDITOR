@@ -1,0 +1,5 @@
+M	plugins.config.json
+A	src/plugins/modified-star/ModifiedStar.ts
+A	src/plugins/modified-star/ModifiedStarPlugin.ts
+A	src/plugins/modified-star/package.json
+A	tests/plugins/ModifiedStar.test.ts
